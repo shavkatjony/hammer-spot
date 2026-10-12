@@ -1,6 +1,6 @@
 /**
  * Site verification. Run against a production build:
- *   npm run build && npx astro preview --port 4321 &   then   node scripts/verify.mjs
+ *   npm run build && npm run preview   (background daemon in Astro 7)   then   npm run verify
  *
  * 1. Static checks on every page in dist/ (CSP, metadata, headings, images, links, inline styles).
  * 2. Browser checks via Playwright: console errors, axe-core WCAG 2.2 AA scan (light + dark),

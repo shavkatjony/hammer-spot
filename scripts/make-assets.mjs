@@ -1,5 +1,5 @@
 // Generates public/Shavkatjon-Yuldashev-CV.pdf (from /resume/) and public/og.jpg (from the hero).
-// Usage: npm run build && npx astro preview --port 4321 & ; then: node scripts/make-assets.mjs
+// Usage: npm run build && npm run preview   then   npm run assets   (rebuild afterwards so the files ship)
 // Re-run whenever src/content/site.ts changes, then rebuild so the files ship.
 import { chromium } from 'playwright';
 const base = process.env.BASE_URL || 'http://127.0.0.1:4321/';

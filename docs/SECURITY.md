@@ -45,7 +45,7 @@ Expect `HTTP/2 200`, `strict-transport-security`, and no `x-frame-options`, whic
 
 ```bash
 npm audit
-npm run build && npm run preview &   # then:
+npm run build && npm run preview     # preview runs in the background; then:
 npm run verify
 grep -rInE "api[_-]?key|secret|BEGIN .*PRIVATE|ghp_|github_pat_|AKIA" --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=dist .
 ```

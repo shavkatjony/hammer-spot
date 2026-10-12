@@ -14,7 +14,7 @@ Requires Node ≥ 22.12.
 npm ci                 # install exact locked versions
 npm run dev            # http://localhost:4321 (hot reload; the CSP is not applied in dev)
 npm run build          # production build into dist/
-npm run preview        # serve dist/ at http://127.0.0.1:4321 (CSP active)
+npm run preview        # background preview of dist/ at http://127.0.0.1:4321 (CSP active); stop: npx astro preview stop
 npm run check          # TypeScript + Astro diagnostics
 ```
 
@@ -27,7 +27,7 @@ Useful query flags on any page:
 
 ### Verification scripts
 
-These run against `npm run preview`, so keep it running in another terminal. Browser checks use Playwright's Chromium (`npx playwright install chromium` if it isn't installed).
+These run against the preview server (`npm run preview`, which runs in the background in Astro 7). Browser checks use Playwright's Chromium (`npx playwright install chromium` if it isn't installed).
 
 ```bash
 npm run verify         # static checks + axe WCAG 2.2 AA + console + theme/menu/reduced-motion/no-JS/keyboard

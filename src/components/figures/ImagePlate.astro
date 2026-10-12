@@ -1,0 +1,58 @@
+---
+/** A real project image presented as a numbered archival plate. Lazy, sized, no CLS. */
+import { url } from '../../lib/url';
+interface Props {
+  src: string; // file in /public/images, without extension
+  small?: string | null; // optional -640 variant name
+  width: number;
+  height: number;
+  alt: string;
+  caption: string;
+  plate?: string;
+  eager?: boolean;
+}
+const { src, small = null, width, height, alt, caption, plate, eager = false } = Astro.props;
+const full = url(`images/${src}.webp`);
+const srcset = small ? `${url(`images/${small}.webp`)} 640w, ${full} ${width}w` : undefined;
+---
+<figure class="plate">
+  <div class="plate__frame" data-reveal="image">
+    <img
+      src={full}
+      srcset={srcset}
+      sizes="(max-width: 52rem) 100vw, 46rem"
+      width={width}
+      height={height}
+      alt={alt}
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+    />
+  </div>
+  <figcaption class="plate__cap">
+    {plate && <span class="mono">Plate {plate}</span>}
+    <span>{caption}</span>
+  </figcaption>
+</figure>
+
+<style>
+  .plate__frame {
+    overflow: hidden;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    padding: 6px;
+  }
+  .plate__frame img {
+    width: 100%;
+  }
+  .plate__cap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem var(--space-3);
+    margin-top: var(--space-3);
+    font-size: var(--fs-small);
+    color: var(--ink-3);
+  }
+  .plate__cap .mono {
+    color: var(--ink-2);
+  }
+</style>

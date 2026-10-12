@@ -1,0 +1,93 @@
+---
+/** 5-fold stratified CV results. Source: telco-c-classifier-alias/reports/model_comparison.csv */
+const rows = [
+  { m: 'Logistic regression', auc: 0.8463, sd: 0.0114, rec: 0.7973, pre: 0.5177, f1: 0.6276, acc: 0.749, chosen: true },
+  { m: 'Gradient boosting (HistGB)', auc: 0.8293, sd: 0.0085, rec: 0.7003, pre: 0.5536, f1: 0.6183, acc: 0.7707, chosen: false },
+  { m: 'Random forest', auc: 0.8239, sd: 0.0121, rec: 0.4649, pre: 0.6374, f1: 0.5374, acc: 0.7875, chosen: false },
+];
+const f3 = (n: number) => n.toFixed(3);
+---
+<figure class="mt">
+  <div class="mt__scroll" tabindex="0" role="region" aria-label="Model comparison table">
+    <table class="mt__table">
+      <caption class="visually-hidden">Cross-validated model comparison, 5 folds</caption>
+      <thead>
+        <tr>
+          <th scope="col">Model</th>
+          <th scope="col">ROC-AUC <span class="muted">± sd</span></th>
+          <th scope="col">Recall</th>
+          <th scope="col">Precision</th>
+          <th scope="col">F1</th>
+          <th scope="col">Accuracy</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr class:list={{ 'is-chosen': r.chosen }}>
+            <th scope="row">{r.m}{r.chosen && <span class="mt__tag mono">Selected</span>}</th>
+            <td>{f3(r.auc)} <span class="muted">± {f3(r.sd)}</span></td>
+            <td>{f3(r.rec)}</td>
+            <td>{f3(r.pre)}</td>
+            <td>{f3(r.f1)}</td>
+            <td>{f3(r.acc)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <figcaption class="mt__cap">
+    <span class="mono">Table.</span> 5-fold stratified cross-validation on the training split. The random forest has the best accuracy
+    and the worst recall. Source: <code>reports/model_comparison.csv</code>.
+  </figcaption>
+</figure>
+
+<style>
+  .mt__scroll {
+    overflow-x: auto;
+  }
+  .mt__table {
+    width: 100%;
+    min-width: 34rem;
+    font-size: var(--fs-small);
+  }
+  .mt__table th,
+  .mt__table td {
+    text-align: left;
+    padding: 0.65rem 1rem 0.65rem 0;
+    border-bottom: 1px solid var(--rule-soft);
+    font-weight: 400;
+  }
+  .mt__table thead th {
+    font-family: var(--f-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
+    color: var(--ink-3);
+    border-bottom: 1px solid var(--rule);
+  }
+  .mt__table td {
+    font-family: var(--f-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .is-chosen th,
+  .is-chosen td {
+    background: var(--surface);
+  }
+  .is-chosen th {
+    border-left: 3px solid var(--series-1);
+    padding-left: 0.6rem;
+  }
+  .mt__tag {
+    display: inline-block;
+    margin-left: 0.6rem;
+    padding: 0.05rem 0.4rem;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+  }
+  .mt__cap {
+    margin-top: var(--space-4);
+    font-size: var(--fs-small);
+    color: var(--ink-3);
+    max-width: 62ch;
+  }
+</style>

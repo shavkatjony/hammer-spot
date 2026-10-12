@@ -1,0 +1,77 @@
+---
+import SectionHead from './SectionHead.astro';
+import ProjectFeature from './ProjectFeature.astro';
+import ExtLink from './ExtLink.astro';
+import Icon from './Icon.astro';
+import { projects, archive } from '../content/site';
+---
+<section class="work" id="work" aria-labelledby="work-title">
+  <div class="wrap wrap--wide">
+    <SectionHead no="01" title="Selected work" id="work-title">
+      Four projects, ordered by how much evidence each one carries. Every entry links to the code and a full case study,
+      including the parts that are unfinished or didn’t work.
+    </SectionHead>
+  </div>
+
+  {projects.map((p, i) => <ProjectFeature project={p} flip={i % 2 === 1 && p.theme !== 'dark'} />)}
+
+  <div class="wrap wrap--wide">
+    <div class="archive">
+      <h3 class="archive__title mono">Also in the archive</h3>
+      <ul class="archive__list" role="list">
+        {archive.map((a) => (
+          <li class="archive__item" data-reveal="fade">
+            <p class="mono muted">{a.meta}</p>
+            <h4 class="archive__name">{a.title}</h4>
+            <p class="archive__text">{a.text}</p>
+            <ExtLink href={a.href} class="link-arrow">Repository <Icon name="arrow-ur" /></ExtLink>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .work {
+    padding-top: var(--space-9);
+  }
+  .archive {
+    margin-top: var(--space-8);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+  .archive__title {
+    grid-column: 1 / span 2;
+    color: var(--ink-3);
+  }
+  .archive__list {
+    grid-column: 3 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6) var(--space-7);
+  }
+  .archive__name {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: var(--fs-h3);
+    line-height: 1.1;
+    margin: var(--space-2) 0 var(--space-3);
+  }
+  .archive__text {
+    color: var(--ink-2);
+    max-width: 52ch;
+  }
+  @media (max-width: 52rem) {
+    .archive__title,
+    .archive__list {
+      grid-column: 1 / -1;
+    }
+    .archive__list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

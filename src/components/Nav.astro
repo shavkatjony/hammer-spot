@@ -1,0 +1,280 @@
+---
+import Icon from './Icon.astro';
+import { url } from '../lib/url';
+import { resume } from '../content/site';
+
+interface Props {
+  onDark?: boolean;
+}
+const { onDark = false } = Astro.props;
+
+const links = [
+  { href: url('#work'), label: 'Work' },
+  { href: url('#notes'), label: 'Notes' },
+  { href: url('#toolkit'), label: 'Toolkit' },
+  { href: url('#about'), label: 'About' },
+  { href: url('#contact'), label: 'Contact' },
+];
+---
+<header class:list={['site-nav', { 'site-nav--on-dark': onDark }]} data-nav>
+  <div class="site-nav__inner wrap wrap--wide">
+    <a class="brand" href={url()} aria-label="SHAVKATJON, home">
+      <svg class="brand__mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="10" r="5" />
+        <path d="M1 16.5h22" />
+        <path d="M5 20h14" />
+      </svg>
+      <span class="brand__word">SHAVKATJON</span>
+    </a>
+
+    <nav class="primary" aria-label="Primary">
+      <ul role="list" class="primary__list" id="nav-menu" data-menu>
+        {links.map((l) => (
+          <li><a href={l.href}>{l.label}</a></li>
+        ))}
+        <li class="primary__resume-m"><a href={url(resume.page)}>Résumé</a></li>
+      </ul>
+    </nav>
+
+    <div class="tools">
+      <a class="tools__resume" href={url(resume.page)}>Résumé</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-pressed="false">
+        <span class="visually-hidden">Dark theme</span>
+        <Icon name="moon" class="icon-btn__moon" />
+        <Icon name="sun" class="icon-btn__sun" />
+      </button>
+      <button class="menu-btn" type="button" data-menu-toggle aria-expanded="false" aria-controls="nav-menu">
+        <span class="menu-btn__label">Menu</span>
+        <span class="menu-btn__bars" aria-hidden="true"><span></span><span></span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-nav {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    height: var(--nav-h);
+    color: var(--ink);
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition: background-color var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
+  }
+  :global(.site-nav.is-solid) {
+    background: var(--bg);
+    border-bottom-color: var(--rule-soft);
+  }
+  /* over a dark page header: light ink until the bar turns solid */
+  .site-nav--on-dark:not(:global(.is-solid)) {
+    --ink: #ede4d3;
+    --bg: #1d1915;
+    --accent: #da916a;
+    --accent-deco: #c9a06a;
+  }
+  .site-nav__inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 44px;
+    text-decoration: none;
+    font-family: var(--f-mono);
+    font-size: var(--fs-small);
+    font-weight: 500;
+    letter-spacing: 0.18em;
+  }
+  .brand__mark {
+    width: 1.35rem;
+    height: 1.35rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+  }
+  .brand__mark circle {
+    fill: var(--accent-deco);
+    stroke: none;
+    transition: transform var(--dur-2) var(--ease-out);
+  }
+  .brand:hover .brand__mark circle {
+    transform: translateY(1.5px);
+  }
+  .primary {
+    margin-left: auto;
+  }
+  .primary__list {
+    display: flex;
+    gap: var(--space-1);
+  }
+  .primary__list a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 0.7rem;
+    font-family: var(--f-mono);
+    font-size: var(--fs-small);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    position: relative;
+  }
+  .primary__list a::after {
+    content: '';
+    position: absolute;
+    left: 0.7rem;
+    right: 0.7rem;
+    bottom: 0.6rem;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-2) var(--ease-out);
+  }
+  .primary__list a:hover::after,
+  .primary__list a:focus-visible::after {
+    transform: scaleX(1);
+  }
+  .primary__resume-m {
+    display: none;
+  }
+  .tools {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .tools__resume {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--ink);
+    border-radius: var(--radius);
+    font-family: var(--f-mono);
+    font-size: var(--fs-small);
+    text-decoration: none;
+    transition: background-color var(--dur-1) ease, color var(--dur-1) ease;
+  }
+  .tools__resume:hover,
+  .tools__resume:focus-visible {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .icon-btn {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    border-radius: var(--radius);
+  }
+  .icon-btn :global(svg) {
+    width: 1.15rem;
+    height: 1.15rem;
+    grid-area: 1 / 1;
+    transition: transform var(--dur-2) var(--ease-out), opacity var(--dur-1) ease;
+  }
+  .icon-btn :global(.icon-btn__sun) {
+    opacity: 0;
+    transform: rotate(-40deg) scale(0.7);
+  }
+  :global(:root[data-theme='dark']) .icon-btn :global(.icon-btn__sun) {
+    opacity: 1;
+    transform: none;
+  }
+  :global(:root[data-theme='dark']) .icon-btn :global(.icon-btn__moon) {
+    opacity: 0;
+    transform: rotate(40deg) scale(0.7);
+  }
+  .icon-btn:hover {
+    color: var(--accent);
+  }
+  .menu-btn {
+    display: none;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 44px;
+    padding: 0 0.4rem 0 0.6rem;
+    border: 0;
+    background: transparent;
+    font-family: var(--f-mono);
+    font-size: var(--fs-small);
+    cursor: pointer;
+  }
+  .menu-btn__bars {
+    display: grid;
+    gap: 5px;
+    width: 18px;
+  }
+  .menu-btn__bars span {
+    display: block;
+    height: 1px;
+    background: currentColor;
+    transition: transform var(--dur-2) var(--ease-out);
+  }
+  .menu-btn[aria-expanded='true'] .menu-btn__bars span:first-child {
+    transform: translateY(3px) rotate(25deg);
+  }
+  .menu-btn[aria-expanded='true'] .menu-btn__bars span:last-child {
+    transform: translateY(-3px) rotate(-25deg);
+  }
+
+  @media (max-width: 52rem) {
+    .menu-btn {
+      display: inline-flex;
+    }
+    .tools__resume {
+      display: none;
+    }
+    .tools {
+      margin-left: auto;
+    }
+    .primary {
+      position: fixed;
+      inset: var(--nav-h) 0 auto 0;
+      margin: 0;
+      pointer-events: none;
+    }
+    .primary__list {
+      flex-direction: column;
+      gap: 0;
+      padding: var(--space-3) var(--gutter) var(--space-6);
+      background: var(--bg);
+      border-bottom: 1px solid var(--rule);
+      visibility: hidden;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity var(--dur-1) ease, transform var(--dur-2) var(--ease-out), visibility 0s linear var(--dur-2);
+    }
+    :global(.primary__list.is-open) {
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+      transition: opacity var(--dur-1) ease, transform var(--dur-2) var(--ease-out), visibility 0s;
+    }
+    .primary__list li {
+      border-bottom: 1px solid var(--rule-soft);
+    }
+    .primary__list a {
+      width: 100%;
+      min-height: 52px;
+      padding-inline: 0;
+      font-family: var(--f-display);
+      font-size: 1.75rem;
+      letter-spacing: 0;
+    }
+    .primary__list a::after {
+      display: none;
+    }
+    .primary__resume-m {
+      display: block;
+    }
+  }
+</style>

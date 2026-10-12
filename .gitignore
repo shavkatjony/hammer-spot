@@ -1,0 +1,22 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+
+# environment / secrets: never commit these
+.env
+.env.*
+!.env.example
+
+# local tooling
+.DS_Store
+.vscode/
+.idea/
+/test-results/
+/playwright-report/
+/reports/lighthouse-*.json

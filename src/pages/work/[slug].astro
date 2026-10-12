@@ -1,0 +1,304 @@
+---
+import Base from '../../layouts/Base.astro';
+import Figure from '../../components/figures/Figure.astro';
+import Rich from '../../components/Rich.astro';
+import ExtLink from '../../components/ExtLink.astro';
+import Icon from '../../components/Icon.astro';
+import { projects, type Project } from '../../content/site';
+import { url } from '../../lib/url';
+
+export function getStaticPaths() {
+  return projects.map((p, i) => ({
+    params: { slug: p.slug },
+    props: { project: p, next: projects[(i + 1) % projects.length] },
+  }));
+}
+interface Props {
+  project: Project;
+  next: Project;
+}
+const { project: p, next } = Astro.props;
+const dark = p.theme === 'dark';
+---
+<Base
+  title={`${p.title} · Case study · SHAVKATJON`}
+  description={`${p.caseStudy.summary} ${p.result}`}
+  ogType="article"
+  navOnDark={dark}
+>
+  <article class="cs" aria-labelledby="cs-title">
+    <header class:list={['cs__head', { 'surface-dark cs__head--dark': dark }]}>
+      {dark && <div class="cs__topo" aria-hidden="true"></div>}
+      <div class="wrap wrap--wide cs__head-inner">
+        <a class="link-arrow cs__back" href={url('#work')}><Icon name="arrow-left" /> All work</a>
+        <p class="cs__crumbs mono">
+          <span>Case study {p.index}</span><span>{p.kicker}</span><span>{p.year}</span>
+        </p>
+        <h1 id="cs-title" class={`cs__title vt-${p.slug}`}>{p.title}</h1>
+        <p class="cs__summary">{p.caseStudy.summary}</p>
+        <div class="cs__status">
+          <span class="status" data-status={p.status}>{p.status}</span>
+          {p.statusNote && <span class="muted">{p.statusNote}</span>}
+        </div>
+        <ul class="cs__metrics" role="list">
+          {p.metrics.map((m) => (
+            <li><span class="cs__metric-v">{m.value}</span><span class="cs__metric-l">{m.label}</span></li>
+          ))}
+        </ul>
+      </div>
+    </header>
+
+    <div class="wrap wrap--wide cs__body">
+      <aside class="cs__aside" aria-label="Project details">
+        <div class="cs__aside-inner">
+          <nav aria-label="On this page" class="cs__toc">
+            <p class="mono muted">Contents</p>
+            <ol role="list">
+              {p.caseStudy.sections.map((s, i) => (
+                <li><a href={`#${s.id}`}><span class="mono">{i + 1}</span> {s.title}</a></li>
+              ))}
+            </ol>
+          </nav>
+          <div class="cs__links">
+            <p class="mono muted">Evidence</p>
+            <ul role="list">
+              {p.links.map((l) => (
+                <li>
+                  <ExtLink href={l.href} class="link-arrow">
+                    <Icon name={l.kind === 'demo' ? 'play' : l.kind === 'repo' ? 'github' : 'doc'} /> {l.label}
+                  </ExtLink>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class="cs__stack">
+            <p class="mono muted">Stack</p>
+            <p>{p.stack.join(' · ')}</p>
+            <p class="mono muted cs__stack-h">Methods</p>
+            <p>{p.methods.join(' · ')}</p>
+          </div>
+        </div>
+      </aside>
+
+      <div class="cs__content">
+        {p.caseStudy.sections.map((s, i) => (
+          <section class="cs__section" id={s.id} aria-labelledby={`${s.id}-h`}>
+            <p class="cs__no mono">{String(i + 1).padStart(2, '0')}</p>
+            <h2 id={`${s.id}-h`} class="cs__h" data-reveal="mask">{s.title}</h2>
+            <div class="prose cs__prose">
+              {s.body.map((para) => <p><Rich text={para} /></p>)}
+              {s.list && (
+                <ul>
+                  {s.list.map((li) => <li><Rich text={li} /></li>)}
+                </ul>
+              )}
+            </div>
+            {s.figure && (
+              <div class="cs__figure">
+                <Figure id={s.figure} />
+              </div>
+            )}
+          </section>
+        ))}
+      </div>
+    </div>
+
+    <nav class="cs__next wrap wrap--wide" aria-label="Next case study">
+      <p class="mono muted">Next case study</p>
+      <a href={url(`work/${next.slug}/`)} class="cs__next-link">
+        <span class="mono">{next.index}</span>
+        <span class="cs__next-title">{next.title}</span>
+        <Icon name="arrow-ur" />
+      </a>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .cs__head {
+    position: relative;
+    padding: calc(var(--nav-h) + var(--space-7)) 0 var(--space-8);
+    background: var(--hero-sky);
+    border-bottom: 1px solid var(--rule);
+    overflow: hidden;
+  }
+  .cs__head--dark {
+    background: var(--bg);
+    color: var(--ink);
+  }
+  .cs__topo {
+    position: absolute;
+    inset: 0;
+    background: var(--rule);
+    -webkit-mask: url('/textures/topo.svg') center / cover no-repeat;
+    mask: url('/textures/topo.svg') center / cover no-repeat;
+    opacity: 0.5;
+  }
+  .cs__head-inner {
+    position: relative;
+  }
+  .cs__back {
+    margin-bottom: var(--space-5);
+  }
+  .cs__crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-5);
+    color: var(--ink-2);
+    margin-bottom: var(--space-4);
+  }
+  .cs__title {
+    font-size: var(--fs-h1);
+    line-height: 0.95;
+    max-width: 16ch;
+  }
+  .cs__summary {
+    margin-top: var(--space-5);
+    font-family: var(--f-display);
+    font-size: clamp(1.3rem, 1.05rem + 0.8vw, 1.75rem);
+    line-height: 1.3;
+    max-width: 44ch;
+    color: var(--ink-2);
+  }
+  .cs__status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    margin-top: var(--space-5);
+    font-size: var(--fs-small);
+  }
+  .cs__metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 14rem));
+    gap: var(--space-5);
+    margin-top: var(--space-7);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--rule);
+  }
+  .cs__metrics li {
+    display: grid;
+    gap: var(--space-1);
+    align-content: start;
+  }
+  .cs__metric-v {
+    font-family: var(--f-display);
+    font-size: clamp(1.8rem, 1.3rem + 1.5vw, 2.8rem);
+    line-height: 1;
+  }
+  .cs__metric-l {
+    font-size: var(--fs-small);
+    color: var(--ink-3);
+  }
+
+  .cs__body {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--space-6);
+    padding-block: var(--space-8);
+  }
+  .cs__aside {
+    grid-column: 1 / span 3;
+  }
+  .cs__aside-inner {
+    position: sticky;
+    top: calc(var(--nav-h) + var(--space-5));
+    display: grid;
+    gap: var(--space-6);
+    font-size: var(--fs-small);
+  }
+  .cs__toc ol {
+    margin-top: var(--space-2);
+  }
+  .cs__toc a {
+    display: flex;
+    gap: var(--space-3);
+    padding: 0.4rem 0;
+    text-decoration: none;
+    color: var(--ink-2);
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .cs__toc a:hover {
+    color: var(--accent);
+  }
+  .cs__toc .mono {
+    color: var(--ink-3);
+    min-width: 1rem;
+  }
+  .cs__links ul {
+    margin-top: var(--space-1);
+  }
+  .cs__links :global(.link-arrow) {
+    min-height: 40px;
+  }
+  .cs__stack p:not(.mono) {
+    color: var(--ink-2);
+    margin-top: var(--space-1);
+  }
+  .cs__stack-h {
+    margin-top: var(--space-4);
+  }
+  .cs__content {
+    grid-column: 5 / span 8;
+    display: grid;
+    gap: var(--space-8);
+  }
+  .cs__section {
+    scroll-margin-top: calc(var(--nav-h) + var(--space-4));
+  }
+  .cs__no {
+    color: var(--ink-3);
+    margin-bottom: var(--space-2);
+  }
+  .cs__h {
+    font-size: clamp(1.9rem, 1.3rem + 1.8vw, 3rem);
+    margin-bottom: var(--space-4);
+  }
+  .cs__prose {
+    color: var(--ink-2);
+  }
+  .cs__figure {
+    margin-top: var(--space-6);
+  }
+  .cs__next {
+    padding-block: var(--space-7) var(--space-9);
+    border-top: 1px solid var(--rule);
+  }
+  .cs__next-link {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+    text-decoration: none;
+  }
+  .cs__next-title {
+    font-family: var(--f-display);
+    font-size: var(--fs-h2);
+    line-height: 1;
+  }
+  .cs__next-link :global(svg) {
+    width: 2rem;
+    height: 2rem;
+    transition: transform var(--dur-2) var(--ease-out);
+  }
+  .cs__next-link:hover :global(svg),
+  .cs__next-link:focus-visible :global(svg) {
+    transform: translate(4px, -4px);
+  }
+  @media (max-width: 52rem) {
+    .cs__aside,
+    .cs__content {
+      grid-column: 1 / -1;
+    }
+    .cs__aside-inner {
+      position: static;
+    }
+    .cs__metrics {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 30rem) {
+    .cs__metrics {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

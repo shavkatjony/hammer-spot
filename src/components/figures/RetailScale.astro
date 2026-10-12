@@ -1,0 +1,61 @@
+---
+/** Measured at full M5 shape. Source: retail-commercial-intelligence/docs/architecture.md */
+const rows = [
+  { v: 'First version: one-shot pandas melt, uncapped DuckDB', t: 105, m: 8.8, final: false },
+  { v: 'Final: streamed reshape, categoricals, isolated ingest, capped DuckDB', t: 84, m: 2.6, final: true },
+];
+const max = 9;
+---
+<figure class="scale">
+  <div class="scale__rows">
+    {rows.map((r) => (
+      <div class="scale__row" class:list={{ 'is-final': r.final }}>
+        <p class="scale__label">{r.v}</p>
+        <svg class="scale__bar" width="100%" height="22" aria-hidden="true">
+          <rect class="scale__track" x="0" y="10" width="100%" height="1" />
+          <rect class="scale__fill" x="0" y="0" width={`${((r.m / max) * 100).toFixed(1)}%`} height="22" rx="4" />
+          <rect class="scale__fill" x="0" y="0" width="5" height="22" />
+        </svg>
+        <p class="scale__val mono"><span>{r.m.toFixed(1)} GB peak</span><span class="muted">{r.t} s</span></p>
+      </div>
+    ))}
+  </div>
+  <figcaption class="scale__cap">
+    <span class="mono">Fig.</span> End-to-end build of 59.1M item-store-days (30,450 series × 1,941 days) on an Intel i9 MacBook Pro.
+    Peak memory, scale 0–9 GB. Source: <code>docs/architecture.md</code>.
+  </figcaption>
+</figure>
+
+<style>
+  .scale__rows {
+    display: grid;
+    gap: var(--space-5);
+    max-width: 44rem;
+  }
+  .scale__label {
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+    margin-bottom: var(--space-2);
+  }
+  .scale__track {
+    fill: var(--chart-grid);
+  }
+  .scale__fill {
+    fill: var(--ink-3);
+  }
+  .is-final .scale__fill {
+    fill: var(--series-1);
+  }
+  .scale__val {
+    display: flex;
+    gap: var(--space-4);
+    margin-top: var(--space-2);
+    color: var(--ink);
+  }
+  .scale__cap {
+    margin-top: var(--space-5);
+    font-size: var(--fs-small);
+    color: var(--ink-3);
+    max-width: 62ch;
+  }
+</style>

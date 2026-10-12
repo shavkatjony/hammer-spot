@@ -1,0 +1,54 @@
+---
+/** Column provenance tags from DPEC's rules (docs/rules/00-rules-and-purpose.md, rule 3). */
+const tags = [
+  { t: 'observed', d: 'Measured and published by F1 timing (lap times, speed, position).' },
+  { t: 'derived', d: 'Computed from observed data (sector deltas, stint length).' },
+  { t: 'estimated', d: 'Modelled, never measured (e.g. fuel effect). Always labelled.' },
+  { t: 'unknown', d: 'Not public: setup, tyre temperatures, ERS and active-aero state.' },
+];
+---
+<figure class="tags">
+  <dl class="tags__list">
+    {tags.map((x) => (
+      <div class="tags__item" data-tag={x.t}>
+        <dt class="mono">{x.t}</dt>
+        <dd>{x.d}</dd>
+      </div>
+    ))}
+  </dl>
+  <figcaption class="tags__cap"><span class="mono">Fig.</span> Every column in DPEC carries one of four provenance tags.</figcaption>
+</figure>
+
+<style>
+  .tags__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    border-top: 1px solid var(--rule);
+  }
+  .tags__item {
+    padding: var(--space-4) var(--space-4) var(--space-4) 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .tags__item dt {
+    display: inline-block;
+    padding: 0.1rem 0.45rem;
+    border: 1px solid var(--ink-2);
+    margin-bottom: var(--space-2);
+  }
+  .tags__item[data-tag='estimated'] dt {
+    border-style: dashed;
+  }
+  .tags__item[data-tag='unknown'] dt {
+    border-style: dotted;
+    color: var(--ink-3);
+  }
+  .tags__item dd {
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+  .tags__cap {
+    margin-top: var(--space-4);
+    font-size: var(--fs-small);
+    color: var(--ink-3);
+  }
+</style>

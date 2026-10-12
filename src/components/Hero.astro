@@ -1,0 +1,405 @@
+---
+import DuneFallback from './DuneFallback.astro';
+import Icon from './Icon.astro';
+import ExtLink from './ExtLink.astro';
+import { identity, social, resume, education, languages } from '../content/site';
+import { url } from '../lib/url';
+
+const letters = identity.handle.split('');
+const edu = education[0];
+---
+<section class="hero" aria-labelledby="hero-title" data-hero>
+  <div class="hero__scene hero-scene" data-hero-scene>
+    <div class="hero__fallback" data-hero-fallback>
+      <DuneFallback />
+    </div>
+  </div>
+
+  <div class="hero__annot wrap wrap--wide">
+    <p class="mono">{identity.location.coords}</p>
+    <p class="mono">{identity.location.city} · {identity.location.country}</p>
+    <p class="mono hero__annot-vol">Field archive · Vol. 01 · 2026</p>
+    <span class="hero__annot-rule" aria-hidden="true"></span>
+  </div>
+
+  <div class="hero__body wrap wrap--wide">
+    <h1 id="hero-title" class="hero__mark">
+      <span class="visually-hidden">{identity.handle}, the portfolio of {identity.name}</span>
+      <span class="hero__letters" aria-hidden="true">
+        {letters.map((ch) => <span class="hero__letter">{ch}</span>)}
+      </span>
+    </h1>
+
+    <div class="hero__grid">
+      <p class="hero__roles mono">{identity.roles.join(' · ')}</p>
+      <div class="hero__copy">
+        <p class="hero__statement">{identity.statement}</p>
+        <div class="hero__actions">
+          <a class="link-arrow hero__primary" data-dir="down" href="#work">
+            Selected work <Icon name="arrow-down" />
+          </a>
+          <a class="action" href={url(resume.page)}>Résumé</a>
+          <ul class="hero__social" role="list" aria-label="Profiles">
+            <li>
+              <ExtLink href={social.github.href} class="hero__icon" label="GitHub profile">
+                <Icon name="github" />
+              </ExtLink>
+            </li>
+            <li>
+              <ExtLink href={social.linkedin.href} class="hero__icon" label="LinkedIn profile">
+                <Icon name="linkedin" />
+              </ExtLink>
+            </li>
+            <li>
+              <ExtLink href={social.email.href} class="hero__icon" label={`Email ${social.email.handle}`}>
+                <Icon name="mail" />
+              </ExtLink>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="hero__card" aria-label="Field card">
+    <p class="mono hero__card-head"><span>Field card</span><span>Nº 001</span></p>
+    {identity.portrait && (
+      <img
+        class="hero__portrait"
+        src={url(identity.portrait.src)}
+        alt={identity.portrait.alt}
+        width={identity.portrait.width}
+        height={identity.portrait.height}
+        decoding="async"
+      />
+    )}
+    <dl class="hero__card-list">
+      <div><dt>Name</dt><dd>{identity.name}</dd></div>
+      <div><dt>Base</dt><dd>{identity.location.city}, {identity.location.country}</dd></div>
+      <div><dt>Studied</dt><dd>Integrated Business Mgmt., {edu.school} ({edu.year})</dd></div>
+      <div><dt>Works in</dt><dd>Python · SQL · statistics · ML</dd></div>
+      <div><dt>Speaks</dt><dd>{languages.map((l) => l.name).join(' · ')}</dd></div>
+    </dl>
+  </aside>
+
+  <div class="hero__foot wrap wrap--wide">
+    {identity.availability.open && (
+      <p class="hero__status">
+        <span class="status" data-status="Complete">{identity.availability.short}</span>
+        <span class="hero__status-detail">{identity.availability.detail}</span>
+      </p>
+    )}
+    <a class="hero__cue mono" href="#work" tabindex="-1" aria-hidden="true">Scroll</a>
+  </div>
+</section>
+
+<style>
+  .hero {
+    --scene-sky: var(--hero-sky);
+    --scene-sand: #d8bd90;
+    --scene-sand-dark: #bd9768;
+    --scene-sun: #f4e6c6;
+    --scene-light: #ffd9a6;
+    --scene-hemi-sky: #f1e2c4;
+    --scene-hemi-ground: #8c6a4b;
+    --scene-stone: #3b2f25;
+    --scene-dust: #f6ead2;
+    position: relative;
+    isolation: isolate;
+    min-height: max(100svh, 40rem);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding-top: var(--nav-h);
+    background: var(--hero-sky);
+    overflow: hidden;
+  }
+  :global(:root[data-theme='dark']) .hero {
+    --scene-sand: #6b5139;
+    --scene-sand-dark: #3d2d20;
+    --scene-sun: #d6a96c;
+    --scene-light: #f0a36a;
+    --scene-hemi-sky: #5a4434;
+    --scene-hemi-ground: #1a1410;
+    --scene-stone: #120f0c;
+    --scene-dust: #c9a679;
+  }
+
+  /* ---- scene layers ---- */
+  .hero__scene {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .hero__fallback {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 46%;
+  }
+  .hero__scene :global(canvas) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1200ms var(--ease-in-out);
+  }
+  .hero__scene :global(canvas.is-ready) {
+    opacity: 1;
+  }
+
+  /* ---- annotation row ---- */
+  .hero__annot {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: var(--space-4) var(--space-3);
+    color: var(--ink-2);
+  }
+  .hero__annot-rule {
+    position: absolute;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: 0;
+    height: 1px;
+    background: var(--rule);
+    transform-origin: left;
+  }
+
+  /* ---- wordmark ---- */
+  .hero__body {
+    align-self: start;
+    padding-top: clamp(1.5rem, 5vh, 4rem);
+  }
+  .hero__mark {
+    font-size: var(--fs-mark);
+    line-height: 0.86;
+    letter-spacing: -0.012em;
+    margin-left: -0.04em;
+    white-space: nowrap;
+  }
+  .hero__letters {
+    display: inline-flex;
+  }
+  .hero__letter {
+    display: inline-block;
+  }
+
+  .hero__grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--space-5) var(--space-6);
+    margin-top: var(--space-6);
+  }
+  .hero__roles {
+    grid-column: 1 / span 5;
+    color: var(--ink);
+    font-size: var(--fs-small);
+    padding-top: 0.35rem;
+    border-top: 1px solid var(--ink);
+    align-self: start;
+  }
+  .hero__copy {
+    grid-column: 7 / span 6;
+  }
+  .hero__statement {
+    font-family: var(--f-display);
+    font-size: clamp(1.4rem, 1.05rem + 1.1vw, 2.05rem);
+    line-height: 1.22;
+    max-width: 30ch;
+    color: var(--ink);
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-5);
+    margin-top: var(--space-5);
+  }
+  .hero__social {
+    display: flex;
+    gap: var(--space-1);
+  }
+  .hero__social :global(.hero__icon) {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    color: var(--ink);
+    border-radius: var(--radius);
+    transition: color var(--dur-1) ease, transform var(--dur-1) var(--ease-out);
+  }
+  .hero__social :global(.hero__icon svg) {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+  .hero__social :global(.hero__icon:hover) {
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  /* ---- field card ---- */
+  .hero__card {
+    position: absolute;
+    right: var(--gutter);
+    bottom: 1.25rem;
+    width: min(21rem, 30vw);
+    display: none;
+    padding: var(--space-4) var(--space-5) var(--space-5);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    transform: perspective(var(--perspective)) rotateX(2deg) rotateY(-4deg);
+    transform-origin: right bottom;
+    transition: transform var(--dur-3) var(--ease-settle);
+  }
+  .hero__card:hover {
+    transform: perspective(var(--perspective)) rotateX(0deg) rotateY(0deg) translateY(var(--lift));
+  }
+  .hero__card-head {
+    display: flex;
+    justify-content: space-between;
+    color: var(--ink-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: var(--space-3);
+  }
+  .hero__portrait {
+    float: right;
+    width: 4.5rem;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    margin: 0 0 var(--space-2) var(--space-3);
+    filter: sepia(0.18) saturate(0.85);
+  }
+  .hero__card-list {
+    display: grid;
+    gap: var(--space-2);
+    font-size: var(--fs-small);
+  }
+  .hero__card-list div {
+    display: grid;
+    grid-template-columns: 5.2rem 1fr;
+    gap: var(--space-3);
+  }
+  .hero__card-list dt {
+    font-family: var(--f-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding-top: 0.15em;
+  }
+
+  /* ---- foot ---- */
+  .hero__foot {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-bottom: var(--space-5);
+  }
+  .hero__status {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    max-width: 44rem;
+    padding: 0.55rem 0.85rem;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+  .hero__status .status {
+    color: var(--accent);
+  }
+  .hero__cue {
+    color: var(--ink-2);
+    text-decoration: none;
+    padding: 0.4rem 0.6rem;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+  }
+
+  /* The field card only appears where there is room below the actions (large, tall screens). */
+  @media (min-width: 80rem) and (min-height: 50rem) {
+    .hero__card {
+      display: block;
+    }
+    .hero__cue {
+      display: none;
+    }
+  }
+  @media (max-width: 52rem) {
+    .hero__grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+      margin-top: var(--space-4);
+    }
+    .hero__roles,
+    .hero__copy {
+      grid-column: 1;
+    }
+    .hero__annot-vol {
+      display: none;
+    }
+    .hero__fallback {
+      height: 34%;
+    }
+    .hero__cue {
+      display: none;
+    }
+  }
+
+  /* ---- opening choreography (first visit in a session, motion allowed) ---- */
+  @keyframes rise-mask {
+    from { clip-path: inset(100% 0 0 0); }
+    to { clip-path: inset(0 0 0 0); }
+  }
+  @keyframes letter-in {
+    from { opacity: 0; transform: translateY(0.32em); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes draw {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+  @keyframes card-in {
+    from { opacity: 0; transform: perspective(var(--perspective)) rotateX(14deg) rotateY(-4deg) translateY(24px); }
+    to { opacity: 1; transform: perspective(var(--perspective)) rotateX(2deg) rotateY(-4deg); }
+  }
+  :global(html.motion:not(.intro-seen)) .hero__fallback {
+    animation: rise-mask 1300ms var(--ease-in-out) 80ms backwards;
+  }
+  :global(html.motion:not(.intro-seen)) .hero__letter {
+    animation: letter-in 900ms var(--ease-settle) backwards;
+  }
+  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(1) { animation-delay: 260ms; }
+  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(2) { animation-delay: 300ms; }
+  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(3) { animation-delay: 340ms; }
+  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(4) { animation-delay: 380ms; }
+  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(5) { animation-delay: 420ms; }
+  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(6) { animation-delay: 460ms; }
+  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(7) { animation-delay: 500ms; }
+  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(8) { animation-delay: 540ms; }
+  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(9) { animation-delay: 580ms; }
+  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(10) { animation-delay: 620ms; }
+  :global(html.motion:not(.intro-seen)) .hero__roles { animation: fade-up 700ms var(--ease-out) 820ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__statement { animation: fade-up 700ms var(--ease-out) 900ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__actions { animation: fade-up 700ms var(--ease-out) 1000ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__annot .mono { animation: fade-in 700ms ease 1100ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__annot-rule { animation: draw 1100ms var(--ease-in-out) 950ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__card { animation: card-in 1000ms var(--ease-settle) 1150ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__foot { animation: fade-in 800ms ease 1250ms backwards; }
+  :global(html.motion:not(.intro-seen) .site-nav) { animation: fade-in 700ms ease 1050ms backwards; }
+</style>

@@ -1,0 +1,139 @@
+---
+import SectionHead from './SectionHead.astro';
+import { identity, education, experience, languages, seeking } from '../content/site';
+import { url } from '../lib/url';
+---
+<section class="section about" id="about" aria-labelledby="about-title">
+  <div class="wrap wrap--wide">
+    <SectionHead no="04" title="About" id="about-title" />
+    <div class="about__grid">
+      <div class="about__prose prose" data-reveal="fade">
+        <p class="about__lead">
+          I’m {identity.name}, SHAVKATJON online. I studied Integrated Business Management at Dong-A University in Busan,
+          where econometrics and business statistics pulled me toward data.
+        </p>
+        <p>
+          Since then I’ve been building projects end to end: cleaning messy tables, choosing a metric that matches the cost
+          of being wrong, writing SQL that answers one specific question, and shipping something another person can run. I
+          use AI tools for scaffolding and review. The modelling decisions and the evaluation are my own.
+        </p>
+        <p>
+          I’m early in my career, and I’d rather show that than hide it. What I can offer is the work itself: code, tests,
+          write-ups, and the limits of each project stated plainly. Outside of that, Formula 1, which is how DPEC started.
+        </p>
+      </div>
+
+      <div class="about__facts">
+        <section class="fact" aria-labelledby="f-edu">
+          <h3 id="f-edu" class="fact__head mono">Education</h3>
+          {education.map((e) => (
+            <div class="fact__row">
+              <p class="fact__main">{e.degree}</p>
+              <p>{e.school}, {e.place}</p>
+              <p class="muted">{e.year} · {e.focus}</p>
+            </div>
+          ))}
+        </section>
+        <section class="fact" aria-labelledby="f-exp">
+          <h3 id="f-exp" class="fact__head mono">Experience</h3>
+          {experience.map((x) => (
+            <div class="fact__row">
+              <p class="fact__main">{x.role}, {x.org}</p>
+              <p class="muted">{x.period} · {x.place}</p>
+              <ul class="fact__points">
+                {x.points.map((pt) => <li>{pt}</li>)}
+              </ul>
+            </div>
+          ))}
+        </section>
+        <section class="fact" aria-labelledby="f-lang">
+          <h3 id="f-lang" class="fact__head mono">Languages</h3>
+          <ul role="list" class="fact__langs">
+            {languages.map((l) => (
+              <li><span>{l.name}</span> <span class="muted">{l.level}</span></li>
+            ))}
+          </ul>
+        </section>
+        <section class="fact" aria-labelledby="f-seek">
+          <h3 id="f-seek" class="fact__head mono">Looking for</h3>
+          <ul class="fact__points">
+            {seeking.map((s) => <li>{s}</li>)}
+          </ul>
+          <p class="muted fact__small">{identity.availability.detail}</p>
+          <a class="link-arrow" href={url('resume/')}>Full résumé →</a>
+        </section>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about__grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--space-7) var(--space-6);
+  }
+  .about__prose {
+    grid-column: 1 / span 6;
+    color: var(--ink-2);
+  }
+  .about__lead {
+    font-family: var(--f-display);
+    font-size: clamp(1.5rem, 1.15rem + 1.1vw, 2.15rem);
+    line-height: 1.2;
+    color: var(--ink);
+  }
+  .about__note {
+    margin-top: var(--space-6);
+  }
+  .about__facts {
+    grid-column: 8 / span 5;
+    display: grid;
+    gap: var(--space-6);
+    align-content: start;
+  }
+  .fact__head {
+    color: var(--ink-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: var(--space-3);
+  }
+  .fact__row + .fact__row {
+    margin-top: var(--space-4);
+  }
+  .fact__row p,
+  .fact__small {
+    font-size: var(--fs-small);
+  }
+  .fact__main {
+    font-weight: 500;
+    font-size: var(--fs-body) !important;
+  }
+  .fact__points {
+    margin-top: var(--space-2);
+    padding-left: 1.1em;
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+  .fact__points li + li {
+    margin-top: var(--space-1);
+  }
+  .fact__points li::marker {
+    color: var(--accent-deco);
+  }
+  .fact__langs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2) var(--space-4);
+    font-size: var(--fs-small);
+  }
+  .fact__small {
+    margin-top: var(--space-3);
+  }
+  @media (max-width: 52rem) {
+    .about__prose,
+    .about__facts {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

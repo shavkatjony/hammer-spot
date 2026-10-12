@@ -1,0 +1,127 @@
+---
+/**
+ * A pipeline drawn as a field survey log: each stage is a station on a vertical line.
+ * Built stages are solid; planned stages are hollow, dashed and labelled in text.
+ */
+import Rich from '../Rich.astro';
+interface Step {
+  title: string;
+  detail: string;
+  state?: 'built' | 'planned';
+}
+interface Props {
+  steps: Step[];
+  caption: string;
+  label: string;
+}
+const { steps, caption, label } = Astro.props;
+---
+<figure class="log">
+  <ol class="log__list" role="list" aria-label={label} data-reveal="stagger">
+    {steps.map((s, i) => (
+      <li class="log__step" data-state={s.state ?? 'built'}>
+        <span class="log__node" aria-hidden="true"></span>
+        <span class="log__no mono">{String(i + 1).padStart(2, '0')}</span>
+        <span class="log__body">
+          <span class="log__title"><Rich text={s.title} /></span>
+          <span class="log__detail"><Rich text={s.detail} /></span>
+        </span>
+        <span class="log__state mono">{s.state === 'planned' ? 'Planned' : 'Built'}</span>
+      </li>
+    ))}
+  </ol>
+  <figcaption class="log__cap"><span class="mono">Fig.</span> <Rich text={caption} /></figcaption>
+</figure>
+
+<style>
+  .log__list {
+    position: relative;
+    display: grid;
+    gap: 0;
+  }
+  .log__step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.6rem 2.2rem 1fr auto;
+    align-items: start;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .log__step::before {
+    /* the survey line connecting stations */
+    content: '';
+    position: absolute;
+    left: calc(0.8rem - 0.5px);
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--rule);
+  }
+  .log__step:first-child::before {
+    top: 1.35rem;
+  }
+  .log__step:last-child::before {
+    bottom: calc(100% - 1.35rem);
+  }
+  .log__step[data-state='planned']::before {
+    background: none;
+    border-left: 1px dashed var(--rule);
+  }
+  .log__node {
+    position: relative;
+    z-index: 1;
+    justify-self: center;
+    width: 0.8rem;
+    height: 0.8rem;
+    margin-top: 0.35rem;
+    border-radius: 50%;
+    background: var(--ink);
+    box-shadow: 0 0 0 3px var(--bg);
+  }
+  .log__step[data-state='planned'] .log__node {
+    background: var(--bg);
+    border: 1px dashed var(--ink-3);
+  }
+  .log__no {
+    color: var(--ink-3);
+    padding-top: 0.2rem;
+  }
+  .log__body {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .log__title {
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .log__detail {
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+  .log__step[data-state='planned'] .log__title,
+  .log__step[data-state='planned'] .log__detail {
+    color: var(--ink-3);
+  }
+  .log__state {
+    color: var(--ink-3);
+    padding-top: 0.2rem;
+  }
+  .log__step[data-state='built'] .log__state {
+    color: var(--ink-2);
+  }
+  .log__cap {
+    margin-top: var(--space-4);
+    font-size: var(--fs-small);
+    color: var(--ink-3);
+    max-width: 62ch;
+  }
+  @media (max-width: 30rem) {
+    .log__step {
+      grid-template-columns: 1.6rem 1fr auto;
+    }
+    .log__no {
+      display: none;
+    }
+  }
+</style>

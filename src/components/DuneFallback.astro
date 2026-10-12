@@ -1,0 +1,115 @@
+---
+/**
+ * Static, art-directed desert: the no-WebGL / reduced-data version of the hero scene.
+ * Generated at build time (seeded), zero runtime cost. Lit windward faces, shadowed
+ * lee faces, a distant mesa line, the sun, and a weathered monolith.
+ */
+const W = 1600;
+const H = 440;
+let seed = 4242;
+const rnd = () => ((seed = (seed * 1103515245 + 12345) >>> 0) / 4294967296);
+
+interface Layer { base: number; amp: number; min: number; max: number; cls: string }
+const layers: Layer[] = [
+  { base: 148, amp: 18, min: 260, max: 420, cls: 'far' },
+  { base: 206, amp: 34, min: 340, max: 560, cls: 'mid' },
+  { base: 282, amp: 58, min: 420, max: 700, cls: 'near' },
+  { base: 380, amp: 82, min: 560, max: 900, cls: 'front' },
+];
+
+const f = (n: number) => n.toFixed(1);
+
+/** Smooth, asymmetric dune ridge: long windward rise, short slip face. Returns fill + ridge line. */
+function layer(l: Layer) {
+  const pts: { x: number; y: number }[] = [];
+  let x = -160 - rnd() * 140;
+  let crest = false;
+  while (x < W + 260) {
+    const span = l.min + rnd() * (l.max - l.min);
+    if (crest) {
+      x += span * 0.34;
+      pts.push({ x, y: l.base + rnd() * 6 });
+    } else {
+      x += span * 0.66;
+      pts.push({ x, y: l.base - l.amp * (0.5 + rnd() * 0.5) });
+    }
+    crest = !crest;
+  }
+  let ridge = `M-220 ${f(l.base)} `;
+  let prev = { x: -220, y: l.base };
+  for (const p of pts) {
+    const rising = p.y < prev.y;
+    // rising (windward): convex; falling (lee): steeper start
+    const c1x = prev.x + (p.x - prev.x) * (rising ? 0.45 : 0.18);
+    const c1y = rising ? prev.y : prev.y + (p.y - prev.y) * 0.1;
+    const c2x = prev.x + (p.x - prev.x) * (rising ? 0.8 : 0.55);
+    const c2y = rising ? p.y : p.y;
+    ridge += `C${f(c1x)} ${f(c1y)} ${f(c2x)} ${f(c2y)} ${f(p.x)} ${f(p.y)} `;
+    prev = p;
+  }
+  const fill = `${ridge}L${W + 260} ${H} L-220 ${H} Z`;
+  return { fill, ridge, cls: l.cls };
+}
+
+const built = layers.map(layer);
+// distant mesas sitting on the horizon
+const mesa = 'M-20 132 L180 132 L196 112 L330 110 L344 132 L700 132 L712 121 L790 120 L806 132 L1230 132 L1244 104 L1300 102 L1316 120 L1420 119 L1430 132 L1640 132 L1640 160 L-20 160 Z';
+---
+<svg class="dunes" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+  <circle class="dunes__sun" cx="200" cy="96" r="26" />
+  <path class="dunes__mesa" d={mesa} />
+  <g class="dunes__monolith">
+    <path d="M452 62 L463 60.5 L467 150 L455 151 Z" />
+    <path class="dunes__monolith-lit" d="M452 62 L456 61.6 L458.5 151 L455 151 Z" />
+    <path d="M478 136 L488 133 L493 148 L480 150 Z" />
+  </g>
+  {built.map((b) => (
+    <g class={`dunes__layer dunes__layer--${b.cls}`}>
+      <path class="fill" d={b.fill} />
+      <path class="ridge" d={b.ridge} />
+    </g>
+  ))}
+</svg>
+
+<style>
+  .dunes {
+    width: 100%;
+    height: 100%;
+    --d-sun: #f2e4c4;
+    --d-mesa: #d9c6a2;
+    --d-mono: #3a2e24;
+    --d-mono-lit: #6a5444;
+    --d-far: #d5c09a;
+    --d-mid: #ceb38a;
+    --d-near: #c6a477;
+    --d-front: #b88f61;
+    --d-ridge: #8a6a48;
+  }
+  :global(:root[data-theme='dark']) .dunes {
+    --d-sun: #c9a06a;
+    --d-mesa: #2e261f;
+    --d-mono: #0f0d0b;
+    --d-mono-lit: #3d3026;
+    --d-far: #362c23;
+    --d-mid: #403328;
+    --d-near: #4b3b2d;
+    --d-front: #574331;
+    --d-ridge: #7a5f45;
+  }
+  .dunes__sun { fill: var(--d-sun); }
+  .dunes__mesa { fill: var(--d-mesa); }
+  .dunes__monolith path { fill: var(--d-mono); }
+  .dunes__monolith .dunes__monolith-lit { fill: var(--d-mono-lit); }
+  .ridge {
+    fill: none;
+    stroke: var(--d-ridge);
+    stroke-width: 1.2;
+    vector-effect: non-scaling-stroke;
+    opacity: 0.55;
+  }
+  .dunes__layer--far .fill { fill: var(--d-far); }
+  .dunes__layer--mid .fill { fill: var(--d-mid); }
+  .dunes__layer--near .fill { fill: var(--d-near); }
+  .dunes__layer--front .fill { fill: var(--d-front); }
+  .dunes__layer--front .ridge { opacity: 0.8; }
+</style>

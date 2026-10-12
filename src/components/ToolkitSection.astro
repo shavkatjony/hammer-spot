@@ -1,0 +1,150 @@
+---
+import SectionHead from './SectionHead.astro';
+import ExtLink from './ExtLink.astro';
+import { toolkit, projects } from '../content/site';
+import { url } from '../lib/url';
+
+const bySlug = Object.fromEntries(projects.map((p) => [p.slug, p]));
+---
+<section class="section toolkit" id="toolkit" aria-labelledby="toolkit-title">
+  <div class="wrap wrap--wide">
+    <SectionHead no="03" title="Toolkit" id="toolkit-title">
+      No skill bars and no logo wall. Tools I use are linked to the projects that show them; tools I’m learning are labelled
+      as learning.
+    </SectionHead>
+
+    <div class="tk">
+      <div class="tk__col tk__col--use">
+        <h3 class="tk__head mono">In use, with evidence</h3>
+        <ul role="list" class="tk__list">
+          {toolkit.use.map((t) => (
+            <li class="tk__item" data-reveal="fade">
+              <ExtLink href={t.href} class="tk__name">{t.name}</ExtLink>
+              <p class="tk__why">{t.why}</p>
+              {(t.evidence.length > 0 || ('repo' in t && t.repo)) && (
+                <p class="tk__ev mono">
+                  <span class="muted">Seen in</span>
+                  {t.evidence.map((s: string) => (
+                    <a href={url(`work/${s}/`)}>{bySlug[s]?.index} {bySlug[s]?.title.split(':')[0]}</a>
+                  ))}
+                  {'repo' in t && t.repo && <ExtLink href={t.repo.href}>{t.repo.label}</ExtLink>}
+                </p>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="tk__side">
+        <div class="tk__col">
+          <h3 class="tk__head mono">Learning now</h3>
+          <ul role="list" class="tk__list">
+            {toolkit.learning.map((t) => (
+              <li class="tk__item" data-reveal="fade">
+                <ExtLink href={t.href} class="tk__name">{t.name}</ExtLink>
+                <p class="tk__why">{t.why}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="tk__col">
+          <h3 class="tk__head mono">Open source I’ve studied</h3>
+          <ul role="list" class="tk__list">
+            {toolkit.studied.map((t) => (
+              <li class="tk__item" data-reveal="fade">
+                <ExtLink href={t.href} class="tk__name">{t.name}</ExtLink>
+                <p class="tk__why">{t.why}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="tk__col">
+          <h3 class="tk__head mono">Datasets worked with</h3>
+          <ul role="list" class="tk__list tk__list--plain">
+            {toolkit.datasets.map((d) => (
+              <li><ExtLink href={d.href}>{d.name}</ExtLink></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tk {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--space-7) var(--space-6);
+  }
+  .tk__col--use {
+    grid-column: 1 / span 7;
+  }
+  .tk__side {
+    grid-column: 9 / span 4;
+    display: grid;
+    gap: var(--space-7);
+    align-content: start;
+  }
+  .tk__head {
+    color: var(--ink-3);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--ink);
+    margin-bottom: var(--space-2);
+  }
+  .tk__col--use .tk__list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 var(--space-6);
+  }
+  .tk__item {
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .tk__item :global(.tk__name) {
+    font-weight: 500;
+    text-decoration-color: var(--rule);
+  }
+  .tk__why {
+    margin-top: var(--space-1);
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+  .tk__ev {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.8rem;
+    margin-top: var(--space-2);
+    align-items: center;
+    text-transform: none;
+    letter-spacing: 0.01em;
+  }
+  .tk__ev a,
+  .tk__ev :global(a) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    color: var(--ink-2);
+  }
+  .tk__list--plain li {
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--rule-soft);
+    font-size: var(--fs-small);
+  }
+  @media (max-width: 72rem) {
+    .tk__col--use,
+    .tk__side {
+      grid-column: 1 / -1;
+    }
+    .tk__side {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-6);
+    }
+  }
+  @media (max-width: 52rem) {
+    .tk__col--use .tk__list,
+    .tk__side {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

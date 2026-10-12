@@ -1,0 +1,12 @@
+---
+/**
+ * Renders plain text where `backticks` become <code>. No HTML is ever injected,
+ * so content strings can't introduce markup or scripts.
+ */
+interface Props {
+  text: string;
+}
+const { text } = Astro.props;
+const parts = text.split('`');
+---
+{parts.map((part, i) => (i % 2 === 1 ? <code>{part}</code> : part))}

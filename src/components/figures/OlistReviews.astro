@@ -1,0 +1,154 @@
+---
+/**
+ * Average review score by delivery timeliness (Olist).
+ * Source: brazilian-e-market/notebooks/analysis.ipynb (query sql/notebook/delivery_vs_review.sql).
+ * Single series, so no legend: the caption names it. Values are direct-labelled at the bar tip.
+ */
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+const rows = [
+  { band: 'On time or early', orders: 88163, avg: 4.29 },
+  { band: '1–3 days late', orders: 2636, avg: 3.77 },
+  { band: '4–7 days late', orders: 1773, avg: 2.32 },
+  { band: '8+ days late', orders: 3252, avg: 1.73 },
+];
+const L = 38; // label column, %
+const R = 90; // plot right edge, %
+const span = R - L;
+const rowH = 50;
+const top = 14;
+const h = top + rows.length * rowH + 30;
+const pct = (v: number) => `${(L + (v / 5) * span).toFixed(2)}%`;
+const nf = new Intl.NumberFormat('en-US');
+---
+<figure class="chart" class:list={{ 'chart--compact': compact }}>
+  <svg class="chart__svg" width="100%" height={h} role="img" aria-labelledby="olist-rv-title olist-rv-desc">
+    <title id="olist-rv-title">Average review score by delivery timeliness</title>
+    <desc id="olist-rv-desc">
+      On time or early: 4.29 stars. 1 to 3 days late: 3.77. 4 to 7 days late: 2.32. 8 or more days late: 1.73.
+    </desc>
+    {[0, 1, 2, 3, 4, 5].map((t) => (
+      <g>
+        <line class="chart__grid" x1={pct(t)} x2={pct(t)} y1={top - 6} y2={top + rows.length * rowH} />
+        <text class="chart__tick" x={pct(t)} y={h - 8} text-anchor="middle">{t}</text>
+      </g>
+    ))}
+    {rows.map((r, i) => {
+      const y = top + i * rowH + (rowH - 22) / 2;
+      return (
+        <g class="chart__row">
+          <title>{`${r.band}: ${r.avg.toFixed(2)} average stars across ${nf.format(r.orders)} delivered orders`}</title>
+          <rect class="chart__hit" x="0" y={top + i * rowH} width="100%" height={rowH} />
+          <text class="chart__label" x="0" y={y + 9}>{r.band}</text>
+          <text class="chart__sub" x="0" y={y + 25}>{nf.format(r.orders)} orders</text>
+          <rect class="chart__bar" x={pct(0)} y={y} width={`${((r.avg / 5) * span).toFixed(2)}%`} height="22" rx="4" />
+          <rect class="chart__bar" x={pct(0)} y={y} width="5" height="22" />
+          <text class="chart__value" x={pct(r.avg)} dx="8" y={y + 16}>{r.avg.toFixed(2)}</text>
+        </g>
+      );
+    })}
+    <text class="chart__tick" x={`${R}%`} dx="6" y={h - 8}>stars</text>
+  </svg>
+  {!compact && (
+    <details class="chart__table no-print">
+      <summary class="mono">View data table</summary>
+      <table>
+        <thead><tr><th scope="col">Delivery</th><th scope="col">Orders</th><th scope="col">Avg. review</th></tr></thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr><th scope="row">{r.band}</th><td>{nf.format(r.orders)}</td><td>{r.avg.toFixed(2)}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </details>
+  )}
+  <figcaption class="chart__cap">
+    <span class="mono">Fig.</span> Average review score (1–5) by delivery timeliness, delivered orders only. Source:
+    Olist public dataset; my SQL and notebook.
+  </figcaption>
+</figure>
+
+<style>
+  .chart {
+    font-family: var(--f-body);
+  }
+  .chart__svg {
+    overflow: visible;
+  }
+  .chart__grid {
+    stroke: var(--chart-grid);
+    stroke-width: 1;
+  }
+  .chart__tick {
+    fill: var(--ink-3);
+    font-family: var(--f-mono);
+    font-size: 11px;
+  }
+  .chart__label {
+    fill: var(--ink);
+    font-size: 14px;
+  }
+  .chart__sub {
+    fill: var(--ink-3);
+    font-family: var(--f-mono);
+    font-size: 11px;
+  }
+  .chart__bar {
+    fill: var(--series-1);
+    transition: opacity var(--dur-1) ease;
+  }
+  .chart__value {
+    fill: var(--ink);
+    font-family: var(--f-mono);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .chart__hit {
+    fill: transparent;
+  }
+  .chart__svg:hover .chart__row .chart__bar {
+    opacity: 0.45;
+  }
+  .chart__svg:hover .chart__row:hover .chart__bar {
+    opacity: 1;
+  }
+  .chart__cap {
+    margin-top: var(--space-4);
+    font-size: var(--fs-small);
+    color: var(--ink-3);
+    max-width: 60ch;
+  }
+  .chart__table {
+    margin-top: var(--space-4);
+    font-size: var(--fs-small);
+  }
+  .chart__table summary {
+    cursor: pointer;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    color: var(--ink-2);
+  }
+  .chart__table table {
+    margin-top: var(--space-2);
+    min-width: 18rem;
+  }
+  .chart__table th,
+  .chart__table td {
+    text-align: left;
+    padding: 0.35rem 1rem 0.35rem 0;
+    border-bottom: 1px solid var(--rule-soft);
+    font-weight: 400;
+  }
+  .chart__table td {
+    font-variant-numeric: tabular-nums;
+    font-family: var(--f-mono);
+  }
+  @media (max-width: 30rem) {
+    .chart__label {
+      font-size: 12.5px;
+    }
+  }
+</style>

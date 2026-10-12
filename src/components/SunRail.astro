@@ -1,0 +1,57 @@
+---
+/**
+ * Decorative scroll indicator: a sun that sets along a thin vertical horizon as the
+ * page is read. Desktop only, aria-hidden; the real navigation is the nav bar.
+ */
+const ticks = ['Opening', 'Work', 'Notes', 'Toolkit', 'About', 'Contact'];
+---
+<div class="sun-rail" aria-hidden="true" data-sun-rail>
+  <div class="sun-rail__track">
+    {ticks.map((t) => <span class="sun-rail__tick" data-label={t}></span>)}
+    <span class="sun-rail__sun" data-sun></span>
+  </div>
+</div>
+
+<style>
+  .sun-rail {
+    position: fixed;
+    right: clamp(0.6rem, 1vw, 1.25rem);
+    top: 50%;
+    z-index: 40;
+    height: 46vh;
+    transform: translateY(-50%);
+    pointer-events: none;
+    display: none;
+  }
+  @media (min-width: 72rem) and (pointer: fine) {
+    .sun-rail {
+      display: block;
+    }
+  }
+  .sun-rail__track {
+    position: relative;
+    height: 100%;
+    width: 1px;
+    background: var(--rule);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .sun-rail__tick {
+    width: 7px;
+    height: 1px;
+    margin-left: -3px;
+    background: var(--ink-3);
+  }
+  .sun-rail__sun {
+    position: absolute;
+    top: 0;
+    left: -5px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--accent-deco);
+    box-shadow: 0 0 0 3px var(--bg);
+    will-change: transform;
+  }
+</style>

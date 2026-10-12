@@ -1,0 +1,98 @@
+---
+import '@fontsource/instrument-serif/400.css';
+import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource/ibm-plex-sans/400.css';
+import '@fontsource/ibm-plex-sans/400-italic.css';
+import '@fontsource/ibm-plex-sans/500.css';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import SunRail from '../components/SunRail.astro';
+import { meta, identity, social, email } from '../content/site';
+import { url } from '../lib/url';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogType?: 'website' | 'article';
+  rail?: boolean;
+  navOnDark?: boolean; // the page opens on a dark header: invert the nav until it turns solid
+}
+const { title = meta.title, description = meta.description, ogType = 'website', rail = false, navOnDark = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL(url('og.jpg'), Astro.site).href;
+
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: identity.name,
+  alternateName: identity.handle,
+  jobTitle: 'Data Scientist (early career)',
+  address: { '@type': 'PostalAddress', addressLocality: identity.location.city, addressCountry: 'KR' },
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'Dong-A University' },
+  email: `mailto:${email}`,
+  url: new URL(url(), Astro.site).href,
+  sameAs: [social.github.href, social.linkedin.href],
+  knowsAbout: ['Data science', 'Machine learning', 'Statistics', 'SQL', 'Python'],
+};
+---
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#eae1cf" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1d1915" media="(prefers-color-scheme: dark)" />
+    <meta name="author" content={identity.name} />
+    <link rel="icon" href={url('favicon.svg')} type="image/svg+xml" />
+    <link rel="sitemap" href={url('sitemap.xml')} />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="SHAVKATJON wordmark over a sand-coloured desert horizon." />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Theme + motion bootstrap: runs before first paint to avoid a flash. -->
+    <script is:inline>
+      (function () {
+        var d = document.documentElement, t = null, s = null;
+        d.classList.add('js');
+        try { t = localStorage.getItem('theme'); s = sessionStorage.getItem('intro-seen'); } catch (e) {}
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        d.setAttribute('data-theme', t);
+        if (s) d.classList.add('intro-seen');
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          d.classList.add('motion');
+          // Safety net: if the motion module never initialises, show everything.
+          setTimeout(function () { if (!d.classList.contains('reveal-ready')) d.classList.remove('motion'); }, 3500);
+        }
+      })();
+    </script>
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(person)} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Nav onDark={navOnDark} />
+    {rail && <SunRail />}
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import '../scripts/site';
+    </script>
+  </body>
+</html>

@@ -1,0 +1,118 @@
+---
+import SectionHead from './SectionHead.astro';
+import ExtLink from './ExtLink.astro';
+import Rich from './Rich.astro';
+import { notes } from '../content/site';
+---
+<section class="section notes" id="notes" aria-labelledby="notes-title">
+  <div class="notes__topo" aria-hidden="true"></div>
+  <div class="wrap wrap--wide">
+    <SectionHead no="02" title="Field notes" id="notes-title">
+      Short lessons taken from the projects, each with a link to the file it comes from. They are working notes, not
+      published articles.
+    </SectionHead>
+    <ol class="notes__list" role="list">
+      {notes.map((n, i) => (
+        <li class="note" data-reveal="fade">
+          <p class="note__meta mono">
+            <span>N.{String(i + 1).padStart(2, '0')}</span>
+            <span class="muted">{n.category}</span>
+          </p>
+          <h3 class="note__title">{n.title}</h3>
+          <p class="note__text"><Rich text={n.text} /></p>
+          <p class="note__src">
+            <span class="visually-hidden">Source: </span>
+            <ExtLink href={n.source.href} class="note__link mono">{n.source.label} ↗</ExtLink>
+          </p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .notes {
+    background: var(--surface);
+    border-block: 1px solid var(--rule-soft);
+    overflow: hidden;
+  }
+  .notes__topo {
+    position: absolute;
+    inset: 0;
+    background: var(--rule);
+    -webkit-mask: url('/textures/topo.svg') 70% 20% / 1400px auto no-repeat;
+    mask: url('/textures/topo.svg') 70% 20% / 1400px auto no-repeat;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  .notes .wrap {
+    position: relative;
+  }
+  .notes__list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0 var(--space-6);
+  }
+  .note {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: var(--space-3);
+    padding: var(--space-5) 0 var(--space-6);
+    border-top: 1px solid var(--rule);
+  }
+  .note__meta {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    color: var(--ink-2);
+  }
+  .note__title {
+    font-size: clamp(1.45rem, 1.15rem + 0.8vw, 1.85rem);
+    line-height: 1.1;
+  }
+  .note__text {
+    color: var(--ink-2);
+    font-size: 0.98rem;
+  }
+  .note__src :global(.note__link) {
+    display: inline-block;
+    padding-block: 0.4rem;
+    color: var(--ink-3);
+    text-transform: none;
+    letter-spacing: 0.02em;
+  }
+  .note__src :global(.note__link:hover) {
+    color: var(--accent);
+  }
+  /* an odd last note spans the row and lays out horizontally */
+  @media (min-width: 72.01rem) {
+    .note:last-child:nth-child(3n + 1) {
+      grid-column: 1 / -1;
+      grid-template-columns: 1fr 2fr;
+      grid-template-rows: auto auto;
+      column-gap: var(--space-6);
+    }
+    .note:last-child:nth-child(3n + 1) .note__meta,
+    .note:last-child:nth-child(3n + 1) .note__title {
+      grid-column: 1;
+    }
+    .note:last-child:nth-child(3n + 1) .note__text {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      max-width: 60ch;
+    }
+    .note:last-child:nth-child(3n + 1) .note__src {
+      grid-column: 2;
+    }
+  }
+  @media (max-width: 72rem) {
+    .notes__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 40rem) {
+    .notes__list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

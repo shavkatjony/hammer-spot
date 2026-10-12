@@ -1,0 +1,278 @@
+---
+import type { Project } from '../content/site';
+import Figure from './figures/Figure.astro';
+import Icon from './Icon.astro';
+import ExtLink from './ExtLink.astro';
+import Rich from './Rich.astro';
+import { url } from '../lib/url';
+
+interface Props {
+  project: Project;
+  flip?: boolean;
+}
+const { project: p, flip = false } = Astro.props;
+const caseHref = url(`work/${p.slug}/`);
+const dark = p.theme === 'dark';
+const extra = p.links.filter((l) => l.kind !== 'doc' || l === p.links.find((x) => x.kind === 'doc'));
+---
+<article
+  class:list={['feature', { 'feature--flip': flip, 'feature--dark surface-dark': dark }]}
+  aria-labelledby={`feat-${p.slug}`}
+>
+  {dark && <div class="feature__topo" aria-hidden="true"></div>}
+  <div class="feature__inner wrap wrap--wide">
+    <span class="feature__line" aria-hidden="true" data-reveal="rule"></span>
+    <div class="feature__meta" data-reveal="stagger">
+      <span class="feature__index" aria-hidden="true">{p.index}</span>
+      <p class="mono">{p.kicker}</p>
+      <p class="mono muted">{p.year}</p>
+      <p class="status" data-status={p.status}>{p.status}</p>
+      {p.statusNote && <p class="feature__note">{p.statusNote}</p>}
+    </div>
+
+    <div class="feature__main">
+      <h3 id={`feat-${p.slug}`} class={`feature__title vt-${p.slug}`} data-reveal="mask">
+        <a href={caseHref}>{p.title}</a>
+      </h3>
+      <dl class="feature__facts" data-reveal="fade">
+        <div><dt class="mono">Problem</dt><dd><Rich text={p.problem} /></dd></div>
+        <div><dt class="mono">My part</dt><dd><Rich text={p.contribution} /></dd></div>
+        <div><dt class="mono">Result</dt><dd><Rich text={p.result} /></dd></div>
+      </dl>
+      <ul class="feature__metrics" role="list" data-reveal="stagger">
+        {p.metrics.map((m) => (
+          <li>
+            <span class="feature__metric-v">{m.value}</span>
+            <span class="feature__metric-l">{m.label}</span>
+          </li>
+        ))}
+      </ul>
+      <p class="feature__stack mono"><span class="visually-hidden">Stack: </span>{p.stack.join(' · ')}</p>
+      <div class="feature__links">
+        <a class="link-arrow feature__case" href={caseHref}>
+          Read the case study <Icon name="arrow-ur" />
+        </a>
+        {extra.map((l) => (
+          <ExtLink href={l.href} class="link-arrow">
+            {l.label} <Icon name={l.kind === 'demo' ? 'play' : l.kind === 'repo' ? 'github' : 'doc'} />
+          </ExtLink>
+        ))}
+      </div>
+    </div>
+
+    <div class="feature__plate" data-parallax>
+      <Figure id={p.plate} compact />
+    </div>
+  </div>
+</article>
+
+<style>
+  .feature {
+    position: relative;
+    padding-block: var(--space-8);
+  }
+  .feature--dark {
+    background: var(--bg);
+    color: var(--ink);
+    padding-block: var(--space-9);
+    margin-block: var(--space-6);
+    overflow: hidden;
+  }
+  .feature__topo {
+    position: absolute;
+    inset: 0;
+    background: var(--rule);
+    -webkit-mask: url('/textures/topo.svg') center / cover no-repeat;
+    mask: url('/textures/topo.svg') center / cover no-repeat;
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  .feature__inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--space-6) var(--space-6);
+    align-items: start;
+  }
+  .feature__line {
+    position: absolute;
+    top: calc(-1 * var(--space-8));
+    left: var(--gutter);
+    right: var(--gutter);
+    height: 1px;
+    background: var(--rule);
+  }
+  .feature--dark .feature__line {
+    display: none;
+  }
+  .feature__meta {
+    grid-column: 1 / span 2;
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+    color: var(--ink-2);
+  }
+  .feature__index {
+    font-family: var(--f-display);
+    font-size: clamp(3.5rem, 2rem + 4vw, 6.5rem);
+    line-height: 0.8;
+    color: var(--ink);
+    margin-bottom: var(--space-3);
+    transition: transform var(--dur-2) var(--ease-out), color var(--dur-2) ease;
+  }
+  .feature__note {
+    font-size: var(--fs-small);
+    color: var(--ink-3);
+    max-width: 18ch;
+  }
+  .feature__main {
+    grid-column: 3 / span 5;
+  }
+  .feature__plate {
+    grid-column: 8 / span 5;
+    transition: transform var(--dur-3) var(--ease-settle);
+    transform: perspective(var(--perspective)) rotateY(0deg);
+  }
+  .feature--flip .feature__main {
+    grid-column: 8 / span 5;
+    grid-row: 1;
+  }
+  .feature--flip .feature__plate {
+    grid-column: 3 / span 5;
+    grid-row: 1;
+  }
+  .feature__title {
+    font-size: clamp(2.1rem, 1.3rem + 2.6vw, 3.6rem);
+    line-height: 0.98;
+    margin-bottom: var(--space-5);
+  }
+  .feature__title a {
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.14em;
+    text-decoration-color: transparent;
+    transition: text-decoration-color var(--dur-2) var(--ease-out), color var(--dur-1) ease;
+  }
+  .feature__facts {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .feature__facts div {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: var(--space-4);
+  }
+  .feature__facts dt {
+    color: var(--ink-3);
+    padding-top: 0.3em;
+  }
+  .feature__facts dd {
+    color: var(--ink-2);
+    max-width: 52ch;
+  }
+  .feature__metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--rule);
+  }
+  .feature__metrics li {
+    display: grid;
+    gap: var(--space-1);
+    align-content: start;
+  }
+  .feature__metric-v {
+    font-family: var(--f-display);
+    font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.3rem);
+    line-height: 1;
+    color: var(--ink);
+  }
+  .feature__metric-l {
+    font-size: var(--fs-small);
+    color: var(--ink-3);
+    line-height: 1.35;
+  }
+  .feature__stack {
+    margin-top: var(--space-5);
+    color: var(--ink-3);
+  }
+  .feature__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-5);
+    margin-top: var(--space-4);
+  }
+  .feature__case {
+    color: var(--accent);
+  }
+
+  /* interaction: one coordinated response on hover or keyboard focus */
+  .feature:hover .feature__index,
+  .feature:focus-within .feature__index {
+    transform: translateX(6px);
+    color: var(--accent);
+  }
+  .feature:hover .feature__title a,
+  .feature:focus-within .feature__title a {
+    text-decoration-color: currentColor;
+  }
+  @media (pointer: fine) {
+    .feature:hover .feature__plate {
+      transform: perspective(var(--perspective)) rotateY(calc(var(--tilt-max) * -1)) translateY(var(--lift));
+    }
+    .feature--flip:hover .feature__plate {
+      transform: perspective(var(--perspective)) rotateY(var(--tilt-max)) translateY(var(--lift));
+    }
+  }
+
+  @media (max-width: 72rem) {
+    .feature__meta {
+      grid-column: 1 / -1;
+      grid-template-columns: auto repeat(3, auto) 1fr;
+      align-items: baseline;
+      gap: var(--space-2) var(--space-4);
+    }
+    .feature__index {
+      margin-bottom: 0;
+    }
+    .feature__note {
+      grid-column: 1 / -1;
+      max-width: none;
+    }
+    .feature__main,
+    .feature--flip .feature__main {
+      grid-column: 1 / span 6;
+      grid-row: auto;
+    }
+    .feature__plate,
+    .feature--flip .feature__plate {
+      grid-column: 7 / span 6;
+      grid-row: auto;
+    }
+  }
+  @media (max-width: 52rem) {
+    .feature__main,
+    .feature--flip .feature__main,
+    .feature__plate,
+    .feature--flip .feature__plate {
+      grid-column: 1 / -1;
+    }
+    .feature__meta {
+      grid-template-columns: auto 1fr;
+    }
+    .feature__metrics {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 30rem) {
+    .feature__facts div {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+    .feature__metrics {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

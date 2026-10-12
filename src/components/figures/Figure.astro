@@ -1,0 +1,91 @@
+---
+/** Maps a FigureId from content to the component that draws it. */
+import type { FigureId } from '../../content/site';
+import ImagePlate from './ImagePlate.astro';
+import OlistReviews from './OlistReviews.astro';
+import TelcoThresholds from './TelcoThresholds.astro';
+import TelcoConfusion from './TelcoConfusion.astro';
+import TelcoModels from './TelcoModels.astro';
+import SurveyLog from './SurveyLog.astro';
+import RetailScale from './RetailScale.astro';
+import DpecRules from './DpecRules.astro';
+
+interface Props {
+  id: FigureId;
+  compact?: boolean;
+}
+const { id, compact = false } = Astro.props;
+
+const retailSteps = [
+  { title: 'Raw M5 CSVs', detail: 'Daily unit sales (wide), weekly prices, event/SNAP calendar.' },
+  { title: 'Python reshape', detail: 'Wide → long, streamed store by store; categoricals for every text column.' },
+  { title: 'Parquet staging', detail: 'Typed, validated, columnar.' },
+  { title: 'DuckDB SQL model', detail: 'Staging → dimensions → facts → marts, each with a stated grain.' },
+  { title: 'Data-quality gate', detail: '8 checks; hard failures stop the build.' },
+  { title: 'Metrics engine', detail: 'YoY, contribution, exception scoring, HHI concentration.' },
+  { title: 'Dashboards', detail: 'Self-contained HTML (live) and a Tableau build guide.' },
+];
+const dpecSteps = [
+  { title: 'FastF1 schedule', detail: 'Only sessions that started 3+ hours ago are requested.' },
+  { title: '`fetch_session`', detail: 'Laps, results, car data, positions, weather, race control, track status.' },
+  { title: '`parquet_safe`', detail: 'Timedeltas → seconds; mixed-type text → strings; raw values untouched.' },
+  { title: 'Parquet + `manifest.json`', detail: 'Rows, columns and SHA-256 per table; reruns skip saved sessions.' },
+  { title: 'Quality & alignment', detail: 'Flags; laps on a common 5 m distance grid.', state: 'planned' as const },
+  { title: 'Baseline → forecast', detail: 'Walk-forward by race weekend; calibrated intervals.', state: 'planned' as const },
+  { title: 'Frozen ledger', detail: 'Published before the session, scored after the race.', state: 'planned' as const },
+];
+---
+{id === 'telco-app' && (
+  <ImagePlate
+    src={compact ? 'telco-top' : 'telco-app'}
+    small={compact ? 'telco-top-640' : 'telco-app-640'}
+    width={1100}
+    height={compact ? 687 : 1603}
+    alt="Screenshot of the Telco Customer Churn Predictor Streamlit app: a form of customer and billing fields, and a prediction result."
+    caption={compact ? 'The Streamlit predictor, running locally.' : 'The Streamlit predictor scoring a high-risk profile: month-to-month, fibre optic, 3 months tenure. Result: 87.7% churn probability, “High”.'}
+    plate="I"
+  />
+)}
+{id === 'telco-models' && <TelcoModels />}
+{id === 'telco-thresholds' && <TelcoThresholds />}
+{id === 'telco-confusion' && <TelcoConfusion />}
+{id === 'olist-reviews' && <OlistReviews compact={compact} />}
+{id === 'olist-states' && (
+  <ImagePlate
+    src="olist-slowest-states"
+    width={1200}
+    height={715}
+    alt="Bar chart of the 15 slowest Brazilian states by average delivery time; Roraima, Amapá and Amazonas take the longest."
+    caption="Original notebook figure: 15 slowest states by average delivery days, against a 12.6-day national average."
+    plate="II"
+  />
+)}
+{id === 'olist-cohorts' && (
+  <ImagePlate
+    src="olist-cohort-retention"
+    width={1200}
+    height={715}
+    alt="Line chart of repeat-purchase rate by monthly acquisition cohort; flat between about 3 and 5 percent after early 2017."
+    caption="Original notebook figure: retention by acquisition cohort, flat at 3–5%. The early spike is a one-customer cohort."
+    plate="III"
+  />
+)}
+{id === 'retail-pipeline' && (
+  <SurveyLog steps={retailSteps} label="Retail pipeline stages" caption="Raw data to ranked decision: every stage is rebuildable with one `make all`." />
+)}
+{id === 'retail-tower' && (
+  <ImagePlate
+    src="retail-control-tower"
+    small="retail-control-tower-640"
+    width={1200}
+    height={785}
+    alt="Executive Control Tower reference render with KPI tiles, a contribution-by-category bar chart and ranked exception segments. Labelled synthetic data."
+    caption="Reference render of page 1, Executive Control Tower, produced by the pipeline from the synthetic sample. Numbers are illustrative."
+    plate="IV"
+  />
+)}
+{id === 'retail-scale' && <RetailScale />}
+{id === 'dpec-pipeline' && (
+  <SurveyLog steps={dpecSteps} label="DPEC pipeline: built and planned stages" caption="What exists (solid) and what is planned (dashed). Source: `src/telemetry_core/ingestion/`." />
+)}
+{id === 'dpec-rules' && <DpecRules />}

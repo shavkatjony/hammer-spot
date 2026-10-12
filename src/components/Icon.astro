@@ -1,0 +1,33 @@
+---
+/** Small inline icon set. Decorative by default (aria-hidden); labels live on the link. */
+interface Props {
+  name: 'github' | 'linkedin' | 'mail' | 'arrow-ur' | 'arrow-down' | 'arrow-left' | 'doc' | 'play' | 'sun' | 'moon' | 'download';
+  class?: string;
+}
+const { name, class: cls } = Astro.props;
+---
+<svg class={cls} viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+  {name === 'github' && (
+    <path fill="currentColor" d="M12 .8a11.3 11.3 0 0 0-3.6 22c.6.1.8-.2.8-.5v-2c-3.1.7-3.8-1.4-3.8-1.4-.5-1.3-1.2-1.7-1.2-1.7-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.7 2.7 1.2 3.3.9.1-.7.4-1.2.7-1.5-2.5-.3-5.1-1.3-5.1-5.6 0-1.2.4-2.2 1.2-3-.1-.3-.5-1.4.1-3 0 0 .9-.3 3.1 1.2a10.7 10.7 0 0 1 5.6 0c2.2-1.5 3.1-1.2 3.1-1.2.6 1.6.2 2.7.1 3 .7.8 1.2 1.8 1.2 3 0 4.3-2.6 5.3-5.1 5.6.4.3.8 1 .8 2v3c0 .3.2.6.8.5A11.3 11.3 0 0 0 12 .8Z" />
+  )}
+  {name === 'linkedin' && (
+    <path fill="currentColor" d="M20.4 2H3.6C2.7 2 2 2.7 2 3.6v16.8c0 .9.7 1.6 1.6 1.6h16.8c.9 0 1.6-.7 1.6-1.6V3.6c0-.9-.7-1.6-1.6-1.6ZM8 19H5V9.5h3V19ZM6.5 8.2a1.7 1.7 0 1 1 0-3.5 1.7 1.7 0 0 1 0 3.5ZM19 19h-3v-4.6c0-1.1 0-2.5-1.5-2.5S12.8 13 12.8 14.3V19h-3V9.5h2.9v1.3c.4-.8 1.4-1.6 2.9-1.6 3.1 0 3.6 2 3.6 4.7V19Z" />
+  )}
+  {name === 'mail' && (
+    <g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5.5" width="18" height="13" rx="0.5" /><path d="m3.5 6.5 8.5 6.5 8.5-6.5" /></g>
+  )}
+  {name === 'arrow-ur' && <path fill="none" stroke="currentColor" stroke-width="1.5" d="M7 17 17 7M8.5 7H17v8.5" />}
+  {name === 'arrow-down' && <path fill="none" stroke="currentColor" stroke-width="1.5" d="M12 4v15m-6-6 6 6 6-6" />}
+  {name === 'arrow-left' && <path fill="none" stroke="currentColor" stroke-width="1.5" d="M19 12H5m6-6-6 6 6 6" />}
+  {name === 'doc' && (
+    <g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3h8l4 4v14H6z" /><path d="M14 3v4h4M9 12h6M9 15.5h6" /></g>
+  )}
+  {name === 'play' && (
+    <g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9" /><path d="m10 8.5 5 3.5-5 3.5z" /></g>
+  )}
+  {name === 'download' && <path fill="none" stroke="currentColor" stroke-width="1.5" d="M12 4v11m-5-5 5 5 5-5M5 20h14" />}
+  {name === 'sun' && (
+    <g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="4.2" /><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" /></g>
+  )}
+  {name === 'moon' && <path fill="none" stroke="currentColor" stroke-width="1.5" d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10Z" />}
+</svg>

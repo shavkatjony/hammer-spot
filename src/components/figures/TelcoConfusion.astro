@@ -1,0 +1,103 @@
+---
+/**
+ * Test-set outcomes for the shipped pipeline at threshold 0.50.
+ * Derived from reports/final_model_metrics.csv: recall 0.7914 of 374 churners -> TP 296;
+ * precision 0.4983 -> 594 flagged -> FP 298; test n = 1,409 -> TN 737.
+ * Check: (296 + 737) / 1409 = 0.73314 = reported accuracy.
+ */
+const cells = [
+  { k: 'tp', label: 'Churners flagged', n: 296, note: 'caught in time' },
+  { k: 'fn', label: 'Churners missed', n: 78, note: 'lost revenue' },
+  { k: 'fp', label: 'Stayers flagged', n: 298, note: 'one unneeded call each' },
+  { k: 'tn', label: 'Stayers cleared', n: 737, note: 'correctly left alone' },
+];
+---
+<figure class="cm">
+  <table class="cm__grid">
+    <caption class="visually-hidden">Test-set outcomes at threshold 0.50 for 1,409 customers</caption>
+    <thead>
+      <tr>
+        <td></td>
+        <th scope="col" class="mono">Flagged as churn</th>
+        <th scope="col" class="mono">Not flagged</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row" class="mono">Actually churned (374)</th>
+        <td class="cm__cell cm__cell--good"><span class="cm__n">{cells[0].n}</span><span>{cells[0].label}</span><span class="cm__note">{cells[0].note}</span></td>
+        <td class="cm__cell cm__cell--bad"><span class="cm__n">{cells[1].n}</span><span>{cells[1].label}</span><span class="cm__note">{cells[1].note}</span></td>
+      </tr>
+      <tr>
+        <th scope="row" class="mono">Actually stayed (1,035)</th>
+        <td class="cm__cell cm__cell--cost"><span class="cm__n">{cells[2].n}</span><span>{cells[2].label}</span><span class="cm__note">{cells[2].note}</span></td>
+        <td class="cm__cell"><span class="cm__n">{cells[3].n}</span><span>{cells[3].label}</span><span class="cm__note">{cells[3].note}</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <figcaption class="cm__cap">
+    <span class="mono">Fig.</span> Outcomes for 1,409 held-out customers at threshold 0.50 (logistic regression, class-weighted).
+    Derived from <code>reports/final_model_metrics.csv</code>; the counts reproduce its accuracy of 0.733 exactly.
+  </figcaption>
+</figure>
+
+<style>
+  .cm__grid {
+    width: 100%;
+    max-width: 40rem;
+    table-layout: fixed;
+  }
+  .cm__grid th {
+    font-weight: 400;
+    color: var(--ink-3);
+    text-align: left;
+    padding: 0 var(--space-3) var(--space-2) 0;
+    vertical-align: bottom;
+  }
+  .cm__grid tbody th {
+    vertical-align: middle;
+    width: 30%;
+  }
+  .cm__cell {
+    border: 1px solid var(--rule);
+    padding: var(--space-4);
+    vertical-align: top;
+    background: var(--surface);
+  }
+  .cm__cell span {
+    display: block;
+  }
+  .cm__n {
+    font-family: var(--f-display);
+    font-size: clamp(2rem, 1.4rem + 2vw, 3rem);
+    line-height: 1;
+    margin-bottom: var(--space-2);
+  }
+  .cm__note {
+    font-size: var(--fs-small);
+    color: var(--ink-3);
+  }
+  .cm__cell--good {
+    border-top: 3px solid var(--series-1);
+  }
+  .cm__cell--bad {
+    border-top: 3px solid var(--ink);
+  }
+  .cm__cell--cost {
+    border-top: 3px solid var(--rule);
+  }
+  .cm__cap {
+    margin-top: var(--space-4);
+    font-size: var(--fs-small);
+    color: var(--ink-3);
+    max-width: 62ch;
+  }
+  @media (max-width: 30rem) {
+    .cm__cell {
+      padding: var(--space-3);
+    }
+    .cm__grid tbody th {
+      font-size: 10px;
+    }
+  }
+</style>

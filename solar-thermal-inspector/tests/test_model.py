@@ -18,8 +18,8 @@ from tests.conftest import ROOT, SAMPLE, module_array, sample_rows
 
 MODELS = ROOT / "models"
 
-# measured on the sample with the shipped model: standard recall 0.96, false-alarm rate 0.19,
-# fault-label accuracy 0.68; safety critical recall 0.99
+# measured on the sample with the shipped model: standard recall 0.95, false-alarm rate 0.18,
+# fault-label accuracy 0.67; safety critical recall 0.99
 FLOORS = {"recall": 0.92, "max_fpr": 0.25, "fault_accuracy": 0.62, "safety_critical_recall": 0.96}
 
 

@@ -25,7 +25,7 @@ thousands of IR crops into a short, ranked list of jobs that a technician can tr
 
 This app does that step:
 
-1. **Score** every module image (CNN, about 3-4 ms per image on one CPU thread).
+1. **Score** every module image (CNN, about 2 ms per image on one CPU thread).
 2. **Decide** with a threshold tuned for recall, because a missed dead module costs more than a check.
 3. **Explain**: false-colour image, detected hot regions, contrast numbers, level against the rest of the flight.
 4. **Prioritise**: P1 / P2 / P3 by fault type (escalated by delta T for radiometric input), with estimated W,
@@ -46,31 +46,34 @@ never used for training, model selection or threshold choice. Full report:
 | Rule: peak contrast (image processing only) | 0.842 | 0.965 | 0.575 | 0.711 |
 | Isolation Forest (normal modules only, no fault labels) | 0.779 | 0.959 | 0.526 | 0.859 |
 | Gradient boosting on 30 hand-crafted thermal features | 0.935 | 0.965 | 0.661 | 0.493 |
-| **CNN on raw pixels (served)** | **0.980** | 0.959 | **0.866** | **0.148** |
+| **CNN on raw pixels (served)** | **0.977** | 0.957 | **0.872** | **0.140** |
 
-**Naming the fault (12 classes):** CNN accuracy **0.821**, macro-F1 0.683, top-2 accuracy 0.928, with
-calibrated probabilities (ECE 0.024 after temperature scaling). Published results on this dataset are
+**Naming the fault (12 classes):** CNN accuracy **0.816**, macro-F1 0.673, top-2 accuracy 0.929, with
+calibrated probabilities (ECE 0.016 after temperature scaling). Published results on this dataset are
 about 0.83-0.86 accuracy with much larger networks (ResNet-50, ensembles; different splits). This model
-has 288k parameters and a 1.2 MB ONNX file.
+has 647k parameters and a 2.6 MB ONNX file. It was picked from two candidates on **validation** macro-F1;
+the comparison, including the test numbers of the one that lost, is in the evaluation report.
 
 What the numbers mean in practice:
 
-- **3.3x fewer wasted truck rolls.** At the same ~96% recall the CNN raises false alarms on 14.8% of
+- **3.5x fewer wasted truck rolls.** At the same ~96% recall the CNN raises false alarms on 14.0% of
   healthy modules, against 49.3% for the feature model and 71.1% for a contrast rule.
 - **Precision depends on how rare faults are.** The test split is 50% faulty; a real plant is not. With 5%
-  faulty modules, about 25% of alerts are real faults (10,000 modules -> about 1,886 alerts, 480 faults
-  caught, 20 missed). That is why every alert carries its image for a quick desk review, and why the
+  faulty modules, about 26% of alerts are real faults (10,000 modules -> about 1,808 alerts, 478 faults
+  caught, 22 missed). That is why every alert carries its image for a quick desk review, and why the
   *false alarm* button feeds a field-precision KPI and a retraining set.
-- **Known weak spot: offline modules** (class recall 0.63). A module that is warm all over looks normal
-  on its own. An operator-selectable **safety policy** adds a lower alert bar for critical faults:
+- **Known weak spot: offline modules** (class recall 0.65; 21 of the 24 missed critical faults). A module
+  that is warm all over looks normal on its own. An operator-selectable **safety policy** adds a lower alert
+  bar for critical faults:
 
   | Policy | Recall | False-alarm rate | Critical faults missed (of 412) |
   |---|---:|---:|---:|
-  | standard (default) | 0.959 | 0.148 | 22 |
-  | safety (`ALERT_POLICY=safety`) | 0.977 | 0.315 | 8 |
+  | standard (default) | 0.957 | 0.140 | 24 |
+  | safety (`ALERT_POLICY=safety`) | 0.981 | 0.397 | 6 |
 
-- **Robust to camera scaling, sensitive to heavy noise.** Brightness offsets of +/-10 grey levels move recall by
-  at most 0.005; Gaussian noise with sd 5 drops it to 0.80. Noisy flights should be re-flown or reviewed.
+- **Robust to noise and camera scaling, by design.** The first CNN candidate lost recall under sensor noise
+  (0.96 -> 0.80 at sd 5). Retraining with noise and shift augmentation fixed it: the served model keeps 0.95,
+  and brightness offsets of +/-10 grey levels move recall by at most 0.009.
 - **Data quality matters.** The dataset has 22 groups of pixel-identical images and **6 of them carry
   conflicting labels** (the same image labelled e.g. Cell-Multi and Cracking). They were removed before
   splitting, so no image sits in both train and test.
@@ -104,7 +107,7 @@ flowchart LR
 
 | Layer | Choice | Why |
 |---|---|---|
-| Model serving | ONNX Runtime (no PyTorch in the image) | 1.2 MB model, about 3-4 ms/image on CPU, no GPU needed |
+| Model serving | ONNX Runtime (no PyTorch in the image) | 2.6 MB model, about 2 ms/image on CPU, no GPU needed |
 | Decision rule | `decide_batch()` shared by the API and the evaluation script | the metrics in the report are the metrics of what the API does |
 | Backend | FastAPI + SQLAlchemy 2.0 | typed, self-documenting API (`/docs`); same code on SQLite and PostgreSQL |
 | KPIs | computed in SQL (`GROUP BY`, `CASE`) | they scale with the database, not with Python memory |
@@ -137,7 +140,7 @@ make run            # http://localhost:8000 with auto-reload
 make test           # 57 tests
 ```
 
-**Reproduce the model from raw data** (about 30 minutes on 4 CPU cores, no GPU):
+**Reproduce the model from raw data** (about an hour on 4 CPU cores, no GPU):
 
 ```bash
 make setup-train    # + pandas, scikit-learn, matplotlib, torch
@@ -220,11 +223,12 @@ Offline-Module (whole module). For the other classes it is a stated planning ass
 - **Image processing:** robust z-score (median and MAD) hot-spot segmentation with 4-connected
   components, plus 30 features: level, contrast, hot-region size and shape, thirds and halves of the
   module (bypass-diode substrings), border vs centre, gradient and Laplacian texture.
-- **CNN:** 3 conv blocks (32-64-128 channels, BatchNorm, max-pool), global average pooling, dropout,
-  288k parameters. Raw 0-255 levels (whole-module faults are about absolute warmth), flip and noise
-  augmentation, square-root inverse-frequency class weights, label smoothing, OneCycle LR, best epoch by
-  validation macro-F1, flip test-time augmentation and a temperature (T = 0.7) fitted on validation.
-- **Decision rule:** alert when P(fault) >= 0.38 (95% recall on validation). The reported class is the most
+- **CNN:** 3 conv blocks (48-96-192 channels, BatchNorm, max-pool), global average pooling, dropout,
+  647k parameters. Raw 0-255 levels (whole-module faults are about absolute warmth); augmentation with
+  flips, +/-2 px shifts and sensor noise up to sd 6; square-root inverse-frequency class weights, label
+  smoothing, OneCycle LR over 50 epochs, best epoch by validation macro-F1, and a softmax temperature
+  (T = 0.75) fitted on validation.
+- **Decision rule:** alert when P(fault) >= 0.32 (95% recall on validation). The reported class is the most
   likely fault. *needs review* below 0.5 confidence. Optional safety rule as above.
 - Model card: [`models/MODEL_CARD.md`](models/MODEL_CARD.md).
 
@@ -252,7 +256,8 @@ PostgreSQL 16**, builds the image and smoke-tests the running container over HTT
 The image (`python:3.12-slim`, pinned by digest) runs as a non-root user with a healthcheck and stores
 everything under `/data`. Free or cheap options for a public demo: any Docker host, Hugging Face Spaces
 (Docker SDK, port 8000), Render or Fly.io. For a real site, use Compose with PostgreSQL, set `API_KEY`, and put
-it behind HTTPS.
+it behind HTTPS and a reverse proxy that also caps request size (the app refuses bodies over `MAX_UPLOAD_MB`, but
+only after the headers arrive).
 
 | Variable | Default | |
 |---|---|---|

@@ -1,5 +1,5 @@
 {
-  "version": "cnn-dbb19326af",
+  "version": "cnn-5455accec2",
   "created": "2026-10-26",
   "classes": [
     "Cell",
@@ -16,8 +16,8 @@
     "Vegetation"
   ],
   "normal": "No-Anomaly",
-  "anomaly_threshold": 0.3822115659713745,
-  "critical_threshold": 0.06268726289272308,
+  "anomaly_threshold": 0.3231777548789978,
+  "critical_threshold": 0.05113619565963745,
   "critical_classes": [
     "Diode",
     "Diode-Multi",
@@ -25,7 +25,7 @@
     "Offline-Module"
   ],
   "review_confidence": 0.5,
-  "temperature": 0.7,
+  "temperature": 0.75,
   "input": {
     "name": "pixels",
     "shape": [
@@ -36,6 +36,6 @@
     ],
     "range": "[0, 1] = grey level / 255"
   },
-  "tta": true,
-  "onnx_sha256": "dbb19326afdceabcdbfcd920e81f4457d349f86b288336b8f131041908567e97"
+  "tta": false,
+  "onnx_sha256": "5455accec2f8b9a08907833941dc805629ae7a1c1313542efc5082491da18fc8"
 }

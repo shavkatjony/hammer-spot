@@ -434,6 +434,7 @@ def write_report(m: dict, order: list[int]) -> None:
         f"confident and their fault label is right {m['review']['auto_accuracy']:.1%} of the time, against "
         f"{m['review']['review_accuracy']:.1%} for the alerts routed to review.",
         "",
+        *model_selection_lines(),
         "## 4. Robustness (CNN, same threshold)",
         "",
         "| Perturbation | Accuracy | Macro-F1 | Recall | False-alarm rate |",
@@ -441,10 +442,10 @@ def write_report(m: dict, order: list[int]) -> None:
         *(f"| {r['perturbation']} | {r['accuracy']:.3f} | {r['macro_f1']:.3f} | {r['recall']:.3f} | {r['fpr']:.3f} |"
           for r in m["robustness"]),
         "",
-        f"The weakest point is **{worst['perturbation']}**: recall falls from {rob['none']['recall']:.3f} to "
-        f"{worst['recall']:.3f}. Noisy frames (low irradiance, high gain, motion) should be re-flown or fed through "
-        f"review. Global brightness offsets of +/-10 grey levels, which mimic a flight with different 8-bit "
-        f"scaling, move recall by at most {offset_drop:.3f}.",
+        f"The largest recall drop comes from **{worst['perturbation']}** ({rob['none']['recall']:.3f} -> "
+        f"{worst['recall']:.3f}). Global brightness offsets of +/-10 grey levels, which mimic a flight with "
+        f"different 8-bit scaling, move recall by at most {offset_drop:.3f}. Training with noise and shift "
+        "augmentation is what keeps the noise row close to the clean one (see model selection above).",
         "",
         "## 5. Speed",
         "",
@@ -472,6 +473,38 @@ def write_report(m: dict, order: list[int]) -> None:
     ]
     (ROOT / "reports/evaluation.md").write_text("\n".join(lines))
     print("wrote reports/evaluation.md")
+
+
+def model_selection_lines() -> list[str]:
+    """Candidate CNNs and why the served one won (reports/model_selection.json, if present)."""
+    path = ROOT / "reports/model_selection.json"
+    if not path.exists():
+        return []
+    sel = json.loads(path.read_text())
+    lines = [
+        "**Model selection.** Two CNN candidates were trained. The winner was fixed in advance as the one with "
+        "the higher **validation** macro-F1; test numbers are shown only for transparency.",
+        "",
+        "| Candidate | Params | Augmentation | Val macro-F1 (selection) | Test accuracy | Test macro-F1 | "
+        "Test recall, noise sd 5 | Test ECE | Latency (ms) |",
+        "|---|---:|---|---:|---:|---:|---:|---:|---:|",
+    ]
+    for c in sel["candidates"]:
+        name = f"**{c['name']} (served)**" if c["selected"] else c["name"]
+        lines.append(
+            f"| {name} | {c['parameters']:,} | {c['augmentation']}{', flip TTA' if c['tta'] else ''} | "
+            f"{c['val_macro_f1_selection']:.3f} | {c['test_accuracy']:.3f} | {c['test_macro_f1']:.3f} | "
+            f"{c['test_recall_noise_sd5']:.3f} | {c['test_ece']:.3f} | {c['latency_ms']:.1f} |")
+    a, b = sel["candidates"]
+    lines += [
+        "",
+        f"B won on validation. On the clean test split the two are within about one point of each other "
+        f"(accuracy {b['test_accuracy']:.3f} vs {a['test_accuracy']:.3f}), but B keeps its recall under sensor "
+        f"noise ({b['test_recall_noise_sd5']:.2f} vs {a['test_recall_noise_sd5']:.2f}), is better calibrated, and "
+        "needs one forward pass instead of four.",
+        "",
+    ]
+    return lines
 
 
 def write_model_card(m: dict, meta: dict) -> None:

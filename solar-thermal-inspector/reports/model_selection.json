@@ -1,0 +1,46 @@
+{
+  "rule": "highest validation macro-F1 (with each candidate's own TTA choice); test results shown for transparency only",
+  "candidates": [
+    {
+      "name": "A",
+      "model_version": "cnn-dbb19326af",
+      "width": 32,
+      "parameters": 288428,
+      "epochs": 40,
+      "best_epoch": 40,
+      "augmentation": "flips + noise sd 2",
+      "tta": true,
+      "temperature": 0.7,
+      "val_macro_f1_selection": 0.661,
+      "test_accuracy": 0.8213689482470785,
+      "test_macro_f1": 0.6834264261550246,
+      "test_recall": 0.9591973244147157,
+      "test_fpr": 0.148,
+      "test_recall_noise_sd5": 0.7986622073578595,
+      "test_ece": 0.024295084976990733,
+      "latency_ms": 3.176,
+      "selected": false
+    },
+    {
+      "name": "B",
+      "model_version": "cnn-5455accec2",
+      "width": 48,
+      "parameters": 646908,
+      "epochs": 50,
+      "best_epoch": 41,
+      "augmentation": "flips + noise sd 0-6 + shift 2 px",
+      "tta": false,
+      "temperature": 0.75,
+      "val_macro_f1_selection": 0.6769,
+      "test_accuracy": 0.8156928213689483,
+      "test_macro_f1": 0.6733276575476452,
+      "test_recall": 0.9565217391304348,
+      "test_fpr": 0.14,
+      "test_recall_noise_sd5": 0.9505016722408027,
+      "test_ece": 0.016421364996588493,
+      "latency_ms": 1.767,
+      "selected": true
+    }
+  ],
+  "latency_note": "single-image latency, 1 CPU thread, both measured back to back on the same idle machine"
+}

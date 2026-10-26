@@ -39,7 +39,7 @@ feature distributions.
 
 - Half the data is normal and four classes have fewer than 260 images -> class weights and macro-F1.
 - Whole-module faults (Offline, Diode-Multi) are about **absolute warmth** -> no per-image normalisation.
-- Flipping a module doesn't change the fault, but rotating it does -> flip augmentation only.
+- Flipping a module doesn't change the fault, but rotating it does -> flips, small shifts and sensor noise; no rotations.
 - Vegetation heats the **bottom edge** (hottest pixel in the bottom quarter in 63% of images vs 29% for normal).
 
 **Remember:** every modelling choice should point back to something the data showed.
@@ -67,24 +67,29 @@ feature distributions.
 | Rule | "peak contrast above a threshold" | 0.842 |
 | Isolation Forest | trained on normal modules only, no fault labels | 0.779 |
 | Gradient boosting | 30 hand-crafted features | 0.935 |
-| CNN | learns its own features from raw pixels | **0.980** |
+| CNN | learns its own features from raw pixels | **0.977** |
 
 **Protocol.** Thresholds are chosen on **validation** (95% recall); the **test** split is used once, at the end.
-At equal recall the CNN raises 3.3x fewer false alarms than gradient boosting.
+At equal recall the CNN raises 3.5x fewer false alarms than gradient boosting.
+
+**Two CNN candidates, one rule.** The first CNN (A) was good on clean data but fell from 0.96 to 0.80 recall
+with sensor noise. A second one (B) was trained with noise and shift augmentation. The rule fixed in advance
+was "higher validation macro-F1 wins": B won (0.677 vs 0.661). On test, A was about a point better on clean
+images, and B was far better on noisy ones and twice as fast. Reporting both is the honest version.
 
 **Remember:** "which model is best" only means something at a fixed operating point on held-out data.
 
 ## Step 6. Make the probabilities mean something
 
-- **Calibration:** label smoothing and test-time augmentation made the CNN under-confident (ECE 0.12).
-  One temperature (T = 0.7), fitted on validation log-loss, brought ECE down to about 0.02 without changing any
-  prediction. So "80% confident" now means right about 80% of the time, which matters because confidence
+- **Calibration:** label smoothing made the CNN under-confident (validation ECE 0.11). One temperature
+  (T = 0.75), fitted on validation log-loss, brought it down to about 0.02 without changing any prediction. So "80% confident" now means right about 80% of the time, which matters because confidence
   decides which alerts go to human review.
 - **Prevalence:** the test split is 50% faulty; a plant may be 5%. Precision = TPR·p / (TPR·p + FPR·(1-p)),
   so at 5% only about 1 alert in 4 is a real fault. The fix is a workflow, not a bigger model: every alert carries
   its image, and the false-alarm feedback is stored.
-- **Weak spot:** offline modules (recall 0.63) look normal on their own. The **safety policy** adds a lower alert
-  bar for critical classes: critical misses fall from 22 to 8 out of 412, while false alarms roughly double.
+- **Weak spot:** offline modules (recall 0.65) look normal on their own. The **safety policy** adds a lower alert
+  bar for critical classes: critical misses fall from 24 to 6 out of 412, while the false-alarm rate rises from
+  14% to 40%.
   It's a business choice, so it's a setting (`ALERT_POLICY`), not a hidden constant.
 
 **Remember:** a model is a probability plus a decision rule. Put the rule (`decide_batch`) in one place and
@@ -94,7 +99,7 @@ evaluate exactly what you serve.
 
 **What.** `src/solar_inspector/`:
 
-- `predictor.py`: ONNX Runtime, no PyTorch at serving time (1.2 MB model, about 3-4 ms per image on one CPU thread).
+- `predictor.py`: ONNX Runtime, no PyTorch at serving time (2.6 MB model, about 2 ms per image on one CPU thread).
 - `services.py`: upload pipeline, with ZIP flattening without path traversal, size limits, per-file rejection
   reasons, and batch-relative level.
 - `scoring.py` + `catalog.py`: fault -> priority (P1/P2/P3 with deadlines), W / kWh / KRW at risk, recommended action.

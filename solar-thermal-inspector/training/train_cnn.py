@@ -1,11 +1,12 @@
 """Train the production model: a small CNN on raw 40 x 24 IR crops, exported to ONNX.
 
-    python training/train_cnn.py            # ~10 min on 4 CPU cores
+    python training/train_cnn.py            # defaults = the served model; about 50 min on 4 CPU cores
 
 Choices (see reports/evaluation.md for the evidence):
 - Raw 0-255 levels, not per-image normalisation: whole-module faults (Offline, Diode-Multi) are
   about the absolute level, so normalising each image would erase them.
-- Flip augmentation only (a flipped module is the same fault; a rotated one is not), plus mild noise.
+- Flips (a flipped module is the same fault; a rotated one is not), +/-2 px shifts and sensor noise up to
+  sd 6 grey levels (the earlier, noise-light candidate fell from 0.96 to 0.80 recall under noise).
 - Class-weighted loss (inverse square-root frequency) so rare classes count without over-correcting.
 - Best epoch picked on validation macro-F1; the test split is never touched here.
 - Exported with normalisation and softmax inside the graph, so the API only needs onnxruntime.
@@ -156,12 +157,12 @@ def finalize(net: nn.Module, X: torch.Tensor, y: np.ndarray, split: np.ndarray, 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--epochs", type=int, default=40)
+    ap.add_argument("--epochs", type=int, default=50)
     ap.add_argument("--batch", type=int, default=128)
     ap.add_argument("--lr", type=float, default=3e-3)
-    ap.add_argument("--width", type=int, default=32)
-    ap.add_argument("--shift", type=int, default=0, help="max random translation in pixels (augmentation)")
-    ap.add_argument("--noise-max", type=float, default=2.0, help="max sensor-noise sd in grey levels (augmentation)")
+    ap.add_argument("--width", type=int, default=48)
+    ap.add_argument("--shift", type=int, default=2, help="max random translation in pixels (augmentation)")
+    ap.add_argument("--noise-max", type=float, default=6.0, help="max sensor-noise sd in grey levels (augmentation)")
     ap.add_argument("--export-only", metavar="STATE", help="skip training: calibrate + export a saved state_dict")
     ap.add_argument("--info", metavar="JSON", help="with --export-only: the training log (cnn_training.json) to keep")
     args = ap.parse_args()

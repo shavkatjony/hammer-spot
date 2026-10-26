@@ -349,7 +349,7 @@ def write_report(m: dict, order: list[int]) -> None:
         "",
         f"Test split: **{m['dataset']['test_anomalies'] + m['dataset']['test_normal']:,} images** "
         f"({m['dataset']['test_anomalies']:,} anomalous, {m['dataset']['test_normal']:,} normal), never used for "
-        "training, model selection or threshold choice.",
+        "training or threshold choice; the final model was chosen on validation (see *Model selection*).",
         "",
         "## 1. Can it find faulty modules? (anomaly vs normal)",
         "",
@@ -502,6 +502,10 @@ def model_selection_lines() -> list[str]:
         f"(accuracy {b['test_accuracy']:.3f} vs {a['test_accuracy']:.3f}), but B keeps its recall under sensor "
         f"noise ({b['test_recall_noise_sd5']:.2f} vs {a['test_recall_noise_sd5']:.2f}), is better calibrated, and "
         "needs one forward pass instead of four.",
+        "",
+        "Caveat: A's weakness to noise was first seen in this report's test-split robustness table, and that "
+        "prompted training B. The choice between them used validation only, but the idea for B came from a "
+        "test-set observation, so a fresh hold-out (for example a new site) is the fully clean check.",
         "",
     ]
     return lines

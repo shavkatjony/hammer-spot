@@ -35,8 +35,10 @@ This app does that step:
 
 ## Results
 
-All numbers come from the **held-out test split** (2,995 images, half of them faulty). That split was
-never used for training, model selection or threshold choice. Full report:
+All numbers come from the **held-out test split** (2,995 images, half of them faulty). It was never used
+for training or threshold choice, and the final model was chosen on validation. One caveat, stated plainly:
+the first CNN's weakness to sensor noise was spotted on this split, and that is what prompted the second
+candidate. A new site's data is the fully clean check. Full report:
 [`reports/evaluation.md`](reports/evaluation.md). Data analysis: [`reports/eda.md`](reports/eda.md).
 
 **Finding faulty modules** (each alert threshold set on validation for at least 95% recall):

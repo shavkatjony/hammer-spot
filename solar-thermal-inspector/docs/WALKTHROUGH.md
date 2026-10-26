@@ -75,7 +75,9 @@ At equal recall the CNN raises 3.5x fewer false alarms than gradient boosting.
 **Two CNN candidates, one rule.** The first CNN (A) was good on clean data but fell from 0.96 to 0.80 recall
 with sensor noise. A second one (B) was trained with noise and shift augmentation. The rule fixed in advance
 was "higher validation macro-F1 wins": B won (0.677 vs 0.661). On test, A was about a point better on clean
-images, and B was far better on noisy ones and twice as fast. Reporting both is the honest version.
+images, and B was far better on noisy ones and twice as fast. Reporting both is the honest version, and so is
+admitting that A's noise problem was first noticed on the test split: that's why a new site's data is the
+fully clean check.
 
 **Remember:** "which model is best" only means something at a fixed operating point on held-out data.
 

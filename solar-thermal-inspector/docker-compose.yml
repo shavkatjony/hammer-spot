@@ -1,0 +1,42 @@
+# Production-like stack: the app + PostgreSQL, with persistent volumes.
+#   docker compose up --build        -> http://localhost:8000
+# Set POSTGRES_PASSWORD and API_KEY in a .env file next to this one before exposing it anywhere.
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: inspector
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      POSTGRES_DB: inspector
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U inspector -d inspector"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://inspector:${POSTGRES_PASSWORD:-change-me}@db:5432/inspector
+      API_KEY: ${API_KEY:-}
+      SEED_DEMO: "1"
+      ALERT_POLICY: ${ALERT_POLICY:-standard}
+      WORKERS: "2"
+      MODULE_POWER_W: ${MODULE_POWER_W:-400}
+      SPECIFIC_YIELD: ${SPECIFIC_YIELD:-1300}
+      TARIFF_KRW_PER_KWH: ${TARIFF_KRW_PER_KWH:-150}
+    ports:
+      - "8000:8000"
+    volumes:
+      - uploads:/data
+
+volumes:
+  pgdata:
+  uploads:

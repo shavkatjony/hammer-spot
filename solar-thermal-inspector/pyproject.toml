@@ -1,0 +1,31 @@
+[project]
+name = "solar-thermal-inspector"
+version = "1.0.0"
+description = "Drone thermal inspection of solar PV modules: anomaly detection, prioritised work orders and KPIs."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Shavkatjon Yuldashev" }]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+solar_inspector = ["static/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "."]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+src = ["src", "training", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+ignore = ["B008"]  # FastAPI's Depends()/File() defaults are the documented pattern
+
+[tool.ruff.lint.isort]
+known-first-party = ["solar_inspector", "common", "plotstyle", "tests"]

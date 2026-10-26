@@ -1,0 +1,15 @@
+.venv
+**/__pycache__
+.pytest_cache
+.ruff_cache
+data/raw
+data/processed
+data/uploads
+data/*.db
+reports
+training
+tests
+docs
+*.md
+.env
+.env.*

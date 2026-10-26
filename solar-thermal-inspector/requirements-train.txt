@@ -1,0 +1,9 @@
+# Data preparation, EDA, training and evaluation (offline, not needed to run the app).
+-r requirements-dev.txt
+pandas==3.1.0
+scikit-learn==1.9.1
+matplotlib==3.11.2
+onnx==1.23.2
+# CPU is enough (about 10 minutes on 4 cores). Prefer the CPU wheel when you can reach it:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+torch>=2.6

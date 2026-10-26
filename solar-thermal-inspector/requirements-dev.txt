@@ -1,0 +1,5 @@
+# Tests and lint (what CI installs on top of requirements.txt).
+-r requirements.txt
+pytest==9.1.1
+httpx2==2.16.0  # starlette TestClient transport
+ruff==0.17.2

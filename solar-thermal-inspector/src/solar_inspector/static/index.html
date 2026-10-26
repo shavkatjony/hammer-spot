@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Solar Thermal Inspector</title>
+  <meta name="description" content="Drone thermal inspection of solar PV modules: anomaly detection, prioritised work orders and KPIs.">
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="topbar">
+    <a class="brand" href="#/">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><rect x="3" y="5" width="18" height="14" rx="2" class="brand-panel"/><path d="M3 10h18M3 14.5h18M9 5v14M15 5v14" class="brand-grid"/><circle cx="16.8" cy="8" r="2.4" class="brand-hot"/></svg>
+      <span>Solar Thermal Inspector</span>
+    </a>
+    <nav aria-label="Main">
+      <a href="#/" data-nav="overview">Overview</a>
+      <a href="#/new" data-nav="new">New inspection</a>
+      <a href="#/model" data-nav="model">Model</a>
+      <a href="/docs" target="_blank" rel="noopener noreferrer">API docs</a>
+    </nav>
+  </header>
+  <main id="main" tabindex="-1">
+    <p class="muted">Loading…</p>
+  </main>
+  <dialog id="finding" aria-labelledby="finding-title">
+    <div class="dialog-body" id="finding-body"></div>
+  </dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <noscript><p class="wrap">This dashboard needs JavaScript. The REST API works without it: see <a href="/docs">/docs</a>.</p></noscript>
+</body>
+</html>

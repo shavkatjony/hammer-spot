@@ -1,0 +1,76 @@
+# Solar Thermal Inspector: lint, test, build the container and smoke-test it.
+# Runs only when the project (or this workflow) changes. Actions are pinned to full commit SHAs.
+name: Solar Thermal Inspector
+
+on:
+  push:
+    paths:
+      - 'solar-thermal-inspector/**'
+      - '.github/workflows/solar-inspector.yml'
+  pull_request:
+    paths:
+      - 'solar-thermal-inspector/**'
+      - '.github/workflows/solar-inspector.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: solar-inspector-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: solar-thermal-inspector
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: inspector
+          POSTGRES_PASSWORD: ci-only
+          POSTGRES_DB: inspector_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U inspector -d inspector_test"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install (system Python 3.12, pinned requirements)
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install --upgrade pip
+          .venv/bin/pip install -r requirements-dev.txt
+
+      - name: Lint
+        run: .venv/bin/ruff check src training tests
+
+      - name: Unit, API and model-quality tests (SQLite)
+        run: .venv/bin/python -m pytest
+
+      - name: Same suite against PostgreSQL 16
+        run: .venv/bin/python -m pytest
+        env:
+          TEST_DATABASE_URL: postgresql+psycopg://inspector:ci-only@127.0.0.1:5432/inspector_test
+
+      - name: Build container
+        run: docker build -t solar-thermal-inspector .
+
+      - name: Smoke-test container (demo data, real HTTP)
+        run: |
+          docker run -d --name sti -p 8000:8000 -e SEED_DEMO=1 solar-thermal-inspector
+          for i in $(seq 1 40); do curl -fs http://127.0.0.1:8000/api/health && break; sleep 2; done
+          curl -fs http://127.0.0.1:8000/api/kpis | python3 -c "import json,sys; k=json.load(sys.stdin); assert k['modules_inspected']==627, k; print(k['anomalies'], 'anomalies')"
+          curl -fs -o /dev/null http://127.0.0.1:8000/
+
+      - name: Container logs
+        if: always()
+        run: docker logs sti || true

@@ -1,0 +1,78 @@
+{
+  "source": "https://raw.githubusercontent.com/RaptorMaps/InfraredSolarModules/master/2020-02-14_InfraredSolarModules.zip",
+  "sha256": "b82c706bc719b045ac4f8930570d81767a8a170d0998ca3e09283b585db05b5e",
+  "images_in_metadata": 20000,
+  "exact_duplicate_groups": 22,
+  "conflicting_label_groups": 6,
+  "dropped_conflicting_images": 12,
+  "dropped_redundant_copies": 16,
+  "images_kept": 19972,
+  "conflicts": [
+    [
+      [
+        "161",
+        "Offline-Module"
+      ],
+      [
+        "4518",
+        "Cell-Multi"
+      ]
+    ],
+    [
+      [
+        "450",
+        "Offline-Module"
+      ],
+      [
+        "7484",
+        "Cracking"
+      ]
+    ],
+    [
+      [
+        "483",
+        "Offline-Module"
+      ],
+      [
+        "6888",
+        "Hot-Spot"
+      ]
+    ],
+    [
+      [
+        "543",
+        "Offline-Module"
+      ],
+      [
+        "5171",
+        "Cell"
+      ]
+    ],
+    [
+      [
+        "1124",
+        "Diode"
+      ],
+      [
+        "7387",
+        "Cracking"
+      ]
+    ],
+    [
+      [
+        "3915",
+        "Cell-Multi"
+      ],
+      [
+        "7027",
+        "Cracking"
+      ]
+    ]
+  ],
+  "split_sizes": {
+    "train": 13981,
+    "val": 2996,
+    "test": 2995
+  },
+  "seed": 42
+}

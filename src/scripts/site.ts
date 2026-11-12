@@ -156,8 +156,9 @@ function trackHorizon() {
     hero.style.setProperty('--horizon-y', `${Math.round(y)}px`);
   };
   place();
-  if ('ResizeObserver' in window) new ResizeObserver(place).observe(hero);
-  else window.addEventListener('resize', place, { passive: true });
+  // ResizeObserver also catches reflow from late font loads; resize is the fallback for old engines.
+  if (typeof ResizeObserver === 'function') new ResizeObserver(place).observe(hero);
+  else addEventListener('resize', place, { passive: true });
 }
 
 /* ---------- hero 3D scene (lazy, guarded) ---------- */

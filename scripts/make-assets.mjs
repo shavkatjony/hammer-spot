@@ -29,8 +29,8 @@ const browser = await chromium.launch({ executablePath: process.env.PW_CHROMIUM 
   const ctx = await browser.newContext({ viewport: { width: 1200, height: 630 }, colorScheme: 'light', reducedMotion: 'reduce', bypassCSP: true }); // tooling only
   const page = await ctx.newPage();
   await page.goto(base + '?static', { waitUntil: 'networkidle' });
-  // tooling-only style: hide the nav and rail, and size the portrait plate so it fits the 630 px frame
-  await page.addStyleTag({ content: '.site-nav,.sun-rail{display:none!important} body::after{opacity:.25} .hero__plate{width:min(100%,19.5rem)!important}' });
+  // tooling-only style: hide the nav, rail and stack panel (it would be cut by the 630 px frame), and size the portrait plate to fit
+  await page.addStyleTag({ content: '.site-nav,.sun-rail{display:none!important} body::after{opacity:.25} .hero__plate{width:min(100%,19.5rem)!important} .hero__stack{visibility:hidden}' });
   await page.waitForTimeout(400);
   await page.screenshot({ path: 'public/og.jpg', type: 'jpeg', quality: 82, clip: { x: 0, y: 0, width: 1200, height: 630 } });
   await ctx.close();

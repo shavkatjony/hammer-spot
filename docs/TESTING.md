@@ -38,6 +38,10 @@ Mobile LCP is the hero statement. Most of its delay is the first-visit intro cho
 13. A retail metric wrapped mid-value ("8.8 → 2.6 / GB"). It now reads "2.6 GB, down from 8.8 GB".
 14. The forced-3D test mode (`?3d=force`) was killed by the 250 ms first-frame budget on software GL, so the 3D hero couldn't be inspected. The budget still applies to real visitors; it is skipped only in that test mode.
 
+### Follow-up: hero stack panel (2026-11-12)
+
+The five-metric "At a glance" strip mixed unrelated numbers without context, so it was replaced with a "My stack" panel: six labelled groups of tools, models and the ML process, all taken from the projects. It fits inside the first 1440×900 screen (hero height 900 px), stacks to one column on mobile, and `verify.mjs` passes again (axe WCAG 2.2 AA, light and dark). The share image hides the panel, which the 630 px frame would cut.
+
 ### Not tested / gaps (this run)
 
 - External links were not fetched (network policy). In particular the DPEC Render app, the Streamlit demo and LinkedIn could not be opened from here.

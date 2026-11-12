@@ -109,6 +109,27 @@ export const interests = [
   'Sports analytics, especially Formula 1',
 ];
 
+/**
+ * The hero's "My stack" panel: only what the projects below actually use, grouped so a recruiter
+ * can scan it in seconds. Evidence for each item: the toolkit's "Shown in" links and the case studies.
+ * `flow: true` renders the items as ordered steps (→) instead of a list (·).
+ */
+export const heroStack: { title: string; items: string[]; flow?: boolean }[] = [
+  { title: 'Languages & data', items: ['Python', 'SQL', 'pandas', 'NumPy', 'DuckDB', 'SQLite', 'Parquet'] },
+  { title: 'ML libraries', items: ['scikit-learn', 'statsmodels', 'PyTorch'] },
+  {
+    title: 'ML models',
+    items: ['Logistic regression', 'Random forest', 'Gradient boosting', 'Linear regression (WLS)', 'Neural network (MLP)'],
+  },
+  {
+    title: 'ML process',
+    flow: true,
+    items: ['Data cleaning', 'Feature engineering', 'Cross-validation', 'Baselines', 'Evaluation', 'Backtesting', 'Deployment'],
+  },
+  { title: 'Deploy & MLOps', items: ['FastAPI', 'Docker', 'Streamlit', 'pytest', 'GitHub Actions CI', 'Git'] },
+  { title: 'Analytics, vision & AI', items: ['matplotlib', 'd3.js', 'OpenCV', 'Tesseract OCR', 'LLM tool use (Claude API, Ollama)'] },
+];
+
 /* ------------------------------------------------------------------ */
 /* Projects                                                            */
 /* ------------------------------------------------------------------ */
@@ -157,7 +178,6 @@ export interface Project {
   contribution: string;
   result: string;
   metrics: { value: string; label: string }[];
-  strip: { value: string; label: string };
   methods: string[];
   stack: string[];
   links: Link[];
@@ -196,7 +216,6 @@ export const projects: Project[] = [
       { value: '296 / 374', label: 'Churners caught (recall 0.791)' },
       { value: '33', label: 'Test functions, run in CI' },
     ],
-    strip: { value: '0.842', label: 'test ROC-AUC' },
     methods: ['Logistic regression', 'Random forest', 'Gradient boosting', 'Stratified 5-fold CV', 'Model card'],
     stack: ['Python', 'pandas', 'scikit-learn', 'FastAPI', 'Streamlit', 'pytest', 'GitHub Actions'],
     links: [
@@ -304,7 +323,6 @@ export const projects: Project[] = [
       { value: '4.29 → 1.73', label: 'Avg. stars, on time → 8+ days late' },
       { value: 'r = 0.78', label: 'On-time rate vs. review, across states' },
     ],
-    strip: { value: '4.29 → 1.73', label: 'stars, on time → late' },
     methods: ['Recency segmentation', 'Cohort retention', 'Delivery-band analysis', 'Seller concentration'],
     stack: ['SQL (SQLite)', 'Python', 'pandas', 'matplotlib', 'd3.js', 'GitHub Pages'],
     links: [
@@ -411,7 +429,6 @@ export const projects: Project[] = [
       { value: '2.6 GB', label: 'Peak memory at full shape, down from 8.8 GB' },
       { value: '8', label: 'Data-quality checks gating the build' },
     ],
-    strip: { value: '59.1M rows', label: 'in 2.6 GB of memory' },
     methods: ['Star schema', 'Like-for-like YoY', 'Contribution analysis', 'Exception scoring', 'HHI concentration'],
     stack: ['Python', 'DuckDB SQL', 'Parquet', 'Make', 'Tableau (guide)'],
     links: [
@@ -506,7 +523,6 @@ export const projects: Project[] = [
       { value: '79.9%', label: 'Real results inside the 80% ranges' },
       { value: '129', label: 'Tests run in CI on every push' },
     ],
-    strip: { value: '0.548%', label: 'race-pace error, unseen races' },
     methods: ['Walk-forward backtest', 'Split-conformal ranges', 'Monte Carlo strategy', 'LLM tool use'],
     stack: ['Python', 'DuckDB SQL', 'statsmodels', 'FastAPI', 'Docker', 'Claude API · Ollama', 'pytest'],
     links: [
@@ -618,7 +634,6 @@ export const projects: Project[] = [
       { value: '0.3 px', label: 'Corner error, SIFT + RANSAC' },
       { value: '+2.94°', label: 'Skew recovered of a true +3.00°' },
     ],
-    strip: { value: '12 / 12', label: 'fields read (sample)' },
     methods: ['Canny + contours', 'Homography', 'ORB / SIFT + RANSAC', 'Tesseract OCR'],
     stack: ['Python', 'OpenCV', 'NumPy', 'Tesseract (kor/eng)', 'matplotlib'],
     links: [],

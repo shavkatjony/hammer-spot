@@ -1,15 +1,15 @@
 ---
 /**
  * Opening scene. Reading order is deliberate (F-pattern): who (name) → what (positioning) →
- * proof of availability → actions, with the portrait on the first horizontal sweep and a
- * five-project index resting on the dunes so evidence is visible in the first viewport.
+ * proof of availability → actions, with the portrait on the first horizontal sweep and the
+ * stack panel resting on the dunes, so a recruiter sees what I work with in the first viewport.
  */
 import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import DuneFallback from './DuneFallback.astro';
 import Icon from './Icon.astro';
 import ExtLink from './ExtLink.astro';
-import { identity, social, resume, projects } from '../content/site';
+import { identity, social, resume, heroStack } from '../content/site';
 import { url } from '../lib/url';
 
 // Drop a photo at src/assets/portrait.(jpg|jpeg|png|webp|avif) and it is used automatically.
@@ -89,22 +89,27 @@ const cvHref = resume.pdf ? url(resume.pdf) : url(resume.page);
     </div>
   </div>
 
-  <nav class="hero__index wrap wrap--wide" aria-label="Selected work at a glance">
-    <p class="hero__index-label mono caps">At a glance</p>
-    <ol class="hero__index-list" role="list">
-      {projects.map((p) => (
-        <li>
-          <a href={url(`work/${p.slug}/`)} class="hero__index-link">
-            <span class="hero__index-no mono">{p.index}</span>
-            <span class="hero__index-title">{p.short}</span>{' '}
-            <span class="hero__index-value">{p.strip.value}</span>{' '}
-            <span class="hero__index-metric mono">{p.strip.label}</span>
-            {p.status === 'In development' && <span class="hero__index-status mono">in development</span>}
-          </a>
-        </li>
+  <section class="hero__stack wrap wrap--wide" aria-labelledby="stack-title">
+    <h2 id="stack-title" class="hero__stack-label mono caps">My stack</h2>
+    <dl class="hero__stack-grid">
+      {heroStack.map((g) => (
+        <div class="hero__stack-group">
+          <dt class="hero__stack-title mono caps">{g.title}</dt>
+          <dd>
+            {g.flow ? (
+              <ol class="hero__stack-items hero__stack-items--flow" role="list">
+                {g.items.map((it) => (<><li>{it}</li>{' '}</>))}
+              </ol>
+            ) : (
+              <ul class="hero__stack-items" role="list">
+                {g.items.map((it) => (<><li>{it}</li>{' '}</>))}
+              </ul>
+            )}
+          </dd>
+        </div>
       ))}
-    </ol>
-  </nav>
+    </dl>
+  </section>
 </section>
 
 <style>
@@ -349,108 +354,76 @@ const cvHref = resume.pdf ? url(resume.pdf) : url(resume.page);
     font-size: var(--fs-micro);
   }
 
-  /* ---- at-a-glance index on the dunes ---- */
-  .hero__index {
+  /* ---- stack panel on the dunes ---- */
+  .hero__stack {
     position: relative;
     display: grid;
     grid-template-columns: auto 1fr;
     align-items: stretch;
     gap: var(--space-5);
-    padding-bottom: var(--space-5);
+    padding-bottom: var(--space-4);
   }
-  .hero__index-label {
+  .hero__stack-label {
     align-self: center;
+    margin: 0;
+    font-size: var(--fs-micro);
     color: var(--ink);
     writing-mode: vertical-rl;
     transform: rotate(180deg);
     letter-spacing: 0.12em;
     font-weight: 500;
   }
-  .hero__index-list {
+  /* 1 px gaps over a rule-coloured ground draw the dividers in every layout */
+  .hero__stack-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    background: var(--surface);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(2, auto);
+    grid-auto-flow: column;
+    gap: 1px;
+    margin: 0;
+    background: var(--rule);
     border: 1px solid var(--rule-strong);
     border-radius: var(--radius);
     box-shadow: var(--shadow-plate);
+    overflow: hidden;
   }
-  .hero__index-list li + li {
-    border-left: 1px solid var(--rule);
+  .hero__stack-group {
+    padding: 0.65rem var(--space-4) 0.75rem;
+    background: var(--surface);
   }
-  .hero__index-link {
-    position: relative;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-areas: 'no title' 'value value' 'metric metric' 'status status';
-    align-content: start;
-    gap: 0.15rem 0.6rem;
-    height: 100%;
-    padding: var(--space-4) var(--space-4) var(--space-4);
-    text-decoration: none;
-    color: var(--ink);
-    transition: background-color var(--dur-1) ease;
-  }
-  .hero__index-link::after {
-    content: '';
-    position: absolute;
-    left: var(--space-4);
-    right: var(--space-4);
-    bottom: 0;
-    height: 2px;
-    background: var(--accent);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform var(--dur-2) var(--ease-out);
-  }
-  .hero__index-link:hover,
-  .hero__index-link:focus-visible {
-    background: var(--bg);
-    color: var(--ink);
-  }
-  .hero__index-link:hover::after,
-  .hero__index-link:focus-visible::after {
-    transform: scaleX(1);
-  }
-  .hero__index-no {
-    grid-area: no;
+  .hero__stack-title {
+    margin-bottom: 0.3rem;
+    font-size: var(--fs-micro);
+    font-weight: 500;
     color: var(--warm-ink);
-    font-weight: 500;
-    padding-top: 0.1rem;
   }
-  .hero__index-title {
-    grid-area: title;
+  .hero__stack-group dd {
+    margin: 0;
+  }
+  .hero__stack-items {
     font-size: var(--fs-small);
-    font-weight: 500;
+    line-height: 1.55;
+    color: var(--ink);
   }
-  .hero__index-value {
-    grid-area: value;
-    margin-top: var(--space-2);
-    font-family: var(--f-display);
-    font-size: clamp(1.35rem, 1rem + 0.9vw, 1.85rem);
-    font-weight: 500;
-    line-height: 1.05;
+  .hero__stack-items li {
+    display: inline;
+    white-space: nowrap; /* lines break between items, never inside one */
   }
-  .hero__index-metric {
-    grid-area: metric;
+  .hero__stack-items li:not(:last-child)::after {
+    content: '·' / '';
+    margin-left: 0.3em; /* the space between items follows the mark, so it sits centred */
     color: var(--ink-3);
   }
-  .hero__index-status {
-    grid-area: status;
-    justify-self: start;
-    margin-top: var(--space-2);
-    padding: 0.05rem 0.5rem;
-    border: 1px dashed currentColor;
-    border-radius: 999px;
-    color: var(--warm-ink);
-    font-size: 0.68rem;
-    font-weight: 500;
+  .hero__stack-items--flow li:not(:last-child)::after {
+    content: '→' / '';
+    color: var(--accent);
   }
 
   /* ---- responsive ---- */
-  @media (max-width: 80rem) {
-    .hero__index-list {
-      grid-template-columns: repeat(5, minmax(9.5rem, 1fr));
-      overflow-x: auto;
+  @media (max-width: 64rem) {
+    .hero__stack-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(3, auto);
     }
   }
   @media (max-width: 52rem) {
@@ -510,37 +483,20 @@ const cvHref = resume.pdf ? url(resume.pdf) : url(resume.page);
     .hero__social {
       margin-left: 0;
     }
-    .hero__index {
+    .hero__stack {
       grid-template-columns: 1fr;
       gap: var(--space-2);
       margin-top: 30vw;
     }
-    .hero__index-label {
+    .hero__stack-label {
       writing-mode: horizontal-tb;
       transform: none;
       align-self: start;
     }
-    .hero__index-list {
+    .hero__stack-grid {
       grid-template-columns: 1fr;
-      overflow: visible;
-    }
-    .hero__index-list li + li {
-      border-left: 0;
-      border-top: 1px solid var(--rule);
-    }
-    .hero__index-link {
-      grid-template-columns: 2rem 1fr auto;
-      grid-template-areas: 'no title value' 'no metric value' 'no status status';
-      align-items: center;
-      padding: var(--space-3) var(--space-4);
-    }
-    .hero__index-value {
-      margin-top: 0;
-      font-size: 1.25rem;
-      text-align: right;
-    }
-    .hero__index-status {
-      margin-top: var(--space-1);
+      grid-template-rows: none;
+      grid-auto-flow: row;
     }
   }
 
@@ -570,6 +526,6 @@ const cvHref = resume.pdf ? url(resume.pdf) : url(resume.page);
   :global(html.motion:not(.intro-seen)) .hero__statement { animation: fade-up 700ms var(--ease-out) 560ms backwards; }
   :global(html.motion:not(.intro-seen)) .hero__open { animation: fade-up 700ms var(--ease-out) 640ms backwards; }
   :global(html.motion:not(.intro-seen)) .hero__actions { animation: fade-up 700ms var(--ease-out) 720ms backwards; }
-  :global(html.motion:not(.intro-seen)) .hero__index { animation: fade-up 800ms var(--ease-out) 880ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__stack { animation: fade-up 800ms var(--ease-out) 880ms backwards; }
   :global(html.motion:not(.intro-seen) .site-nav) { animation: fade-in 600ms ease 400ms backwards; }
 </style>

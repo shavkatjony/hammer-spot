@@ -44,6 +44,7 @@ Run `npm run assets` and rebuild after changing content, so the PDF résumé and
 Everything personal lives in `src/content/site.ts`:
 
 - `identity`: name, positioning line, statement, location and availability (`availability.open`).
+- `heroStack`: the "My stack" panel at the foot of the hero, in six groups (languages and data, ML libraries, ML models, ML process, deploy and MLOps, analytics/vision/AI). List only tools a project actually uses; the toolkit section shows where.
 - `social`: the only place external profile URLs are defined.
 - `projects`: four primary projects (Telco churn, Olist SQL, Retail BI, DPEC Formula 1, marked *In development*) and one secondary computer-vision project. Each case study has six sections (problem; objectives and questions; data and methodology; technical implementation; findings and verified results; limitations and lessons) plus the repository and demo links. Text can contain `` `code` `` in backticks; it's rendered as `<code>`, never as HTML.
 - `archive` (smaller work, including Lotte World), `notes` (seven field notes), `toolkit` (demonstrated / learning / open source studied, each demonstrated tool linked to the projects that show it), `education`, `experience`, `languages`, `targetRoles`, `interests`.

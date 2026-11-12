@@ -1,4 +1,51 @@
-# Testing record: 2026-10-12
+# Testing record
+
+## Redesign run: 2026-11-12
+
+Run against the production build (`npm run build` + `astro preview`) in a headless Linux container, with Playwright 1.56.1 driving the installed Chromium (`PW_CHROMIUM=/opt/pw-browsers/chromium`). The numbers are what the tools reported.
+
+| Check | Result |
+|---|---|
+| Type check (`astro check`, 44 files) | 0 errors · 0 warnings · 0 hints |
+| Build | Clean, 8 pages (home, 5 case studies, CV, 404) |
+| `npm audit` (all / production) | 0 vulnerabilities / 0 vulnerabilities |
+| `scripts/verify.mjs` at base `/` | **All checks passed** |
+| `scripts/verify.mjs` at base `/personalweb/` | **All checks passed** |
+| axe-core 4.13 (WCAG 2.0/2.1/2.2 A+AA + best practice), 8 routes × light + dark | **0 serious or critical violations** (after the fixes below) |
+| Lighthouse 13.4.1, home, mobile preset | Performance **91** · Accessibility **100** · Best practices **100** · SEO **100** (FCP 2.3 s, LCP 3.2 s, TBT 0 ms, CLS 0) |
+| Lighthouse 13.4.1, home, desktop preset | Performance **100** · Accessibility **100** · Best practices **100** · SEO **100** (FCP 0.5 s, LCP 0.7 s, CLS 0) |
+| Lighthouse 13.4.1, DPEC case study, mobile | 96 · 100 · 100 · 100 |
+| CV PDF | **1 A4 page**; text extracts cleanly (`pdftotext`); no phone number |
+| Console errors (all routes, real CSP) | None |
+| Horizontal overflow at 390 px | None |
+
+Mobile LCP is the hero statement. Most of its delay is the first-visit intro choreography (shown once per session, never with reduced motion) and the 129 KB optical-size Newsreader font. Both were kept on purpose.
+
+### Defects found in review and fixed
+
+1. **The name rendered as "ShavkatjonYuldashev"**: Astro's HTML compression removed the space between the two name spans, for screen readers too. Explicit spaces were added there and between other adjacent labels.
+2. The "in development" tag on the at-a-glance strip overlapped the DPEC title. It is now an outlined tag under the metric, also on mobile (it was hidden there).
+3. The 3D horizon ran behind the buttons and social icons; on mobile the sun sat on the icons. The horizon is now measured from the call-to-action row, and the sun is placed by a ray through the screen: in the gap between the text and portrait on wide screens, on the right on tall ones.
+4. The static (no-WebGL) desert had the same collision. It now follows the same measured horizon through `--horizon-y`.
+5. A 1 px light seam at the bottom of the static dunes (anti-aliased fill edges). The fills now run past the drawing's edge.
+6. The portrait caption sat on the dunes. It moved inside the portrait mat.
+7. On mobile the role line floated far above the name. It now sits directly above it, beside the portrait.
+8. **The printed CV showed `linkedin.com/in/shavkatjon-yuldashev`**, which is not the real profile. It now prints the full slug.
+9. The CV crashed on a project with no public link (the private scanner), and later ran to 2 pages. Print sizes are now fixed in points, the contact block takes two lines, and Experience and Education sit side by side: 1 page.
+10. Contrast: where a contour line of the band texture crossed small text, contrast fell to 3.0–4.4:1 on the Yale and Coffee bands and the Dust Grey notes. Small text on those surfaces now uses lighter (or, on Dust Grey, deeper) inks and the texture is fainter.
+11. CV header links were below the 24 px target size (WCAG 2.5.8).
+12. Texture URLs were absolute (`/textures/…`), so they would 404 under a sub-folder deploy. They are now fingerprinted Vite assets.
+13. A retail metric wrapped mid-value ("8.8 → 2.6 / GB"). It now reads "2.6 GB, down from 8.8 GB".
+14. The forced-3D test mode (`?3d=force`) was killed by the 250 ms first-frame budget on software GL, so the 3D hero couldn't be inspected. The budget still applies to real visitors; it is skipped only in that test mode.
+
+### Not tested / gaps (this run)
+
+- External links were not fetched (network policy). In particular the DPEC Render app, the Streamlit demo and LinkedIn could not be opened from here.
+- 3D frame rate on a real GPU, Safari and Firefox, and screen readers were not tested here (same as below).
+- No portrait was available, so the photo path (`src/assets/portrait.jpg` → AVIF/WebP) was checked by build only, not with a real photo.
+
+## Earlier record: 2026-10-12
+
 
 Everything below was run against the production build (`npm run build` + `astro preview`) in a headless Linux container with Playwright Chromium 1194. The numbers are what the tools reported. Gaps are listed at the end.
 

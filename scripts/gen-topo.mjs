@@ -1,4 +1,4 @@
-// Generates public/textures/topo.svg: nested, irregular contour rings that read as
+// Generates src/assets/textures/topo.svg: nested, irregular contour rings that read as
 // geological survey lines. Deterministic (seeded) so the artwork is stable between builds.
 import { writeFileSync } from 'node:fs';
 
@@ -49,5 +49,5 @@ for (const h of hills) {
 }
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice"><style>path{fill:none;stroke:#7a6a52;stroke-width:1;vector-effect:non-scaling-stroke}.m{stroke-width:1.6}</style>${paths}</svg>`;
-writeFileSync(new URL('../public/textures/topo.svg', import.meta.url), svg);
+writeFileSync(new URL('../src/assets/textures/topo.svg', import.meta.url), svg);
 console.log('topo.svg', svg.length, 'bytes');

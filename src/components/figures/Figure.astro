@@ -1,5 +1,5 @@
 ---
-/** Maps a FigureId from content to the component that draws it. */
+/** Maps a FigureId from content to the component that draws it. Every image is a real project output. */
 import type { FigureId } from '../../content/site';
 import ImagePlate from './ImagePlate.astro';
 import OlistReviews from './OlistReviews.astro';
@@ -8,13 +8,16 @@ import TelcoConfusion from './TelcoConfusion.astro';
 import TelcoModels from './TelcoModels.astro';
 import SurveyLog from './SurveyLog.astro';
 import RetailScale from './RetailScale.astro';
-import DpecRules from './DpecRules.astro';
+import DpecResults from './DpecResults.astro';
+import ScannerResults from './ScannerResults.astro';
 
 interface Props {
   id: FigureId;
-  compact?: boolean;
+  compact?: boolean; // used as a card plate on the home page: no caption number, eager-free
+  frame?: 'paper' | 'dark' | 'none';
 }
-const { id, compact = false } = Astro.props;
+const { id, compact = false, frame = 'paper' } = Astro.props;
+const cardSizes = '(max-width: 52rem) 100vw, (max-width: 80rem) 50vw, 44rem';
 
 const retailSteps = [
   { title: 'Raw M5 CSVs', detail: 'Daily unit sales (wide), weekly prices, event/SNAP calendar.' },
@@ -26,29 +29,44 @@ const retailSteps = [
   { title: 'Dashboards', detail: 'Self-contained HTML (live) and a Tableau build guide.' },
 ];
 const dpecSteps = [
-  { title: 'FastF1 schedule', detail: 'Only sessions that started 3+ hours ago are requested.' },
-  { title: '`fetch_session`', detail: 'Laps, results, car data, positions, weather, race control, track status.' },
-  { title: '`parquet_safe`', detail: 'Timedeltas → seconds; mixed-type text → strings; raw values untouched.' },
-  { title: 'Parquet + `manifest.json`', detail: 'Rows, columns and SHA-256 per table; reruns skip saved sessions.' },
-  { title: 'Quality & alignment', detail: 'Flags; laps on a common 5 m distance grid.', state: 'planned' as const },
-  { title: 'Baseline → forecast', detail: 'Walk-forward by race weekend; calibrated intervals.', state: 'planned' as const },
-  { title: 'Frozen ledger', detail: 'Published before the session, scored after the race.', state: 'planned' as const },
+  { title: 'Collect', detail: 'Each session downloaded once through FastF1 and stored untouched, with a SHA-256 per file: 545 sessions.' },
+  { title: 'Clean', detail: 'A 15-table DuckDB warehouse rebuilt from plain SQL; every lap gets one reason code.' },
+  { title: 'Check', detail: '21 data checks after every build, each returning the rows that break its rule.' },
+  { title: 'Forecast', detail: 'One shared regression refitted before each weekend on earlier races only; 80% ranges and chances.' },
+  { title: 'Decide', detail: '1-, 2- and 3-stop plans costed over 4,000 draws, or “no clear decision”.' },
+  { title: 'Serve', detail: 'Read-only FastAPI (18 endpoints), a 15-window web app and an AI race engineer.' },
+  { title: 'Record', detail: 'Forecasts frozen in git with a SHA-256 before the race and scored after it.', state: 'planned' as const, tag: '0 live weekends' },
 ];
 ---
 {id === 'telco-app' && (
   <ImagePlate
     src={compact ? 'telco-top' : 'telco-app'}
-    small={compact ? 'telco-top-640' : 'telco-app-640'}
+    small={compact ? { name: 'telco-top-640', width: 640 } : { name: 'telco-app-640', width: 640 }}
     width={1100}
     height={compact ? 687 : 1603}
     alt="Screenshot of the Telco Customer Churn Predictor Streamlit app: a form of customer and billing fields, and a prediction result."
-    caption={compact ? 'The Streamlit predictor, running locally.' : 'The Streamlit predictor scoring a high-risk profile: month-to-month, fibre optic, 3 months tenure. Result: 87.7% churn probability, “High”.'}
-    plate="I"
+    caption={compact ? undefined : 'The Streamlit predictor scoring a high-risk profile (month-to-month, fibre optic, 3 months’ tenure): 87.7% churn probability, “High”.'}
+    plate={compact ? undefined : 'I'}
+    frame={frame}
+    sizes={compact ? cardSizes : undefined}
   />
 )}
 {id === 'telco-models' && <TelcoModels />}
 {id === 'telco-thresholds' && <TelcoThresholds />}
 {id === 'telco-confusion' && <TelcoConfusion />}
+{id === 'olist-dashboard' && (
+  <ImagePlate
+    src="olist-dashboard"
+    small={{ name: 'olist-dashboard-700', width: 700 }}
+    width={1400}
+    height={735}
+    alt="The live Olist dashboard: headline “what a late delivery costs”, on-time orders average 4.29 stars against 1.73 for 8+ days late, with filters for year, state and category and KPI tiles."
+    caption={compact ? undefined : 'The live dashboard (plain HTML and d3 on GitHub Pages). Its numbers are rebuilt from the raw Kaggle files by `build_web_data.py`.'}
+    plate={compact ? undefined : 'II'}
+    frame={frame}
+    sizes={compact ? cardSizes : undefined}
+  />
+)}
 {id === 'olist-reviews' && <OlistReviews compact={compact} />}
 {id === 'olist-states' && (
   <ImagePlate
@@ -56,8 +74,8 @@ const dpecSteps = [
     width={1200}
     height={715}
     alt="Bar chart of the 15 slowest Brazilian states by average delivery time; Roraima, Amapá and Amazonas take the longest."
-    caption="Original notebook figure: 15 slowest states by average delivery days, against a 12.6-day national average."
-    plate="II"
+    caption="Notebook figure: the 15 slowest states by average delivery days, against a 12.6-day national average. Slowest is not latest: Amapá and Amazonas still arrive on time about 96% of the time."
+    plate="III"
   />
 )}
 {id === 'olist-cohorts' && (
@@ -66,26 +84,88 @@ const dpecSteps = [
     width={1200}
     height={715}
     alt="Line chart of repeat-purchase rate by monthly acquisition cohort; flat between about 3 and 5 percent after early 2017."
-    caption="Original notebook figure: retention by acquisition cohort, flat at 3–5%. The early spike is a one-customer cohort."
-    plate="III"
+    caption="Notebook figure: retention by acquisition cohort, flat at 3–5%. The early spike is a one-customer cohort and is disregarded."
+    plate="IV"
   />
 )}
 {id === 'retail-pipeline' && (
-  <SurveyLog steps={retailSteps} label="Retail pipeline stages" caption="Raw data to ranked decision: every stage is rebuildable with one `make all`." />
+  <SurveyLog steps={retailSteps} label="Retail pipeline stages" caption="Raw data to ranked decision; every stage rebuilds with one `make all`." />
 )}
 {id === 'retail-tower' && (
   <ImagePlate
     src="retail-control-tower"
-    small="retail-control-tower-640"
+    small={{ name: 'retail-control-tower-640', width: 640 }}
     width={1200}
     height={785}
-    alt="Executive Control Tower reference render with KPI tiles, a contribution-by-category bar chart and ranked exception segments. Labelled synthetic data."
-    caption="Reference render of page 1, Executive Control Tower, produced by the pipeline from the synthetic sample. Numbers are illustrative."
-    plate="IV"
+    alt="Executive Control Tower reference render with KPI tiles, a contribution-by-category bar chart and ranked exception segments, labelled synthetic data."
+    caption={compact ? undefined : 'Page 1, Executive Control Tower, rendered by the pipeline from the synthetic sample. Numbers are illustrative.'}
+    plate={compact ? undefined : 'V'}
+    frame={frame}
+    sizes={compact ? cardSizes : undefined}
   />
 )}
 {id === 'retail-scale' && <RetailScale />}
-{id === 'dpec-pipeline' && (
-  <SurveyLog steps={dpecSteps} label="DPEC pipeline: built and planned stages" caption="What exists (solid) and what is planned (dashed). Source: `src/telemetry_core/ingestion/`." />
+{id === 'dpec-pitwall' && (
+  <ImagePlate
+    src="dpec-pitwall"
+    small={{ name: 'dpec-pitwall-700', width: 700 }}
+    width={1400}
+    height={646}
+    alt="The DPEC pit wall app on the 2025 Singapore Grand Prix: a race pace forecast for every car with its 80% range and the real result (19 of 20 inside), and each car's tyre strategy."
+    caption={compact ? undefined : 'The public copy of the app on the 2025 Singapore GP: each car’s forecast after qualifying, its 80% range and what really happened (19 of 20 inside), with the tyres each car used.'}
+    plate={compact ? undefined : 'VI'}
+    frame={frame}
+    sizes={compact ? cardSizes : undefined}
+  />
 )}
-{id === 'dpec-rules' && <DpecRules />}
+{id === 'dpec-pipeline' && (
+  <SurveyLog steps={dpecSteps} label="DPEC system stages" caption="What runs today, and the one part that is not live yet. Source: the project README and architecture notes." />
+)}
+{id === 'dpec-practice' && (
+  <ImagePlate
+    src="dpec-practice"
+    small={{ name: 'dpec-practice-640', width: 640 }}
+    width={1117}
+    height={588}
+    alt="Box plot of the per-weekend Spearman correlation with race pace for qualifying, all practice long runs and FP2 long runs, 2022 to 2026; qualifying is clearly highest."
+    caption="Which pre-race signal predicts race pace? Qualifying: median Spearman 0.80; practice long runs: 0.39 (86 dry weekends)."
+    plate="VII"
+  />
+)}
+{id === 'dpec-results' && <DpecResults />}
+{id === 'dpec-debrief' && (
+  <ImagePlate
+    src="dpec-debrief"
+    small={{ name: 'dpec-debrief-700', width: 700 }}
+    width={1400}
+    height={361}
+    alt="The debrief window: a qualifying gap split by kind of track section, and a race gap split into pace, tyre age and traffic with ranges."
+    caption="The debrief explains misses: here a qualifying gap split by kind of track section and a race gap split into pace, tyres and traffic."
+    plate="VIII"
+  />
+)}
+{id === 'scanner-scan' && (
+  <ImagePlate
+    src="scanner-scan"
+    small={{ name: 'scanner-scan-800', width: 800 }}
+    width={1600}
+    height={364}
+    alt="Five panels: the invoice photo with detected corners, Canny edges, the perspective-warped page, the adaptive threshold, and the Hough-deskewed scan."
+    caption={compact ? undefined : 'Stage 1 on the synthetic sample: photo and detected corners → edges → perspective warp → adaptive threshold → deskew (+2.94° of +3.00°).'}
+    plate={compact ? undefined : 'IX'}
+    frame={frame}
+    sizes={compact ? cardSizes : undefined}
+  />
+)}
+{id === 'scanner-match' && (
+  <ImagePlate
+    src="scanner-match"
+    small={{ name: 'scanner-match-640', width: 640 }}
+    width={1200}
+    height={900}
+    alt="Stage 2 of the scanner: keypoint matches between the photo and the blank template, and the photo registered onto the template."
+    caption="Stage 2: keypoint matching and RANSAC registration of the photo onto the blank template."
+    plate="X"
+  />
+)}
+{id === 'scanner-results' && <ScannerResults />}

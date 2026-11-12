@@ -2,82 +2,121 @@
 import SectionHead from './SectionHead.astro';
 import ExtLink from './ExtLink.astro';
 import Icon from './Icon.astro';
-import { social, email, resume } from '../content/site';
+import { social, email, resume, identity } from '../content/site';
 import { url } from '../lib/url';
 ---
-<section class="section contact" id="contact" aria-labelledby="contact-title">
-  <div class="wrap wrap--wide">
+<section class="section contact band-yale" id="contact" aria-labelledby="contact-title">
+  <div class="contact__topo" aria-hidden="true"></div>
+  <div class="wrap wrap--wide contact__inner">
     <SectionHead no="05" title="Contact" id="contact-title" />
     <div class="contact__grid">
-      <p class="contact__line" data-reveal="mask">
-        Email is the quickest way to reach me. Messages about roles, research, or a dataset worth a look are always welcome.
-      </p>
+      <div class="contact__lead">
+        <p class="contact__line" data-reveal="mask">
+          Hiring for data science or machine learning? Email is the quickest way to reach me.
+        </p>
+        <p class="contact__note">
+          {identity.location.city}, {identity.location.country} (KST, UTC+9). Open to roles in Korea and with international
+          English-speaking teams. There is no contact form, so nothing you send is stored by this site.
+        </p>
+      </div>
       <div class="contact__actions">
         <ExtLink href={social.email.href} class="contact__email">{email}</ExtLink>
-        <ul role="list" class="contact__list">
-          <li>
-            <ExtLink href={social.linkedin.href} class="link-arrow"><Icon name="linkedin" /> LinkedIn</ExtLink>
-          </li>
-          <li>
-            <ExtLink href={social.github.href} class="link-arrow"><Icon name="github" /> GitHub · {social.github.handle}</ExtLink>
-          </li>
-          <li>
-            <a class="link-arrow" href={url(resume.page)}><Icon name="doc" /> Résumé (web)</a>
-          </li>
+        <div class="contact__buttons">
+          <ExtLink href={social.email.href} class="btn btn--primary"><Icon name="mail" /> Email me</ExtLink>
           {resume.pdf && (
-            <li>
-              <a class="link-arrow" href={url(resume.pdf)} download><Icon name="download" /> Résumé (PDF)</a>
-            </li>
+            <a class="btn btn--ghost" href={url(resume.pdf)} download><Icon name="download" /> Download CV (PDF)</a>
           )}
+        </div>
+        <ul role="list" class="contact__list">
+          <li><ExtLink href={social.linkedin.href} class="link-arrow"><Icon name="linkedin" /> LinkedIn</ExtLink></li>
+          <li><ExtLink href={social.github.href} class="link-arrow"><Icon name="github" /> GitHub · {social.github.handle}</ExtLink></li>
+          <li><a class="link-arrow" href={url(resume.page)}><Icon name="doc" /> CV as a web page</a></li>
         </ul>
-        <p class="contact__note muted">Based in Busan, Korea (KST, UTC+9). No contact form, so nothing you send is stored by this site.</p>
       </div>
     </div>
   </div>
 </section>
 
 <style>
+  .contact {
+    overflow: hidden;
+  }
+  .contact__topo {
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    -webkit-mask: url('../assets/textures/topo.svg') 85% 40% / 1500px auto no-repeat;
+    mask: url('../assets/textures/topo.svg') 85% 40% / 1500px auto no-repeat;
+    opacity: 0.09;
+    pointer-events: none;
+  }
+  .contact__inner {
+    position: relative;
+  }
   .contact__grid {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: var(--space-6);
     align-items: start;
   }
-  .contact__line {
+  .contact__lead {
     grid-column: 1 / span 7;
+  }
+  .contact__line {
     font-family: var(--f-display);
-    font-size: clamp(1.8rem, 1.2rem + 2vw, 3.1rem);
+    font-size: clamp(1.8rem, 1.25rem + 2vw, 3.1rem);
     line-height: 1.12;
+    color: var(--ink);
+  }
+  .contact__note {
+    margin-top: var(--space-5);
+    max-width: 54ch;
+    color: var(--ink-2);
   }
   .contact__actions {
     grid-column: 8 / span 5;
   }
   .contact__actions :global(.contact__email) {
     display: inline-block;
-    /* mono, not the display serif: its '1' reads as 'l', and an email must be unambiguous */
-    font-family: var(--f-mono);
-    font-size: clamp(1rem, 0.85rem + 0.5vw, 1.3rem);
+    font-family: var(--f-mono); /* the display serif's "1" reads as "l": an email must be unambiguous */
+    font-size: clamp(0.98rem, 0.85rem + 0.45vw, 1.25rem);
     line-height: 1.3;
     overflow-wrap: anywhere;
-    text-decoration-color: var(--accent-deco);
+    color: var(--ink);
+    text-decoration-color: var(--accent);
     padding-block: 0.3rem;
+  }
+  .contact__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+  }
+  .contact__buttons :global(.btn--ghost) {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+  .contact__buttons :global(.btn--ghost:hover) {
+    background: var(--ink);
+    color: var(--c-yale-deep);
   }
   .contact__list {
     margin-top: var(--space-4);
     display: grid;
   }
-  .contact__list :global(.link-arrow svg) {
-    width: 1.05em;
-    height: 1.05em;
+  .contact__list :global(.link-arrow) {
+    color: var(--ink);
   }
-  .contact__note {
-    margin-top: var(--space-4);
-    font-size: var(--fs-small);
+  .contact__list :global(.link-arrow:hover) {
+    color: var(--accent);
   }
   @media (max-width: 52rem) {
-    .contact__line,
+    .contact__lead,
     .contact__actions {
       grid-column: 1 / -1;
+    }
+    .contact__buttons :global(.btn) {
+      flex: 1 1 12rem;
     }
   }
 </style>

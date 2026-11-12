@@ -8,15 +8,15 @@ import { notes } from '../content/site';
   <div class="notes__topo" aria-hidden="true"></div>
   <div class="wrap wrap--wide">
     <SectionHead no="02" title="Field notes" id="notes-title">
-      Short lessons taken from the projects, each with a link to the file it comes from. They are working notes, not
-      published articles.
+      Seven observations from the projects: what the data or the tests actually showed, each linked to the file it comes
+      from. Working notes, not published articles.
     </SectionHead>
     <ol class="notes__list" role="list">
       {notes.map((n, i) => (
         <li class="note" data-reveal="fade">
           <p class="note__meta mono">
-            <span>N.{String(i + 1).padStart(2, '0')}</span>
-            <span class="muted">{n.category}</span>
+            <span class="note__no">Obs. {String(i + 1).padStart(2, '0')}</span>{' '}
+            <span class="note__cat">{n.category}</span>
           </p>
           <h3 class="note__title">{n.title}</h3>
           <p class="note__text"><Rich text={n.text} /></p>
@@ -32,17 +32,23 @@ import { notes } from '../content/site';
 
 <style>
   .notes {
-    background: var(--surface);
-    border-block: 1px solid var(--rule-soft);
+    /* Dust Grey is darker than the page: small labels take deeper inks to keep 4.5:1 */
+    --warm-ink: #773b29;
+    --ink-3: #4a4f5a;
+    background: var(--surface-2);
     overflow: hidden;
+  }
+  :global(:root[data-theme='dark']) .notes {
+    --warm-ink: #e5a184;
+    --ink-3: #b9b0c4;
   }
   .notes__topo {
     position: absolute;
     inset: 0;
-    background: var(--rule);
-    -webkit-mask: url('/textures/topo.svg') 70% 20% / 1400px auto no-repeat;
-    mask: url('/textures/topo.svg') 70% 20% / 1400px auto no-repeat;
-    opacity: 0.35;
+    background: var(--rule-strong);
+    -webkit-mask: url('../assets/textures/topo.svg') 70% 20% / 1400px auto no-repeat;
+    mask: url('../assets/textures/topo.svg') 70% 20% / 1400px auto no-repeat;
+    opacity: 0.12;
     pointer-events: none;
   }
   .notes .wrap {
@@ -58,7 +64,14 @@ import { notes } from '../content/site';
     grid-template-rows: auto auto 1fr auto;
     gap: var(--space-3);
     padding: var(--space-5) 0 var(--space-6);
-    border-top: 1px solid var(--rule);
+    border-top: 1px solid var(--rule-strong);
+  }
+  .note__no {
+    color: var(--warm-ink);
+    font-weight: 500;
+  }
+  .note__cat {
+    color: var(--ink-3);
   }
   .note__meta {
     display: flex;
@@ -67,8 +80,8 @@ import { notes } from '../content/site';
     color: var(--ink-2);
   }
   .note__title {
-    font-size: clamp(1.45rem, 1.15rem + 0.8vw, 1.85rem);
-    line-height: 1.1;
+    font-size: clamp(1.4rem, 1.15rem + 0.7vw, 1.75rem);
+    line-height: 1.12;
   }
   .note__text {
     color: var(--ink-2);
@@ -77,9 +90,8 @@ import { notes } from '../content/site';
   .note__src :global(.note__link) {
     display: inline-block;
     padding-block: 0.4rem;
-    color: var(--ink-3);
-    text-transform: none;
-    letter-spacing: 0.02em;
+    color: var(--ink-2);
+    letter-spacing: 0.01em;
   }
   .note__src :global(.note__link:hover) {
     color: var(--accent);

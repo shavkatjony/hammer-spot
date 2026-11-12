@@ -13,7 +13,7 @@ function initTheme() {
     const dark = root.getAttribute('data-theme') === 'dark';
     btn.setAttribute('aria-pressed', String(dark));
     const meta = document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]');
-    meta.forEach((m) => (m.content = dark ? '#1d1915' : '#eae1cf'));
+    meta.forEach((m) => (m.content = dark ? '#1d1822' : '#eee6d9'));
   };
   btn.addEventListener('click', () => {
     const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
@@ -143,6 +143,23 @@ function initSunRail() {
   update();
 }
 
+/* ---------- hero horizon ---------- */
+// The desert's horizon sits just under the call-to-action row. Its offset is measured here and
+// exposed as --horizon-y, so the static scene follows the text at every size (the 3D scene
+// measures the same anchor itself).
+function trackHorizon() {
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  const anchor = hero?.querySelector<HTMLElement>('[data-horizon-anchor]');
+  if (!hero || !anchor) return;
+  const place = () => {
+    const y = anchor.getBoundingClientRect().bottom - hero.getBoundingClientRect().top;
+    hero.style.setProperty('--horizon-y', `${Math.round(y)}px`);
+  };
+  place();
+  if ('ResizeObserver' in window) new ResizeObserver(place).observe(hero);
+  else window.addEventListener('resize', place, { passive: true });
+}
+
 /* ---------- hero 3D scene (lazy, guarded) ---------- */
 function canUseWebGL(allowSoftware: boolean): boolean {
   try {
@@ -224,5 +241,6 @@ initNav();
 initReveals();
 initParallax();
 initSunRail();
+trackHorizon();
 initHeroScene();
 markIntroSeen();

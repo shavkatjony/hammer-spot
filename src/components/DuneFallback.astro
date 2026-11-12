@@ -1,8 +1,9 @@
 ---
 /**
  * Static, art-directed desert: the no-WebGL / reduced-data version of the hero scene.
- * Generated at build time (seeded), zero runtime cost. Lit windward faces, shadowed
- * lee faces, a distant mesa line, the sun, and a weathered monolith.
+ * Generated at build time (seeded), zero runtime cost: layered dune ridges and a low sun.
+ * Its far crest sits at y≈130 of 1600 units wide; Hero.astro uses that ratio (0.08125) to put the
+ * crest just under the call-to-action row.
  */
 const W = 1600;
 const H = 440;
@@ -47,22 +48,14 @@ function layer(l: Layer) {
     ridge += `C${f(c1x)} ${f(c1y)} ${f(c2x)} ${f(c2y)} ${f(p.x)} ${f(p.y)} `;
     prev = p;
   }
-  const fill = `${ridge}L${W + 260} ${H} L-220 ${H} Z`;
+  const fill = `${ridge}L${W + 260} ${H + 40} L-220 ${H + 40} Z`; // past the edge: no anti-aliased seam
   return { fill, ridge, cls: l.cls };
 }
 
 const built = layers.map(layer);
-// distant mesas sitting on the horizon
-const mesa = 'M-20 132 L180 132 L196 112 L330 110 L344 132 L700 132 L712 121 L790 120 L806 132 L1230 132 L1244 104 L1300 102 L1316 120 L1420 119 L1430 132 L1640 132 L1640 160 L-20 160 Z';
 ---
-<svg class="dunes" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
-  <circle class="dunes__sun" cx="200" cy="96" r="26" />
-  <path class="dunes__mesa" d={mesa} />
-  <g class="dunes__monolith">
-    <path d="M452 62 L463 60.5 L467 150 L455 151 Z" />
-    <path class="dunes__monolith-lit" d="M452 62 L456 61.6 L458.5 151 L455 151 Z" />
-    <path d="M478 136 L488 133 L493 148 L480 150 Z" />
-  </g>
+<svg class="dunes" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMin meet" aria-hidden="true" focusable="false">
+  <circle class="dunes__sun" cx="980" cy="134" r="30" />
   {built.map((b) => (
     <g class={`dunes__layer dunes__layer--${b.cls}`}>
       <path class="fill" d={b.fill} />
@@ -73,43 +66,27 @@ const mesa = 'M-20 132 L180 132 L196 112 L330 110 L344 132 L700 132 L712 121 L79
 
 <style>
   .dunes {
+    display: block;
     width: 100%;
-    height: 100%;
-    --d-sun: #f2e4c4;
-    --d-mesa: #d9c6a2;
-    --d-mono: #3a2e24;
-    --d-mono-lit: #6a5444;
-    --d-far: #d5c09a;
-    --d-mid: #ceb38a;
-    --d-near: #c6a477;
-    --d-front: #b88f61;
-    --d-ridge: #8a6a48;
-  }
-  :global(:root[data-theme='dark']) .dunes {
-    --d-sun: #c9a06a;
-    --d-mesa: #2e261f;
-    --d-mono: #0f0d0b;
-    --d-mono-lit: #3d3026;
-    --d-far: #362c23;
-    --d-mid: #403328;
-    --d-near: #4b3b2d;
-    --d-front: #574331;
-    --d-ridge: #7a5f45;
+    height: auto;
+    --d-sun: var(--c-gold);
+    --d-far: var(--dune-far);
+    --d-mid: var(--dune-mid);
+    --d-near: var(--dune-near);
+    --d-front: var(--dune-front);
+    --d-ridge: var(--dune-ridge);
   }
   .dunes__sun { fill: var(--d-sun); }
-  .dunes__mesa { fill: var(--d-mesa); }
-  .dunes__monolith path { fill: var(--d-mono); }
-  .dunes__monolith .dunes__monolith-lit { fill: var(--d-mono-lit); }
   .ridge {
     fill: none;
     stroke: var(--d-ridge);
-    stroke-width: 1.2;
+    stroke-width: 1.1;
     vector-effect: non-scaling-stroke;
-    opacity: 0.55;
+    opacity: 0.45;
   }
   .dunes__layer--far .fill { fill: var(--d-far); }
   .dunes__layer--mid .fill { fill: var(--d-mid); }
   .dunes__layer--near .fill { fill: var(--d-near); }
   .dunes__layer--front .fill { fill: var(--d-front); }
-  .dunes__layer--front .ridge { opacity: 0.8; }
+  .dunes__layer--front .ridge { opacity: 0.7; }
 </style>

@@ -3,28 +3,52 @@ import SectionHead from './SectionHead.astro';
 import ProjectFeature from './ProjectFeature.astro';
 import ExtLink from './ExtLink.astro';
 import Icon from './Icon.astro';
-import { projects, archive } from '../content/site';
+import { primaryProjects, secondaryProjects, archive } from '../content/site';
+import { url } from '../lib/url';
 ---
 <section class="work" id="work" aria-labelledby="work-title">
   <div class="wrap wrap--wide">
     <SectionHead no="01" title="Selected work" id="work-title">
-      Four projects, ordered by how much evidence each one carries. Every entry links to the code and a full case study,
-      including the parts that are unfinished or didn’t work.
+      Four main projects, each with a full case study: the problem, the data, how it was built, what the numbers say and
+      where it falls short. Every number links back to the code or report it comes from.
     </SectionHead>
   </div>
 
-  {projects.map((p, i) => <ProjectFeature project={p} flip={i % 2 === 1 && p.theme !== 'dark'} />)}
+  {primaryProjects.map((p, i) => <ProjectFeature project={p} flip={i % 2 === 1} />)}
+
+  <div class="wrap wrap--wide work__also-head">
+    <h3 class="work__also-title">Also in computer vision</h3>
+  </div>
+  {secondaryProjects.map((p) => <ProjectFeature project={p} />)}
 
   <div class="wrap wrap--wide">
     <div class="archive">
-      <h3 class="archive__title mono">Also in the archive</h3>
+      <h3 class="archive__title mono caps">More work</h3>
       <ul class="archive__list" role="list">
         {archive.map((a) => (
           <li class="archive__item" data-reveal="fade">
+            {a.image && (
+              <div class="archive__img">
+                <img
+                  src={url(`images/${a.image.src}.webp`)}
+                  srcset={`${url(`images/${a.image.src}-700.webp`)} 700w, ${url(`images/${a.image.src}.webp`)} ${a.image.width}w`}
+                  sizes="(max-width: 52rem) 100vw, 30rem"
+                  width={a.image.width}
+                  height={a.image.height}
+                  alt={a.image.alt}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            )}
             <p class="mono muted">{a.meta}</p>
             <h4 class="archive__name">{a.title}</h4>
             <p class="archive__text">{a.text}</p>
-            <ExtLink href={a.href} class="link-arrow">Repository <Icon name="arrow-ur" /></ExtLink>
+            {a.href ? (
+              <ExtLink href={a.href} class="link-arrow"><Icon name="github" /> Repository</ExtLink>
+            ) : (
+              <p class="archive__private mono"><Icon name="lock" /> {a.privateNote}</p>
+            )}
           </li>
         ))}
       </ul>
@@ -36,34 +60,71 @@ import { projects, archive } from '../content/site';
   .work {
     padding-top: var(--space-9);
   }
+  .work__also-head {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-4);
+  }
+  .work__also-title {
+    font-size: var(--fs-h3);
+    color: var(--ink-2);
+  }
   .archive {
     margin-top: var(--space-8);
     padding-top: var(--space-5);
-    border-top: 1px solid var(--rule);
+    padding-bottom: var(--space-8);
+    border-top: 1px solid var(--rule-strong);
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: var(--space-6);
   }
   .archive__title {
     grid-column: 1 / span 2;
-    color: var(--ink-3);
+    color: var(--warm-ink);
+    font-weight: 500;
   }
   .archive__list {
     grid-column: 3 / -1;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-6) var(--space-7);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6) var(--space-6);
+    align-items: start;
+  }
+  .archive__img {
+    margin-bottom: var(--space-4);
+    padding: 5px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+  }
+  .archive__img img {
+    width: 100%;
+    border-radius: 2px;
   }
   .archive__name {
-    font-family: var(--f-display);
-    font-weight: 400;
     font-size: var(--fs-h3);
-    line-height: 1.1;
+    line-height: 1.12;
     margin: var(--space-2) 0 var(--space-3);
   }
   .archive__text {
     color: var(--ink-2);
+    font-size: 0.98rem;
     max-width: 52ch;
+  }
+  .archive__private {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 44px;
+    color: var(--ink-3);
+  }
+  .archive__private :global(svg) {
+    width: 0.95rem;
+    height: 0.95rem;
+  }
+  @media (max-width: 72rem) {
+    .archive__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
   @media (max-width: 52rem) {
     .archive__title,

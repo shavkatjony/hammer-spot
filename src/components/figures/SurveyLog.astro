@@ -8,6 +8,7 @@ interface Step {
   title: string;
   detail: string;
   state?: 'built' | 'planned';
+  tag?: string; // overrides the Built / Planned label
 }
 interface Props {
   steps: Step[];
@@ -23,10 +24,10 @@ const { steps, caption, label } = Astro.props;
         <span class="log__node" aria-hidden="true"></span>
         <span class="log__no mono">{String(i + 1).padStart(2, '0')}</span>
         <span class="log__body">
-          <span class="log__title"><Rich text={s.title} /></span>
+          <span class="log__title"><Rich text={s.title} /></span>{' '}
           <span class="log__detail"><Rich text={s.detail} /></span>
         </span>
-        <span class="log__state mono">{s.state === 'planned' ? 'Planned' : 'Built'}</span>
+        <span class="log__state mono">{s.tag ?? (s.state === 'planned' ? 'Planned' : 'Built')}</span>
       </li>
     ))}
   </ol>
@@ -77,10 +78,10 @@ const { steps, caption, label } = Astro.props;
     margin-top: 0.35rem;
     border-radius: 50%;
     background: var(--ink);
-    box-shadow: 0 0 0 3px var(--bg);
+    box-shadow: 0 0 0 3px var(--tone-bg, var(--bg));
   }
   .log__step[data-state='planned'] .log__node {
-    background: var(--bg);
+    background: var(--tone-bg, var(--bg));
     border: 1px dashed var(--ink-3);
   }
   .log__no {
@@ -105,6 +106,7 @@ const { steps, caption, label } = Astro.props;
   }
   .log__state {
     color: var(--ink-3);
+    text-align: right;
     padding-top: 0.2rem;
   }
   .log__step[data-state='built'] .log__state {

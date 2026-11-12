@@ -2,7 +2,7 @@
 import { chromium } from 'playwright';
 const out = process.argv[2];
 const base = process.env.BASE_URL || 'http://127.0.0.1:4321/';
-const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+const browser = await chromium.launch({ executablePath: process.env.PW_CHROMIUM || undefined, args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const shots = [
   { name: 'desk-hero-3d', url: '?3d=force', vw: 1440, vh: 900, wait: 4500 },
   { name: 'desk-hero-static', url: '?static', vw: 1440, vh: 900, wait: 2500 },

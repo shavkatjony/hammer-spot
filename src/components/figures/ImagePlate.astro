@@ -1,26 +1,29 @@
 ---
-/** A real project image presented as a numbered archival plate. Lazy, sized, no CLS. */
+/** A real project image presented as a numbered plate. Lazy, sized, no layout shift. */
 import { url } from '../../lib/url';
+import Rich from '../Rich.astro';
 interface Props {
   src: string; // file in /public/images, without extension
-  small?: string | null; // optional -640 variant name
+  small?: { name: string; width: number } | null;
   width: number;
   height: number;
   alt: string;
-  caption: string;
+  caption?: string;
   plate?: string;
   eager?: boolean;
+  frame?: 'paper' | 'dark' | 'none';
+  sizes?: string;
 }
-const { src, small = null, width, height, alt, caption, plate, eager = false } = Astro.props;
+const { src, small = null, width, height, alt, caption, plate, eager = false, frame = 'paper', sizes = '(max-width: 52rem) 100vw, 48rem' } = Astro.props;
 const full = url(`images/${src}.webp`);
-const srcset = small ? `${url(`images/${small}.webp`)} 640w, ${full} ${width}w` : undefined;
+const srcset = small ? `${url(`images/${small.name}.webp`)} ${small.width}w, ${full} ${width}w` : undefined;
 ---
 <figure class="plate">
-  <div class="plate__frame" data-reveal="image">
+  <div class:list={['plate__frame', `plate__frame--${frame}`]} data-reveal="image">
     <img
       src={full}
       srcset={srcset}
-      sizes="(max-width: 52rem) 100vw, 46rem"
+      sizes={sizes}
       width={width}
       height={height}
       alt={alt}
@@ -28,21 +31,34 @@ const srcset = small ? `${url(`images/${small}.webp`)} 640w, ${full} ${width}w` 
       decoding="async"
     />
   </div>
-  <figcaption class="plate__cap">
-    {plate && <span class="mono">Plate {plate}</span>}
-    <span>{caption}</span>
-  </figcaption>
+  {(caption || plate) && (
+    <figcaption class="plate__cap">
+      {plate && <span class="mono plate__no">Plate {plate}</span>}
+      {caption && <span><Rich text={caption} /></span>}
+    </figcaption>
+  )}
 </figure>
 
 <style>
   .plate__frame {
     overflow: hidden;
+    border-radius: var(--radius);
+  }
+  .plate__frame--paper {
     border: 1px solid var(--rule);
     background: var(--surface);
     padding: 6px;
+    box-shadow: var(--shadow-plate);
+  }
+  .plate__frame--dark {
+    border: 1px solid var(--rule);
+    background: rgb(0 0 0 / 0.2);
+    padding: 6px;
+    box-shadow: var(--shadow-plate);
   }
   .plate__frame img {
     width: 100%;
+    border-radius: 2px;
   }
   .plate__cap {
     display: flex;
@@ -51,8 +67,10 @@ const srcset = small ? `${url(`images/${small}.webp`)} 640w, ${full} ${width}w` 
     margin-top: var(--space-3);
     font-size: var(--fs-small);
     color: var(--ink-3);
+    max-width: 68ch;
   }
-  .plate__cap .mono {
-    color: var(--ink-2);
+  .plate__no {
+    color: var(--warm-ink);
+    font-weight: 500;
   }
 </style>

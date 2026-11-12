@@ -1,8 +1,9 @@
-# SHAVKATJON: personal site of Shavkatjon Yuldashev
+# Shavkatjon Yuldashev: professional portfolio
 
-A static portfolio for an early-career data scientist. It has an editorial, tactile "desert archive" design, a progressive-enhancement three.js hero, and case studies built only from verifiable project evidence.
+The recruiter-facing portfolio of a data scientist building production-grade ML systems. It has an editorial "desert archive" design in light and dark, a progressive-enhancement three.js hero, and five case studies built only from verifiable project evidence.
 
-- **Stack:** Astro 7 (static output), three.js (lazy, hero only), self-hosted fonts (Instrument Serif, IBM Plex Sans, IBM Plex Mono). No backend, no analytics, no cookies.
+- **Stack:** Astro 7 (static output), three.js (lazy, hero only), self-hosted fonts (Newsreader, IBM Plex Sans, IBM Plex Mono). No backend, no analytics, no cookies.
+- **Scope:** professional work only. Personal notes, study material (Korean/TOPIK, general Python/SQL learning), productivity notes, hobby collections and the command-center / learning-platform repositories stay out of this site.
 - **Content source of truth:** [`src/content/site.ts`](src/content/site.ts). Every claim on the site comes from there and is traceable in [`docs/CONTENT_INVENTORY.md`](docs/CONTENT_INVENTORY.md).
 - **Reports:** [Security review](docs/SECURITY.md) · [Testing record](docs/TESTING.md) · [Content inventory](docs/CONTENT_INVENTORY.md)
 
@@ -27,7 +28,7 @@ Useful query flags on any page:
 
 ### Verification scripts
 
-These run against the preview server (`npm run preview`, which runs in the background in Astro 7). Browser checks use Playwright's Chromium (`npx playwright install chromium` if it isn't installed).
+These run against the preview server (`npm run preview`, which runs in the background in Astro 7). Browser checks use Playwright's Chromium (`npx playwright install chromium` if it isn't installed). To use a Chromium that is already installed instead, point `PW_CHROMIUM` at its binary, e.g. `PW_CHROMIUM=/opt/pw-browsers/chromium npm run verify`.
 
 ```bash
 npm run verify         # static checks + axe WCAG 2.2 AA + console + theme/menu/reduced-motion/no-JS/keyboard
@@ -42,10 +43,11 @@ Run `npm run assets` and rebuild after changing content, so the PDF résumé and
 
 Everything personal lives in `src/content/site.ts`:
 
-- `identity`: name, statement, location, availability (`availability.open`), and `portrait` (null until you add one).
+- `identity`: name, positioning line, statement, location and availability (`availability.open`).
 - `social`: the only place external profile URLs are defined.
-- `projects`: the four featured projects and their case studies (8 sections each). Text can contain `` `code` `` in backticks; it's rendered as `<code>`, never as HTML.
-- `archive`, `notes`, `toolkit`, `education`, `experience`, `languages`.
+- `projects`: four primary projects (Telco churn, Olist SQL, Retail BI, DPEC Formula 1, marked *In development*) and one secondary computer-vision project. Each case study has six sections (problem; objectives and questions; data and methodology; technical implementation; findings and verified results; limitations and lessons) plus the repository and demo links. Text can contain `` `code` `` in backticks; it's rendered as `<code>`, never as HTML.
+- `archive` (smaller work, including Lotte World), `notes` (seven field notes), `toolkit` (demonstrated / learning / open source studied, each demonstrated tool linked to the projects that show it), `education`, `experience`, `languages`, `targetRoles`, `interests`.
+- A private repository is shown with `repoPublic: false` and a `privateNote`; no code link is rendered for it.
 
 Rules the content follows:
 
@@ -53,7 +55,7 @@ Rules the content follows:
 2. Entries with `confirm: true` are self-reported or unresolved. Check them before each deploy.
 3. External URLs go through `safeHref()`; only `https:`, `http:` and `mailto:` are accepted, and the build fails otherwise.
 
-**Adding a portrait:** put an optimised image (e.g. `public/images/portrait.webp`, about 600×750, under 80 KB) in place and set `identity.portrait = { src: 'images/portrait.webp', alt: 'Portrait of Shavkatjon Yuldashev', width: 600, height: 750 }`. It appears in the hero field card.
+**Adding your portrait (one step):** save a photo as `src/assets/portrait.jpg` (`.jpeg`, `.png`, `.webp` and `.avif` also work) and rebuild. The hero picks it up automatically, generates AVIF and WebP at 320–960 px, and replaces the "SY" monogram. For a strong first impression use a 4:5 portrait, at least 1200 px tall, evenly lit, head and shoulders, looking at the camera or slightly towards the text (to the left). Then run `npm run assets` and rebuild so the share image shows it too.
 
 ## Project structure
 
@@ -67,17 +69,18 @@ src/
   scripts/site.ts        theme toggle, nav, reveals, sun rail, guarded lazy-load of the 3D scene
   scripts/hero-scene.ts  the three.js desert diorama
   styles/                design tokens + global styles and the motion system
-public/                  images (WebP), textures (SVG), favicon, CV PDF, og.jpg
+src/assets/              portrait slot, contour and grain textures (fingerprinted by Vite, so any base path works)
+public/                  images (WebP), favicon, CV PDF, og.jpg
 scripts/                 verification, screenshots, asset generation, contour generator
 deploy/_headers          optional HTTP headers for Cloudflare Pages / Netlify
 ```
 
 ## Design system (summary)
 
-- **Colour:** warm mineral neutrals defined as tokens in `src/styles/tokens.css`. Every text token passes WCAG AA (≥ 4.5:1) on every surface it's used on. Dark mode is a separate, deliberately chosen palette. There are no gradients, no glass effects and no blue identity.
-- **Type:** Instrument Serif for display, IBM Plex Sans for body, IBM Plex Mono for metadata. Email addresses use mono, because the display serif's "1" reads as "l".
+- **Colour:** every colour is a token in `src/styles/tokens.css`, each with a job. Pumice and Dust Grey are the paper; Hickory and Dark Coffee the ink and the deep band; Yale Blue the accent, links and buttons; Goldenrod the sun, the open-to-work chip and accents on dark; Vintage Brick Dust, Dusty Willow, Cool Steel and Chalk Blue tint the project sections (brick, willow, steel) and the secondary text; Violet Haze (`#6b5e78`, chosen here because no hex was given) gives the dark theme its depth. Light mode is warm archival paper in desert sunlight; dark mode is deep desert shadow with earth tones, violet and a controlled blue. Every text token passes WCAG AA (≥ 4.5:1) on every surface it's used on, including where a contour line of the band texture crosses small text.
+- **Type:** Newsreader (optical-size variable, preloaded) for headlines, IBM Plex Sans for body, IBM Plex Mono for labels and metadata. No thin weights and no oversized decorative lettering; the name is set at a readable display size. Email addresses use mono, so "0411" can't be misread.
 - **Motion tokens:** 160 ms feedback, 560 ms reveals, 1100 ms cinematic. Clip-path and mask reveals, drawn rules, staggered metadata only. `prefers-reduced-motion` disables all of it, and the 3D scene renders a single still frame.
-- **3D:** procedural wind-shaped dunes, a weathered monolith, low raking light with shadows, and sparse dust (capable desktops only). The scene renders on demand, pauses off-screen or when the tab is hidden, adapts quality to the device, skips software GPUs, and falls back to the static SVG scene on any failure.
+- **3D:** procedural wind-shaped dunes, a low Goldenrod sun, raking light with shadows, and sparse dust (capable desktops only). The horizon is measured from the page, so the dunes always sit just under the call-to-action row and the sun in the gap between the text and the portrait; the static SVG desert uses the same measurement (`--horizon-y`). The scene renders on demand, pauses off-screen or when the tab is hidden, adapts quality to the device, skips software GPUs, and falls back to the static scene on any failure.
 - **Charts:** colour-blind-safe palettes validated in both themes, with direct labels, a data-table alternative and keyboard-readable values.
 
 ## Deployment (GitHub Pages)

@@ -1,0 +1,55 @@
+---
+/** Held-out results, 2025–26 (37 weekends, 726 driver-races per checkpoint).
+ *  Source: F1-pace-intelligence README table, verified in reports/numbers-check.md (✓ all 12 values). */
+const rows = [
+  { m: 'Shared model (one regression for every track and year)', p: 0.648, q: 0.548, ours: true },
+  { m: 'Team form (the team’s recent races)', p: 0.674, q: 0.674 },
+  { m: 'Last race', p: 0.744, q: 0.744 },
+  { m: 'A separate model for each year', p: 0.883, q: 0.589 },
+  { m: 'The signal as is (long runs / qualifying gap)', p: 1.071, q: 0.594 },
+  { m: 'No signal (every car equal)', p: 1.047, q: 1.047 },
+];
+const best = (k: 'p' | 'q') => Math.min(...rows.map((r) => r[k]));
+---
+<figure class="dr">
+  <div class="dr__scroll" tabindex="0" role="region" aria-label="Forecaster comparison on held-out races">
+    <table class="dr__table">
+      <caption class="visually-hidden">Mean absolute race-pace error, % of a lap time, 2025–26 held-out weekends</caption>
+      <thead>
+        <tr><th scope="col">Forecaster</th><th scope="col">After practice</th><th scope="col">After qualifying</th></tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr class:list={{ 'is-ours': r.ours }}>
+            <th scope="row">{r.m}{r.ours && <span class="dr__tag mono">DPEC</span>}</th>
+            <td class:list={{ 'is-best': r.p === best('p') }}>{r.p.toFixed(3)}%</td>
+            <td class:list={{ 'is-best': r.q === best('q') }}>{r.q.toFixed(3)}%</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <figcaption class="dr__cap">
+    <span class="mono">Table.</span> Mean absolute error of race pace (% of a lap time; lower is better) on 37 race weekends of
+    2025–26 that played no part in any modelling choice. Best per column in bold. Source: the project README, verified in
+    <code>reports/numbers-check.md</code>.
+  </figcaption>
+</figure>
+
+<style>
+  .dr__scroll { overflow-x: auto; }
+  .dr__table { width: 100%; min-width: 32rem; font-size: var(--fs-small); }
+  .dr__table th, .dr__table td {
+    text-align: left; padding: 0.65rem 1rem 0.65rem 0; border-bottom: 1px solid var(--rule); font-weight: 400;
+  }
+  .dr__table thead th {
+    font-family: var(--f-mono); font-size: var(--fs-micro); letter-spacing: var(--tracking-mono);
+    text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--rule-strong);
+  }
+  .dr__table td { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+  .dr__table td.is-best { font-weight: 600; color: var(--ink); }
+  .is-ours th, .is-ours td { background: var(--surface); }
+  .is-ours th { border-left: 3px solid var(--series-1); padding-left: 0.65rem; }
+  .dr__tag { display: inline-block; margin-left: 0.6rem; padding: 0.05rem 0.4rem; border: 1px solid var(--accent); color: var(--accent); }
+  .dr__cap { margin-top: var(--space-4); font-size: var(--fs-small); color: var(--ink-3); max-width: 66ch; }
+</style>

@@ -1,7 +1,9 @@
 ---
 import SectionHead from './SectionHead.astro';
-import { identity, education, experience, languages, seeking } from '../content/site';
+import { identity, education, experience, languages, targetRoles, interests, projects, resume } from '../content/site';
 import { url } from '../lib/url';
+const edu = education[0];
+const job = experience[0];
 ---
 <section class="section about" id="about" aria-labelledby="about-title">
   <div class="wrap wrap--wide">
@@ -9,60 +11,77 @@ import { url } from '../lib/url';
     <div class="about__grid">
       <div class="about__prose prose" data-reveal="fade">
         <p class="about__lead">
-          I’m {identity.name}, SHAVKATJON online. I studied Integrated Business Management at Dong-A University in Busan,
+          I’m {identity.name}, a data scientist in Busan. I studied Integrated Business Management at Dong-A University,
           where econometrics and business statistics pulled me toward data.
         </p>
         <p>
-          Since then I’ve been building projects end to end: cleaning messy tables, choosing a metric that matches the cost
-          of being wrong, writing SQL that answers one specific question, and shipping something another person can run. I
-          use AI tools for scaffolding and review. The modelling decisions and the evaluation are my own.
+          Since then I’ve built projects end to end, to the standard I’d expect in production: tests and CI, data-quality
+          gates, models chosen against baselines, and evaluation on data the model never saw. My largest project, DPEC,
+          forecasts Formula 1 race pace from public timing data; its README traces every number to its source.
         </p>
         <p>
-          I’m early in my career, and I’d rather show that than hide it. What I can offer is the work itself: code, tests,
-          write-ups, and the limits of each project stated plainly. Outside of that, Formula 1, which is how DPEC started.
+          I’m at the start of my career, so I’d rather show than tell: the code, the tests, the write-ups and the limits
+          of each project, stated plainly.
         </p>
       </div>
 
-      <div class="about__facts">
-        <section class="fact" aria-labelledby="f-edu">
-          <h3 id="f-edu" class="fact__head mono">Education</h3>
-          {education.map((e) => (
-            <div class="fact__row">
-              <p class="fact__main">{e.degree}</p>
-              <p>{e.school}, {e.place}</p>
-              <p class="muted">{e.year} · {e.focus}</p>
-            </div>
-          ))}
-        </section>
-        <section class="fact" aria-labelledby="f-exp">
-          <h3 id="f-exp" class="fact__head mono">Experience</h3>
-          {experience.map((x) => (
-            <div class="fact__row">
-              <p class="fact__main">{x.role}, {x.org}</p>
-              <p class="muted">{x.period} · {x.place}</p>
-              <ul class="fact__points">
-                {x.points.map((pt) => <li>{pt}</li>)}
-              </ul>
-            </div>
-          ))}
-        </section>
-        <section class="fact" aria-labelledby="f-lang">
-          <h3 id="f-lang" class="fact__head mono">Languages</h3>
-          <ul role="list" class="fact__langs">
-            {languages.map((l) => (
-              <li><span>{l.name}</span> <span class="muted">{l.level}</span></li>
-            ))}
-          </ul>
-        </section>
-        <section class="fact" aria-labelledby="f-seek">
-          <h3 id="f-seek" class="fact__head mono">Looking for</h3>
-          <ul class="fact__points">
-            {seeking.map((s) => <li>{s}</li>)}
-          </ul>
-          <p class="muted fact__small">{identity.availability.detail}</p>
-          <a class="link-arrow" href={url('resume/')}>Full résumé →</a>
-        </section>
+      <div class="about__record">
+        <h3 class="about__h mono caps">Record</h3>
+        <ol class="record" role="list">
+          <li class="record__item">
+            <p class="record__meta"><span class="record__type">Employment</span><span>{job.period}</span></p>
+            <p class="record__title">{job.role}, {job.org}</p>
+            <p class="record__sub">{job.place}</p>
+            <ul class="record__points">
+              {job.points.map((pt) => <li>{pt}</li>)}
+            </ul>
+          </li>
+          <li class="record__item">
+            <p class="record__meta"><span class="record__type">Education</span><span>{edu.year}</span></p>
+            <p class="record__title">{edu.degree}</p>
+            <p class="record__sub">{edu.school}, {edu.place} · {edu.focus}</p>
+          </li>
+          <li class="record__item">
+            <p class="record__meta"><span class="record__type">Independent projects</span><span>2026</span></p>
+            <p class="record__title">Five projects with case studies</p>
+            <p class="record__links">
+              {projects.map((p) => (
+                <a href={url(`work/${p.slug}/`)}><span class="mono">{p.index}</span> {p.short}</a>
+              ))}
+            </p>
+          </li>
+          <li class="record__item">
+            <p class="record__meta"><span class="record__type">Academic project</span><span>2023</span></p>
+            <p class="record__title">Lotte World Busan visitor review mining</p>
+            <p class="record__sub">Dong-A University team project · KH Coder, descriptive statistics</p>
+          </li>
+        </ol>
       </div>
+    </div>
+
+    <div class="about__facts">
+      <section class="fact" aria-labelledby="f-roles">
+        <h3 id="f-roles" class="about__h mono caps">Looking for</h3>
+        <ul class="fact__list">
+          {targetRoles.map((r) => <li>{r}</li>)}
+        </ul>
+        <p class="fact__note">{identity.availability.detail}</p>
+        <a class="link-arrow" href={resume.pdf ? url(resume.pdf) : url(resume.page)}>Download the CV (PDF) →</a>
+      </section>
+      <section class="fact" aria-labelledby="f-int">
+        <h3 id="f-int" class="about__h mono caps">Professional interests</h3>
+        <ul class="fact__list">
+          {interests.map((r) => <li>{r}</li>)}
+        </ul>
+      </section>
+      <section class="fact" aria-labelledby="f-lang">
+        <h3 id="f-lang" class="about__h mono caps">Languages</h3>
+        <ul role="list" class="fact__langs">
+          {languages.map((l) => (
+            <li><span>{l.name}</span> <span class="muted">{l.level}</span></li>
+          ))}
+        </ul>
+      </section>
     </div>
   </div>
 </section>
@@ -80,60 +99,129 @@ import { url } from '../lib/url';
   .about__lead {
     font-family: var(--f-display);
     font-size: clamp(1.5rem, 1.15rem + 1.1vw, 2.15rem);
-    line-height: 1.2;
+    line-height: 1.22;
     color: var(--ink);
   }
-  .about__note {
-    margin-top: var(--space-6);
-  }
-  .about__facts {
+  .about__record {
     grid-column: 8 / span 5;
-    display: grid;
-    gap: var(--space-6);
-    align-content: start;
   }
-  .fact__head {
-    color: var(--ink-3);
+  .about__h {
+    color: var(--warm-ink);
+    font-weight: 500;
     padding-bottom: var(--space-2);
-    border-bottom: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule-strong);
     margin-bottom: var(--space-3);
   }
-  .fact__row + .fact__row {
-    margin-top: var(--space-4);
+  .record__item {
+    position: relative;
+    padding: var(--space-3) 0 var(--space-4) var(--space-5);
+    border-left: 1px solid var(--rule-strong);
   }
-  .fact__row p,
-  .fact__small {
-    font-size: var(--fs-small);
+  .record__item::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 1.05rem;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--accent);
   }
-  .fact__main {
+  .record__meta {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    font-family: var(--f-mono);
+    font-size: var(--fs-micro);
+    color: var(--ink-3);
+  }
+  .record__type {
+    color: var(--accent);
     font-weight: 500;
-    font-size: var(--fs-body) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
-  .fact__points {
+  .record__title {
+    margin-top: var(--space-1);
+    font-weight: 600;
+  }
+  .record__sub {
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+  .record__points {
     margin-top: var(--space-2);
     padding-left: 1.1em;
     font-size: var(--fs-small);
     color: var(--ink-2);
   }
-  .fact__points li + li {
+  .record__points li + li {
     margin-top: var(--space-1);
   }
-  .fact__points li::marker {
-    color: var(--accent-deco);
+  .record__points li::marker {
+    color: var(--warm-ink);
+  }
+  .record__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.9rem;
+    margin-top: var(--space-1);
+    font-size: var(--fs-small);
+  }
+  .record__links a {
+    display: inline-flex;
+    gap: 0.3rem;
+    min-height: 28px;
+    align-items: center;
+  }
+  .record__links .mono {
+    color: var(--warm-ink);
+  }
+
+  .about__facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6);
+    margin-top: var(--space-8);
+  }
+  .fact__list {
+    padding-left: 1.1em;
+    color: var(--ink-2);
+  }
+  .fact__list li + li {
+    margin-top: var(--space-1);
+  }
+  .fact__list li::marker {
+    color: var(--warm-ink);
+  }
+  .fact__note {
+    margin-top: var(--space-3);
+    font-size: var(--fs-small);
+    color: var(--ink-3);
   }
   .fact__langs {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-2) var(--space-4);
-    font-size: var(--fs-small);
+    gap: var(--space-2);
   }
-  .fact__small {
-    margin-top: var(--space-3);
+  .fact__langs li {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: var(--space-1);
   }
-  @media (max-width: 52rem) {
+  @media (max-width: 64rem) {
     .about__prose,
-    .about__facts {
+    .about__record {
       grid-column: 1 / -1;
+    }
+    .about__facts {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 40rem) {
+    .about__facts {
+      grid-template-columns: 1fr;
     }
   }
 </style>

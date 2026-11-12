@@ -5,66 +5,81 @@ import ExtLink from '../components/ExtLink.astro';
 import { identity, social, email, education, experience, languages, projects, resume } from '../content/site';
 import { url } from '../lib/url';
 const site = new URL(url(), Astro.site).href.replace(/^https?:\/\//, '').replace(/\/$/, '');
+const strip = (t: string) => t.replaceAll('`', '');
+const repoOf = (p: (typeof projects)[number]) => p.links.find((l) => l.kind === 'repo');
 const skills = [
-  { k: 'Languages', v: 'Python, SQL (SQLite, DuckDB)' },
-  { k: 'Data & ML', v: 'pandas, NumPy, scikit-learn (pipelines, stratified CV), statsmodels (OLS, logit)' },
+  { k: 'Programming', v: 'Python (pandas, NumPy), SQL (DuckDB, SQLite)' },
+  { k: 'ML & statistics', v: 'scikit-learn pipelines, stratified CV, statsmodels (WLS, OLS, logit), walk-forward backtesting, split-conformal ranges, Monte Carlo simulation' },
   { k: 'Data engineering', v: 'Parquet/PyArrow, DuckDB star schemas, data-quality gates, idempotent ingestion' },
-  { k: 'Practice', v: 'pytest, ruff, uv, GitHub Actions CI, Makefiles, decision records' },
-  { k: 'Delivery', v: 'Streamlit, matplotlib, self-contained HTML dashboards' },
-  { k: 'Learning', v: 'Tableau, FastAPI, dbt, MLflow, R (coursework)' },
+  { k: 'Serving & practice', v: 'FastAPI, Docker, Streamlit, pytest, Ruff, GitHub Actions CI' },
+  { k: 'Computer vision', v: 'OpenCV (contours, homography, ORB/SIFT + RANSAC), Tesseract OCR, PyTorch (MNIST)' },
+  { k: 'Applied AI', v: 'LLM tool use with the Claude API and Ollama, graded by an automatic exam' },
+  { k: 'Learning', v: 'Probability calibration, CNNs, Tableau, R (coursework)' },
 ];
 ---
-<Base title="Résumé · Shavkatjon Yuldashev" description="Résumé of Shavkatjon Yuldashev, early-career data scientist in Busan, South Korea.">
+<Base title="CV · Shavkatjon Yuldashev · Data Scientist" description="One-page CV of Shavkatjon Yuldashev, data scientist in Busan, South Korea: machine learning, forecasting, SQL and applied AI.">
   <div class="cv-tools wrap no-print">
     <a class="link-arrow" href={url()}><Icon name="arrow-left" /> Back to site</a>
     <div class="cv-tools__right">
-      <button class="action" type="button" data-print>Print or save as PDF</button>
+      <button class="btn btn--ghost" type="button" data-print>Print</button>
       {resume.pdf && (
-        <a class="action" href={url(resume.pdf)} download><Icon name="download" /> Download PDF</a>
+        <a class="btn btn--primary" href={url(resume.pdf)} download><Icon name="download" /> Download PDF</a>
       )}
     </div>
   </div>
 
   <article class="cv wrap" aria-labelledby="cv-name">
     <header class="cv__head">
-      <h1 id="cv-name" class="cv__name">{identity.name}</h1>
-      <p class="cv__role">Data Science · Machine Learning · Applied AI · early career</p>
+      <div>
+        <h1 id="cv-name" class="cv__name">{identity.name}</h1>
+        <p class="cv__role">{[identity.title, ...identity.roles.filter((r) => r !== 'Data Science')].join(' · ')}</p>
+      </div>
       <p class="cv__contact">
         <span>{identity.location.city}, {identity.location.country}</span>
         <ExtLink href={social.email.href}>{email}</ExtLink>
         <ExtLink href={social.github.href}>github.com/{social.github.handle}</ExtLink>
-        <ExtLink href={social.linkedin.href}>LinkedIn</ExtLink>
+        <ExtLink href={social.linkedin.href}>{social.linkedin.href.replace(/^https:\/\/(www\.)?/, '').replace(/\/$/, '')}</ExtLink>
         <a href={url()}>{site}</a>
       </p>
     </header>
 
     <section class="cv__sec" aria-labelledby="cv-sum">
-      <h2 id="cv-sum" class="cv__h">Summary</h2>
+      <h2 id="cv-sum" class="cv__h">Profile</h2>
       <p>
-        Early-career data scientist with a business-statistics background. I build projects end to end, from raw data
-        and SQL through evaluated models to something a person can use, and I report results against baselines, with
-        their limits stated. Open to junior, internship and research roles in Korea and with international,
-        English-speaking teams.
+        Data scientist building ML systems to a production standard: tested pipelines, models chosen against
+        baselines, evaluation on data the model never saw, and services people can use. Background in econometrics and
+        business statistics. Open to {identity.availability.detail.charAt(0).toLowerCase() + identity.availability.detail.slice(1)}
       </p>
     </section>
 
     <section class="cv__sec" aria-labelledby="cv-proj">
       <h2 id="cv-proj" class="cv__h">Selected projects</h2>
-      {projects.map((p) => (
-        <div class="cv__item">
-          <p class="cv__item-head">
-            <strong>{p.title}</strong>
-            <span class="cv__meta">{p.kicker} · {p.year} · {p.status}</span>
-          </p>
-          <ul>
-            <li>{p.contribution}</li>
-            <li>{p.result}</li>
-          </ul>
-          <p class="cv__stack">{p.stack.join(' · ')} · <a href={p.links[0].href}>{p.links[0].href.replace('https://', '')}</a></p>
-        </div>
-      ))}
+      {projects.map((p) => {
+        const repo = repoOf(p);
+        return (
+          <div class="cv__item">
+            <p class="cv__item-head">
+              <strong>{p.title}</strong>
+              <span class="cv__meta">{p.kicker} · {p.year} · {p.status}</span>
+            </p>
+            <ul>
+              <li>{strip(p.contribution)}</li>
+              <li>{strip(p.result)}</li>
+            </ul>
+            <p class="cv__stack">
+              {p.stack.join(' · ')} ·{' '}
+              {repo ? (
+                <a href={repo.href}>{repo.href.replace('https://', '')}</a>
+              ) : (
+                <span>{p.privateNote ?? 'Private repository'}</span>
+              )}
+            </p>
+          </div>
+        );
+      })}
     </section>
 
+    <div class="cv__pair">
     <section class="cv__sec" aria-labelledby="cv-exp">
       <h2 id="cv-exp" class="cv__h">Experience</h2>
       {experience.map((x) => (
@@ -80,12 +95,13 @@ const skills = [
       {education.map((e) => (
         <div class="cv__item">
           <p class="cv__item-head"><strong>{e.degree}</strong><span class="cv__meta">{e.school}, {e.place} · {e.year}</span></p>
-          <p>Focus: {e.focus}.</p>
+          <p class="cv__sub">Focus: {e.focus}.</p>
         </div>
       ))}
     </section>
+    </div>
 
-    <section class="cv__sec cv__two" aria-labelledby="cv-skills">
+    <section class="cv__sec" aria-labelledby="cv-skills">
       <h2 id="cv-skills" class="cv__h">Skills</h2>
       <dl class="cv__skills">
         {skills.map((s) => (<div><dt>{s.k}</dt><dd>{s.v}</dd></div>))}
@@ -121,12 +137,18 @@ const skills = [
     line-height: 1.5;
   }
   .cv__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: var(--space-3) var(--space-6);
     padding-bottom: var(--space-4);
-    border-bottom: 1px solid var(--ink);
+    border-bottom: 1.5px solid var(--ink);
   }
   .cv__name {
-    font-size: clamp(2.4rem, 1.6rem + 3vw, 3.6rem);
+    font-size: clamp(2.2rem, 1.6rem + 2.4vw, 3.2rem);
     line-height: 1;
+    letter-spacing: -0.015em;
   }
   .cv__role {
     margin-top: var(--space-2);
@@ -135,11 +157,18 @@ const skills = [
     color: var(--ink-2);
   }
   .cv__contact {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.2rem 1.2rem;
-    margin-top: var(--space-3);
+    display: grid;
+    gap: 0.1rem;
     font-size: var(--fs-small);
+    text-align: right;
+  }
+  .cv__contact > :global(*) {
+    min-height: 24px; /* WCAG 2.2 target size for the stacked links */
+    line-height: 24px;
+    overflow-wrap: anywhere;
+  }
+  .cv__sub {
+    color: var(--ink-2);
   }
   .cv__sec {
     padding-top: var(--space-5);
@@ -195,6 +224,11 @@ const skills = [
     color: var(--ink-3);
     font-size: var(--fs-small);
   }
+  @media (max-width: 40rem) {
+    .cv__contact {
+      text-align: left;
+    }
+  }
   @media (max-width: 30rem) {
     .cv__skills div {
       grid-template-columns: 1fr;
@@ -204,41 +238,90 @@ const skills = [
   @media print {
     @page {
       size: A4;
-      margin: 11mm 13mm;
+      margin: 10mm 12mm;
     }
+    /* print sizes are fixed in points: rem-based screen sizes would print larger than the body */
     .cv {
       padding: 0;
       max-width: none;
       font-size: 8.7pt;
-      line-height: 1.38;
+      line-height: 1.32;
       color: #000;
     }
+    .cv__item ul,
+    .cv__sub,
+    .cv__sec > p {
+      color: #1c1c1c;
+    }
     .cv__name {
-      font-size: 21pt;
+      font-size: 20pt;
+    }
+    .cv__role {
+      font-size: 7.6pt;
+      margin-top: 2pt;
     }
     .cv__head {
-      padding-bottom: 5pt;
+      flex-wrap: nowrap;
+      padding-bottom: 4pt;
     }
     .cv__contact {
-      margin-top: 3pt;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 0 8pt;
+      max-width: 54%;
+      font-size: 7.6pt;
+      text-align: right;
+    }
+    .cv__contact > :global(*) {
+      min-height: 0;
+      line-height: inherit;
     }
     .cv__sec {
-      padding-top: 7pt;
+      padding-top: 6pt;
     }
     .cv__h {
-      margin-bottom: 4pt;
+      font-size: 6.8pt;
+      margin-bottom: 3pt;
+      padding-bottom: 1pt;
     }
     .cv__item {
       break-inside: avoid;
     }
     .cv__item + .cv__item {
-      margin-top: 4.5pt;
+      margin-top: 4pt;
     }
     .cv__item ul {
-      margin-top: 1pt;
+      margin-top: 0.5pt;
+    }
+    .cv__meta {
+      font-size: 7.4pt;
+    }
+    .cv__stack {
+      font-size: 6.8pt;
+      margin-top: 0.5pt;
+    }
+    .cv__pair {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 0 14pt;
+    }
+    .cv__pair .cv__item-head {
+      display: block;
+    }
+    .cv__pair .cv__meta {
+      display: block;
     }
     .cv__skills {
-      gap: 1.5pt;
+      gap: 1pt;
+    }
+    .cv__skills div {
+      grid-template-columns: 7.4em 1fr;
+      gap: 6pt;
+    }
+    .cv__skills dt {
+      font-size: 7.4pt;
+      padding-top: 0.6pt;
     }
     .cv a {
       color: #000;

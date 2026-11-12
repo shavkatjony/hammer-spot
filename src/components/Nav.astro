@@ -18,13 +18,14 @@ const links = [
 ---
 <header class:list={['site-nav', { 'site-nav--on-dark': onDark }]} data-nav>
   <div class="site-nav__inner wrap wrap--wide">
-    <a class="brand" href={url()} aria-label="SHAVKATJON, home">
+    <a class="brand" href={url()} aria-label="Shavkatjon Yuldashev, home">
       <svg class="brand__mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <circle cx="12" cy="10" r="5" />
         <path d="M1 16.5h22" />
         <path d="M5 20h14" />
       </svg>
-      <span class="brand__word">SHAVKATJON</span>
+      <span class="brand__word">Shavkatjon Yuldashev</span>{' '}
+      <span class="brand__role mono">Data Scientist</span>
     </a>
 
     <nav class="primary" aria-label="Primary">
@@ -32,12 +33,12 @@ const links = [
         {links.map((l) => (
           <li><a href={l.href}>{l.label}</a></li>
         ))}
-        <li class="primary__resume-m"><a href={url(resume.page)}>Résumé</a></li>
+        <li class="primary__resume-m"><a href={resume.pdf ? url(resume.pdf) : url(resume.page)}>CV (PDF)</a></li>
       </ul>
     </nav>
 
     <div class="tools">
-      <a class="tools__resume" href={url(resume.page)}>Résumé</a>
+      <a class="tools__resume" href={resume.pdf ? url(resume.pdf) : url(resume.page)} download={resume.pdf ? '' : undefined}>CV <span class="mono">PDF</span></a>
       <button class="icon-btn" type="button" data-theme-toggle aria-pressed="false">
         <span class="visually-hidden">Dark theme</span>
         <Icon name="moon" class="icon-btn__moon" />
@@ -68,10 +69,13 @@ const links = [
   }
   /* over a dark page header: light ink until the bar turns solid */
   .site-nav--on-dark:not(:global(.is-solid)) {
-    --ink: #ede4d3;
-    --bg: #1d1915;
-    --accent: #da916a;
-    --accent-deco: #c9a06a;
+    --ink: #eee6d9;
+    --ink-3: #c4b6aa;
+    --bg: #3e251e;
+    --accent: #dba12c;
+    --on-accent: #3d2614;
+    --mark: #dba12c;
+    --rule-strong: rgb(238 230 217 / 0.5);
   }
   .site-nav__inner {
     height: 100%;
@@ -85,10 +89,17 @@ const links = [
     gap: 0.6rem;
     min-height: 44px;
     text-decoration: none;
-    font-family: var(--f-mono);
-    font-size: var(--fs-small);
-    font-weight: 500;
-    letter-spacing: 0.18em;
+  }
+  .brand__word {
+    font-family: var(--f-display);
+    font-size: 1.12rem;
+    font-weight: 560;
+    letter-spacing: -0.01em;
+  }
+  .brand__role {
+    color: var(--ink-3);
+    padding-left: 0.6rem;
+    border-left: 1px solid var(--rule-strong);
   }
   .brand__mark {
     width: 1.35rem;
@@ -98,7 +109,7 @@ const links = [
     stroke-width: 1.4;
   }
   .brand__mark circle {
-    fill: var(--accent-deco);
+    fill: var(--mark);
     stroke: none;
     transition: transform var(--dur-2) var(--ease-out);
   }
@@ -150,19 +161,25 @@ const links = [
   .tools__resume {
     display: inline-flex;
     align-items: center;
-    min-height: 36px;
-    padding: 0.3rem 0.8rem;
-    border: 1px solid var(--ink);
+    gap: 0.45rem;
+    min-height: 38px;
+    padding: 0.3rem 0.85rem;
     border-radius: var(--radius);
-    font-family: var(--f-mono);
+    background: var(--accent);
+    color: var(--on-accent);
     font-size: var(--fs-small);
+    font-weight: 500;
     text-decoration: none;
     transition: background-color var(--dur-1) ease, color var(--dur-1) ease;
   }
+  .tools__resume .mono {
+    font-size: 0.66rem;
+    opacity: 0.85;
+  }
   .tools__resume:hover,
   .tools__resume:focus-visible {
-    background: var(--ink);
-    color: var(--bg);
+    color: var(--on-accent);
+    background: color-mix(in oklab, var(--accent) 86%, var(--ink));
   }
   .icon-btn {
     display: inline-grid;
@@ -225,6 +242,11 @@ const links = [
     transform: translateY(-3px) rotate(-25deg);
   }
 
+  @media (max-width: 64rem) {
+    .brand__role {
+      display: none;
+    }
+  }
   @media (max-width: 52rem) {
     .menu-btn {
       display: inline-flex;

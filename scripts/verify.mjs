@@ -89,8 +89,8 @@ console.log(`static: ${pages.length} pages checked, ${external.size} unique exte
 
 /* ---------------- browser checks ---------------- */
 const axeSource = readFileSync('node_modules/axe-core/axe.min.js', 'utf8');
-const routes = ['', 'work/telco-churn/', 'work/olist-delivery/', 'work/retail-intelligence/', 'work/f1-pace-intelligence/', 'resume/', 'does-not-exist/'];
-const browser = await chromium.launch();
+const routes = ['', 'work/telco-churn/', 'work/olist-delivery/', 'work/retail-intelligence/', 'work/f1-pace-intelligence/', 'work/document-scanner/', 'resume/', 'does-not-exist/'];
+const browser = await chromium.launch({ executablePath: process.env.PW_CHROMIUM || undefined });
 
 async function axe(page, label) {
   await page.evaluate(axeSource); // tooling-only injection; context uses bypassCSP
@@ -133,7 +133,7 @@ for (const theme of ['light', 'dark']) {
   const errors = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   page.on('pageerror', (e) => errors.push(e.message));
-  for (const r of routes.slice(0, 6)) await page.goto(BASE + r + '?static', { waitUntil: 'networkidle' });
+  for (const r of routes.filter((x) => x !== 'does-not-exist/')) await page.goto(BASE + r + '?static', { waitUntil: 'networkidle' });
   const ready = await page.evaluate(() => document.documentElement.classList.contains('reveal-ready'));
   if (!ready) fail('site script did not initialise under the real CSP');
   if (errors.length) fail(`CSP run: console errors: ${errors.join(' | ')}`);

@@ -1,4 +1,26 @@
-# Content inventory — audit of 2026-10-12
+# Content inventory
+
+Audit of 2026-10-12, updated 2026-11-12 for the redesign (section 0). Where section 0 and the older sections disagree, section 0 is current.
+
+## 0. Update of 2026-11-12 (redesign)
+
+| Item | Now | Status |
+|---|---|---|
+| Positioning | "Data Scientist building production-grade ML systems." Roles: Data Science · Machine Learning · Applied AI | Owner's brief (EDITORIAL). The evidence behind "production-grade" is the practice shown in the case studies: tests and CI, data-quality gates, Docker release image, read-only APIs. No production deployment at an employer is claimed |
+| Telco repo | Renamed to `telco-churn-prediction`; every link uses the new name | VERIFIED |
+| Olist | Findings corrected to match `reports/findings.md`: the on-time rate tracks reviews across states (r = 0.78) more than delivery days (r = −0.53); top-15 seller share 17.6% like for like. Live dashboard `https://shavkatjony.github.io/brazilian-e-market/` linked. The dashboard's own headline counts (98,207 orders, 4.12 average review) use different filters from the report, so the site quotes the report's numbers only | VERIFIED |
+| DPEC (F1) | Status **In development**: backtested on 37 held-out race weekends, live forecast record not started. Race-pace error after qualifying 0.548% vs 0.589% for the best of five baselines; 79.9% of results inside the 80% ranges; 129 tests in CI; 18 read-only API endpoints; AI assistant exam 50/50. All from `reports/numbers-check.md`, `reports/ai/README.md` and repo greps | VERIFIED. The Render app could not be reached from this environment: **CONFIRM** it is awake |
+| Korean invoice scanner | Secondary computer-vision project (`korean-document-scanner`). 12/12 fields on one synthetic, tuning sample; 0.3–0.8 px corner error; labelled as not a held-out score | VERIFIED in the repo. The repo is **private**, so the site shows "code available on request" and no link |
+| Seam carving | Archive entry (`seam-carving`), 8 tests | VERIFIED. Repo **private**: no link shown |
+| MNIST explorer | Archive entry: PyTorch network served by FastAPI over WebSockets | VERIFIED (`backend/model.py` imports torch) |
+| Lotte World | Smaller, academic team project (2023) | VERIFIED; individual role still **CONFIRM** |
+| Portrait | Not found. Drive holds only personal phone/Telegram exports, and a photo can't be confirmed as you from its contents, so none was used. The hero shows a designed "SY" monogram until `src/assets/portrait.jpg` is added | **Missing**: supply one (see README) |
+| LinkedIn | Still derived from the slug in your post URL; the printed CV now shows the full slug `linkedin.com/in/shavkatjon-yuldashev-10a637277` | **CONFIRM** |
+| Violet Haze | No hex was supplied; `#6b5e78` was chosen for dark-mode depth | EDITORIAL |
+| Open to work | Shown as open | **CONFIRM** before each deploy |
+
+Still open from section 7: the fabricated metrics page in `command-center/pages/portfolio-professional.html` is public. Remove it before sharing this site.
+
 
 This is the evidence base for every claim on the site. Each line is tagged:
 
@@ -28,10 +50,10 @@ This is the evidence base for every claim on the site. Each line is tagged:
 
 | Rank | Repo | Verdict | Evidence |
 |---|---|---|---|
-| 1 | `telco-c-classifier-alias` | **Feature + case study** (see §7.3b on the stale threshold CSV) | 43 commits. `src/` pipeline (preprocess/train/predict), 4 notebooks, `reports/*.csv`, Streamlit app, real screenshot. Test ROC-AUC **0.842**, recall **0.791** (296/374) from `reports/final_model_metrics.csv`. 5-fold CV table from `reports/model_comparison.csv` |
+| 1 | `telco-churn-prediction` (was `telco-c-classifier-alias`) | **Feature + case study** (see §7.3b on the stale threshold CSV) | 43 commits. `src/` pipeline (preprocess/train/predict), 4 notebooks, `reports/*.csv`, Streamlit app, real screenshot. Test ROC-AUC **0.842**, recall **0.791** (296/374) from `reports/final_model_metrics.csv`. 5-fold CV table from `reports/model_comparison.csv` |
 | 2 | `brazilian-e-market` | **Feature + case study** | 15 commits. 5 SQL files plus 5 notebook queries, SQLite build script, findings report, 5 real figures. Numbers: 99,441 orders; 3.12% repeat rate; review score 4.29 on time vs 1.73 at 8+ days late |
 | 3 | `retail-commercial-intelligence` | **Feature + case study** | Python + DuckDB SQL star schema, data-quality gate, exception engine, self-contained HTML dashboard. **Findings use synthetic data** (README says so). Scale test: 59.1M rows, 84 s, 2.6 GB peak, documented in `docs/architecture.md` |
-| 4 | `F1-pace-intelligence` (DPEC) | **Feature, labelled "in development"** | Plan v4, two ADRs, an idempotent FastF1 → Parquet ingest CLI with SHA-256 manifest, pytest suite, ruff, and GitHub Actions CI. **No forecasting model exists yet**; the README says "Planning" |
+| 4 | `F1-pace-intelligence` (DPEC) | **Feature, labelled "In development"** | Superseded: see section 0 (backtested forecaster, strategy model, API, AI assistant; live record not started) |
 | 5 | `lotte-world-busan-santiment-analyses` | Secondary (academic) | Dong-A **team** project, 887 Google Maps reviews, KH Coder co-occurrence network, descriptive statistics. **CONFIRM** your individual role |
 | 6 | `data-science-portfolio` | Secondary (foundations) | Three course-style notebooks (OLS GPA, used-car price, logit bank marketing). Notebook outputs: car price **test R² 0.773**, 5-fold CV mean 0.749; bank test accuracy 86.0% |
 | — | `f1-race-replay` | **Not your project.** Fork of Tom Shaw's `IAmTomShaw/f1-race-replay` | Your only commit is `starting_plan.md`. Listed under "Open source I've studied" |

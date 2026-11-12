@@ -1,7 +1,7 @@
 ---
 /** Small inline icon set. Decorative by default (aria-hidden); labels live on the link. */
 interface Props {
-  name: 'github' | 'linkedin' | 'mail' | 'arrow-ur' | 'arrow-down' | 'arrow-left' | 'doc' | 'play' | 'sun' | 'moon' | 'download';
+  name: 'github' | 'linkedin' | 'mail' | 'arrow-ur' | 'arrow-down' | 'arrow-left' | 'doc' | 'play' | 'sun' | 'moon' | 'download' | 'data' | 'lock';
   class?: string;
 }
 const { name, class: cls } = Astro.props;
@@ -26,6 +26,12 @@ const { name, class: cls } = Astro.props;
     <g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9" /><path d="m10 8.5 5 3.5-5 3.5z" /></g>
   )}
   {name === 'download' && <path fill="none" stroke="currentColor" stroke-width="1.5" d="M12 4v11m-5-5 5 5 5-5M5 20h14" />}
+  {name === 'data' && (
+    <g fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="6" rx="7" ry="2.8" /><path d="M5 6v12c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8V6M5 12c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8" /></g>
+  )}
+  {name === 'lock' && (
+    <g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="10.5" width="14" height="10" rx="1" /><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3" /></g>
+  )}
   {name === 'sun' && (
     <g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="4.2" /><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" /></g>
   )}

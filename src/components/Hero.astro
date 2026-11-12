@@ -1,140 +1,160 @@
 ---
+/**
+ * Opening scene. Reading order is deliberate (F-pattern): who (name) → what (positioning) →
+ * proof of availability → actions, with the portrait on the first horizontal sweep and a
+ * five-project index resting on the dunes so evidence is visible in the first viewport.
+ */
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import DuneFallback from './DuneFallback.astro';
 import Icon from './Icon.astro';
 import ExtLink from './ExtLink.astro';
-import { identity, social, resume, education, languages } from '../content/site';
+import { identity, social, resume, projects } from '../content/site';
 import { url } from '../lib/url';
 
-const letters = identity.handle.split('');
-const edu = education[0];
+// Drop a photo at src/assets/portrait.(jpg|jpeg|png|webp|avif) and it is used automatically.
+const found = import.meta.glob<{ default: ImageMetadata }>('../assets/portrait.{jpg,jpeg,png,webp,avif}', { eager: true });
+const portrait = Object.values(found)[0]?.default ?? null;
+const cvHref = resume.pdf ? url(resume.pdf) : url(resume.page);
 ---
-<section class="hero" aria-labelledby="hero-title" data-hero>
+<section class="hero" aria-labelledby="hero-name" data-hero>
   <div class="hero__scene hero-scene" data-hero-scene>
     <div class="hero__fallback" data-hero-fallback>
       <DuneFallback />
     </div>
   </div>
 
-  <div class="hero__annot wrap wrap--wide">
-    <p class="mono">{identity.location.coords}</p>
-    <p class="mono">{identity.location.city} · {identity.location.country}</p>
-    <p class="mono hero__annot-vol">Field archive · Vol. 01 · 2026</p>
-    <span class="hero__annot-rule" aria-hidden="true"></span>
-  </div>
-
-  <div class="hero__body wrap wrap--wide">
-    <h1 id="hero-title" class="hero__mark">
-      <span class="visually-hidden">{identity.handle}, the portfolio of {identity.name}</span>
-      <span class="hero__letters" aria-hidden="true">
-        {letters.map((ch) => <span class="hero__letter">{ch}</span>)}
-      </span>
-    </h1>
-
-    <div class="hero__grid">
-      <p class="hero__roles mono">{identity.roles.join(' · ')}</p>
-      <div class="hero__copy">
-        <p class="hero__statement">{identity.statement}</p>
-        <div class="hero__actions">
-          <a class="link-arrow hero__primary" data-dir="down" href="#work">
-            Selected work <Icon name="arrow-down" />
-          </a>
-          <a class="action" href={url(resume.page)}>Résumé</a>
-          <ul class="hero__social" role="list" aria-label="Profiles">
-            <li>
-              <ExtLink href={social.github.href} class="hero__icon" label="GitHub profile">
-                <Icon name="github" />
-              </ExtLink>
-            </li>
-            <li>
-              <ExtLink href={social.linkedin.href} class="hero__icon" label="LinkedIn profile">
-                <Icon name="linkedin" />
-              </ExtLink>
-            </li>
-            <li>
-              <ExtLink href={social.email.href} class="hero__icon" label={`Email ${social.email.handle}`}>
-                <Icon name="mail" />
-              </ExtLink>
-            </li>
-          </ul>
-        </div>
+  <div class="hero__inner wrap wrap--wide">
+    <div class="hero__copy">
+      <p class="hero__eyebrow mono caps">{identity.roles.join(' · ')}</p>
+      <h1 id="hero-name" class="hero__name">
+        <span class="hero__first">{identity.firstName}</span>{' '}
+        <span class="hero__last">{identity.lastName}</span>
+      </h1>
+      <p class="hero__position">
+        Data Scientist building <em>production-grade ML&nbsp;systems</em>.
+      </p>
+      <p class="hero__statement">{identity.statement}</p>
+      {identity.availability.open && (
+        <p class="hero__open">
+          <span class="chip-open">{identity.availability.short}</span>
+          <span class="hero__open-text">
+            {identity.availability.detail} Based in {identity.location.city}, {identity.location.country}.
+          </span>
+        </p>
+      )}
+      <div class="hero__actions" data-horizon-anchor>
+        <a class="btn btn--primary" href="#work">View selected work <Icon name="arrow-down" /></a>
+        <a class="btn btn--ghost hero__cv" href={cvHref} download={resume.pdf ? '' : undefined}>
+          <Icon name="download" /> Download CV <span class="hero__cv-fmt mono">PDF</span>
+        </a>
+        <ul class="hero__social" role="list" aria-label="Profiles">
+          <li><ExtLink href={social.github.href} class="hero__icon" label="GitHub profile"><Icon name="github" /></ExtLink></li>
+          <li><ExtLink href={social.linkedin.href} class="hero__icon" label="LinkedIn profile"><Icon name="linkedin" /></ExtLink></li>
+          <li><ExtLink href={social.email.href} class="hero__icon" label={`Email ${social.email.handle}`}><Icon name="mail" /></ExtLink></li>
+        </ul>
       </div>
+    </div>
+
+    <div class="hero__plate" data-portrait={portrait ? 'photo' : 'monogram'}>
+      <figure class="hero__mat">
+        <span class="hero__tick hero__tick--tl" aria-hidden="true"></span>
+        <span class="hero__tick hero__tick--br" aria-hidden="true"></span>
+        {portrait ? (
+          <Picture
+            src={portrait}
+            formats={['avif', 'webp']}
+            widths={[320, 480, 640, 960]}
+            sizes="(max-width: 52rem) 40vw, 26rem"
+            alt={`Portrait of ${identity.name}`}
+            class="hero__photo"
+            loading="eager"
+            fetchpriority="high"
+          />
+        ) : (
+          <div class="hero__monogram" role="img" aria-label={`${identity.name}, monogram`}>
+            <svg viewBox="0 0 200 250" aria-hidden="true" focusable="false">
+              <circle class="mono-sun" cx="128" cy="96" r="30" />
+              <path class="mono-dune" d="M0 178 C46 158 74 160 104 172 C134 184 160 176 200 160 L200 250 L0 250 Z" />
+              <path class="mono-dune2" d="M0 206 C40 194 82 198 120 210 C150 219 176 214 200 206 L200 250 L0 250 Z" />
+              <text class="mono-text" x="22" y="132">SY</text>
+            </svg>
+          </div>
+        )}
+        <figcaption class="hero__plate-cap mono">
+          <span>{identity.name}</span>{' '}
+          <span>{identity.location.city} · {identity.location.coords}</span>
+        </figcaption>
+      </figure>
     </div>
   </div>
 
-  <aside class="hero__card" aria-label="Field card">
-    <p class="mono hero__card-head"><span>Field card</span><span>Nº 001</span></p>
-    {identity.portrait && (
-      <img
-        class="hero__portrait"
-        src={url(identity.portrait.src)}
-        alt={identity.portrait.alt}
-        width={identity.portrait.width}
-        height={identity.portrait.height}
-        decoding="async"
-      />
-    )}
-    <dl class="hero__card-list">
-      <div><dt>Name</dt><dd>{identity.name}</dd></div>
-      <div><dt>Base</dt><dd>{identity.location.city}, {identity.location.country}</dd></div>
-      <div><dt>Studied</dt><dd>Integrated Business Mgmt., {edu.school} ({edu.year})</dd></div>
-      <div><dt>Works in</dt><dd>Python · SQL · statistics · ML</dd></div>
-      <div><dt>Speaks</dt><dd>{languages.map((l) => l.name).join(' · ')}</dd></div>
-    </dl>
-  </aside>
-
-  <div class="hero__foot wrap wrap--wide">
-    {identity.availability.open && (
-      <p class="hero__status">
-        <span class="status" data-status="Complete">{identity.availability.short}</span>
-        <span class="hero__status-detail">{identity.availability.detail}</span>
-      </p>
-    )}
-    <a class="hero__cue mono" href="#work" tabindex="-1" aria-hidden="true">Scroll</a>
-  </div>
+  <nav class="hero__index wrap wrap--wide" aria-label="Selected work at a glance">
+    <p class="hero__index-label mono caps">At a glance</p>
+    <ol class="hero__index-list" role="list">
+      {projects.map((p) => (
+        <li>
+          <a href={url(`work/${p.slug}/`)} class="hero__index-link">
+            <span class="hero__index-no mono">{p.index}</span>
+            <span class="hero__index-title">{p.short}</span>{' '}
+            <span class="hero__index-value">{p.strip.value}</span>{' '}
+            <span class="hero__index-metric mono">{p.strip.label}</span>
+            {p.status === 'In development' && <span class="hero__index-status mono">in development</span>}
+          </a>
+        </li>
+      ))}
+    </ol>
+  </nav>
 </section>
 
 <style>
   .hero {
     --scene-sky: var(--hero-sky);
-    --scene-sand: #d8bd90;
-    --scene-sand-dark: #bd9768;
-    --scene-sun: #f4e6c6;
-    --scene-light: #ffd9a6;
-    --scene-hemi-sky: #f1e2c4;
-    --scene-hemi-ground: #8c6a4b;
-    --scene-stone: #3b2f25;
-    --scene-dust: #f6ead2;
+    --scene-sand: #e6d3b6;
+    --scene-sand-dark: #bc9e82;
+    --scene-sun: #dba12c;
+    --scene-light: #f6c979;
+    --scene-hemi-sky: #efe5d8;
+    --scene-hemi-ground: #948a82;
+    --scene-dust: #fff7ea;
     position: relative;
     isolation: isolate;
-    min-height: max(100svh, 40rem);
+    min-height: max(100svh, 46rem);
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: 1fr auto;
     padding-top: var(--nav-h);
     background: var(--hero-sky);
     overflow: hidden;
   }
   :global(:root[data-theme='dark']) .hero {
-    --scene-sand: #6b5139;
-    --scene-sand-dark: #3d2d20;
-    --scene-sun: #d6a96c;
-    --scene-light: #f0a36a;
-    --scene-hemi-sky: #5a4434;
-    --scene-hemi-ground: #1a1410;
-    --scene-stone: #120f0c;
-    --scene-dust: #c9a679;
+    --scene-sand: #6a4a3e;
+    --scene-sand-dark: #3a2b36;
+    --scene-sun: #dba12c;
+    --scene-light: #e59a62;
+    --scene-hemi-sky: #5b4d72;
+    --scene-hemi-ground: #120f16;
+    --scene-dust: #cdbfd6;
   }
 
-  /* ---- scene layers ---- */
+  /* ---- scene ---- */
   .hero__scene {
     position: absolute;
     inset: 0;
     z-index: -1;
     pointer-events: none;
   }
+  /* Static desert: its far crest (130 of 1600 units) lands just under the buttons. --horizon-y is
+     measured by site.ts; without JavaScript the crest falls at about two thirds of the hero. */
   .hero__fallback {
+    --dune-w: max(100vw, 56rem);
     position: absolute;
-    inset: auto 0 0 0;
-    height: 46%;
+    left: 50%;
+    width: var(--dune-w);
+    top: calc(var(--horizon-y, 64%) + 1rem - var(--dune-w) * 0.08125);
+    bottom: 0;
+    translate: -50% 0;
+    /* below the drawing, the front dune's colour carries on to the bottom of the hero */
+    background: linear-gradient(to bottom, transparent calc(var(--dune-w) * 0.22), var(--dune-front) 0);
   }
   .hero__scene :global(canvas) {
     position: absolute;
@@ -148,208 +168,379 @@ const edu = education[0];
     opacity: 1;
   }
 
-  /* ---- annotation row ---- */
-  .hero__annot {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    gap: var(--space-4);
-    padding-block: var(--space-4) var(--space-3);
-    color: var(--ink-2);
+  /* ---- layout ---- */
+  .hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: var(--space-6) clamp(2rem, 5vw, 6rem);
+    align-items: start;
+    padding-top: clamp(2rem, 7vh, 5rem);
+    padding-bottom: var(--space-6);
   }
-  .hero__annot-rule {
-    position: absolute;
-    left: var(--gutter);
-    right: var(--gutter);
-    bottom: 0;
-    height: 1px;
-    background: var(--rule);
-    transform-origin: left;
+  .hero__eyebrow {
+    color: var(--warm-ink);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    margin-bottom: var(--space-4);
   }
-
-  /* ---- wordmark ---- */
-  .hero__body {
-    align-self: start;
-    padding-top: clamp(1.5rem, 5vh, 4rem);
+  .hero__name {
+    font-size: var(--fs-name);
+    font-weight: 500;
+    line-height: 0.98;
+    letter-spacing: -0.022em;
   }
-  .hero__mark {
-    font-size: var(--fs-mark);
-    line-height: 0.86;
-    letter-spacing: -0.012em;
-    margin-left: -0.04em;
-    white-space: nowrap;
-  }
-  .hero__letters {
-    display: inline-flex;
-  }
-  .hero__letter {
+  .hero__name span {
     display: inline-block;
   }
-
-  .hero__grid {
-    display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: var(--space-5) var(--space-6);
-    margin-top: var(--space-6);
-  }
-  .hero__roles {
-    grid-column: 1 / span 5;
+  .hero__position {
+    margin-top: var(--space-4);
+    font-family: var(--f-display);
+    font-size: var(--fs-statement);
+    line-height: 1.18;
+    letter-spacing: -0.008em;
     color: var(--ink);
-    font-size: var(--fs-small);
-    padding-top: 0.35rem;
-    border-top: 1px solid var(--ink);
-    align-self: start;
+    max-width: 24ch;
   }
-  .hero__copy {
-    grid-column: 7 / span 6;
+  .hero__position em {
+    font-style: italic;
+    color: var(--accent);
   }
   .hero__statement {
-    font-family: var(--f-display);
-    font-size: clamp(1.4rem, 1.05rem + 1.1vw, 2.05rem);
-    line-height: 1.22;
-    max-width: 30ch;
-    color: var(--ink);
+    margin-top: var(--space-4);
+    font-size: var(--fs-lead);
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 50ch;
+  }
+  .hero__open {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    margin-top: var(--space-5);
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+    max-width: 58ch;
   }
   .hero__actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-3) var(--space-5);
+    gap: var(--space-3);
     margin-top: var(--space-5);
+  }
+  .hero__cv {
+    background: var(--hero-sky);
+  }
+  .hero__cv-fmt {
+    font-size: 0.68rem;
+    padding: 0.05rem 0.3rem;
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    opacity: 0.8;
   }
   .hero__social {
     display: flex;
     gap: var(--space-1);
+    margin-left: var(--space-2);
   }
   .hero__social :global(.hero__icon) {
     display: inline-grid;
     place-items: center;
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
     color: var(--ink);
     border-radius: var(--radius);
-    transition: color var(--dur-1) ease, transform var(--dur-1) var(--ease-out);
+    transition: color var(--dur-1) ease, transform var(--dur-1) var(--ease-out), background-color var(--dur-1) ease;
   }
   .hero__social :global(.hero__icon svg) {
-    width: 1.15rem;
-    height: 1.15rem;
+    width: 1.2rem;
+    height: 1.2rem;
   }
   .hero__social :global(.hero__icon:hover) {
     color: var(--accent);
+    background: var(--surface);
     transform: translateY(-2px);
   }
 
-  /* ---- field card ---- */
-  .hero__card {
-    position: absolute;
-    right: var(--gutter);
-    bottom: 1.25rem;
-    width: min(21rem, 30vw);
-    display: none;
-    padding: var(--space-4) var(--space-5) var(--space-5);
+  /* ---- portrait plate ---- */
+  .hero__plate {
+    justify-self: end;
+    width: min(100%, 25rem);
+    margin-top: var(--space-2);
+  }
+  .hero__mat {
+    position: relative;
+    padding: 10px;
     background: var(--surface);
-    border: 1px solid var(--rule);
-    color: var(--ink);
-    transform: perspective(var(--perspective)) rotateX(2deg) rotateY(-4deg);
-    transform-origin: right bottom;
+    border: 1px solid var(--ink);
+    border-radius: 2px;
+    box-shadow: var(--shadow-plate);
+    transform: perspective(var(--perspective)) rotateY(-3deg) rotateX(1deg);
+    transform-origin: right center;
     transition: transform var(--dur-3) var(--ease-settle);
   }
-  .hero__card:hover {
-    transform: perspective(var(--perspective)) rotateX(0deg) rotateY(0deg) translateY(var(--lift));
+  .hero__plate:hover .hero__mat {
+    transform: perspective(var(--perspective)) rotateY(0deg) rotateX(0deg) translateY(var(--lift));
   }
-  .hero__card-head {
-    display: flex;
-    justify-content: space-between;
-    color: var(--ink-3);
-    padding-bottom: var(--space-2);
-    border-bottom: 1px solid var(--rule);
-    margin-bottom: var(--space-3);
+  .hero__mat :global(picture),
+  .hero__mat :global(img) {
+    width: 100%;
   }
-  .hero__portrait {
-    float: right;
-    width: 4.5rem;
+  .hero__mat :global(.hero__photo) {
     aspect-ratio: 4 / 5;
     object-fit: cover;
-    margin: 0 0 var(--space-2) var(--space-3);
-    filter: sepia(0.18) saturate(0.85);
+    object-position: 50% 28%;
+    filter: saturate(0.92) contrast(1.02);
   }
-  .hero__card-list {
-    display: grid;
-    gap: var(--space-2);
-    font-size: var(--fs-small);
+  .hero__tick {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-color: var(--mark);
+    border-style: solid;
+    border-width: 0;
+    z-index: 1;
   }
-  .hero__card-list div {
-    display: grid;
-    grid-template-columns: 5.2rem 1fr;
-    gap: var(--space-3);
+  .hero__tick--tl {
+    top: -6px;
+    left: -6px;
+    border-top-width: 3px;
+    border-left-width: 3px;
   }
-  .hero__card-list dt {
-    font-family: var(--f-mono);
-    font-size: var(--fs-micro);
-    letter-spacing: var(--tracking-mono);
-    text-transform: uppercase;
+  .hero__tick--br {
+    bottom: -6px;
+    right: -6px;
+    border-bottom-width: 3px;
+    border-right-width: 3px;
+  }
+  .hero__monogram {
+    aspect-ratio: 4 / 5;
+    background: var(--surface-2);
+  }
+  .hero__monogram svg {
+    width: 100%;
+    height: 100%;
+  }
+  .mono-sun {
+    fill: var(--mark);
+  }
+  .mono-dune {
+    fill: color-mix(in oklab, var(--c-brick) 55%, var(--surface-2));
+  }
+  .mono-dune2 {
+    fill: color-mix(in oklab, var(--c-hickory) 70%, var(--surface-2));
+  }
+  .mono-text {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: 84px;
+    font-weight: 500;
+    fill: var(--ink);
+    letter-spacing: -2px;
+  }
+  .hero__plate-cap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0 var(--space-3);
+    padding: 9px 2px 0;
     color: var(--ink-3);
-    padding-top: 0.15em;
+    font-size: var(--fs-micro);
   }
 
-  /* ---- foot ---- */
-  .hero__foot {
-    display: flex;
-    align-items: end;
-    justify-content: space-between;
-    gap: var(--space-4);
+  /* ---- at-a-glance index on the dunes ---- */
+  .hero__index {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: stretch;
+    gap: var(--space-5);
     padding-bottom: var(--space-5);
   }
-  .hero__status {
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-2) var(--space-3);
-    max-width: 44rem;
-    padding: 0.55rem 0.85rem;
+  .hero__index-label {
+    align-self: center;
+    color: var(--ink);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    letter-spacing: 0.12em;
+    font-weight: 500;
+  }
+  .hero__index-list {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     background: var(--surface);
-    border: 1px solid var(--rule);
-    font-size: var(--fs-small);
-    color: var(--ink-2);
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-plate);
   }
-  .hero__status .status {
-    color: var(--accent);
+  .hero__index-list li + li {
+    border-left: 1px solid var(--rule);
   }
-  .hero__cue {
-    color: var(--ink-2);
+  .hero__index-link {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas: 'no title' 'value value' 'metric metric' 'status status';
+    align-content: start;
+    gap: 0.15rem 0.6rem;
+    height: 100%;
+    padding: var(--space-4) var(--space-4) var(--space-4);
     text-decoration: none;
-    padding: 0.4rem 0.6rem;
-    background: var(--surface);
-    border: 1px solid var(--rule);
+    color: var(--ink);
+    transition: background-color var(--dur-1) ease;
+  }
+  .hero__index-link::after {
+    content: '';
+    position: absolute;
+    left: var(--space-4);
+    right: var(--space-4);
+    bottom: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-2) var(--ease-out);
+  }
+  .hero__index-link:hover,
+  .hero__index-link:focus-visible {
+    background: var(--bg);
+    color: var(--ink);
+  }
+  .hero__index-link:hover::after,
+  .hero__index-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+  .hero__index-no {
+    grid-area: no;
+    color: var(--warm-ink);
+    font-weight: 500;
+    padding-top: 0.1rem;
+  }
+  .hero__index-title {
+    grid-area: title;
+    font-size: var(--fs-small);
+    font-weight: 500;
+  }
+  .hero__index-value {
+    grid-area: value;
+    margin-top: var(--space-2);
+    font-family: var(--f-display);
+    font-size: clamp(1.35rem, 1rem + 0.9vw, 1.85rem);
+    font-weight: 500;
+    line-height: 1.05;
+  }
+  .hero__index-metric {
+    grid-area: metric;
+    color: var(--ink-3);
+  }
+  .hero__index-status {
+    grid-area: status;
+    justify-self: start;
+    margin-top: var(--space-2);
+    padding: 0.05rem 0.5rem;
+    border: 1px dashed currentColor;
+    border-radius: 999px;
+    color: var(--warm-ink);
+    font-size: 0.68rem;
+    font-weight: 500;
   }
 
-  /* The field card only appears where there is room below the actions (large, tall screens). */
-  @media (min-width: 80rem) and (min-height: 50rem) {
-    .hero__card {
-      display: block;
-    }
-    .hero__cue {
-      display: none;
+  /* ---- responsive ---- */
+  @media (max-width: 80rem) {
+    .hero__index-list {
+      grid-template-columns: repeat(5, minmax(9.5rem, 1fr));
+      overflow-x: auto;
     }
   }
   @media (max-width: 52rem) {
-    .hero__grid {
-      grid-template-columns: 1fr;
-      gap: var(--space-4);
-      margin-top: var(--space-4);
+    .hero {
+      min-height: auto;
     }
-    .hero__roles,
+    .hero__inner {
+      grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr);
+      grid-template-areas: 'plate eyebrow' 'plate name';
+      grid-template-rows: 1fr auto;
+      gap: var(--space-4) var(--space-4);
+      padding-top: var(--space-5);
+    }
     .hero__copy {
-      grid-column: 1;
+      display: contents;
     }
-    .hero__annot-vol {
+    .hero__plate {
+      grid-area: plate;
+      justify-self: stretch;
+      width: 100%;
+      margin-top: 0;
+    }
+    .hero__mat {
+      padding: 6px;
+      transform: none;
+    }
+    .hero__plate-cap {
       display: none;
     }
-    .hero__fallback {
-      height: 34%;
+    .hero__eyebrow {
+      grid-area: eyebrow;
+      align-self: end;
+      margin: 0;
+      font-size: 0.68rem;
     }
-    .hero__cue {
-      display: none;
+    .hero__name {
+      grid-area: name;
+      align-self: end;
+      font-size: clamp(2.05rem, 1.2rem + 4.6vw, 2.9rem);
+    }
+    .hero__name span {
+      display: block;
+    }
+    .hero__position,
+    .hero__statement,
+    .hero__open,
+    .hero__actions {
+      grid-column: 1 / -1;
+    }
+    .hero__position {
+      margin-top: var(--space-2);
+      max-width: none;
+    }
+    .hero__actions .btn {
+      flex: 1 1 12rem;
+    }
+    .hero__social {
+      margin-left: 0;
+    }
+    .hero__index {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+      margin-top: 30vw;
+    }
+    .hero__index-label {
+      writing-mode: horizontal-tb;
+      transform: none;
+      align-self: start;
+    }
+    .hero__index-list {
+      grid-template-columns: 1fr;
+      overflow: visible;
+    }
+    .hero__index-list li + li {
+      border-left: 0;
+      border-top: 1px solid var(--rule);
+    }
+    .hero__index-link {
+      grid-template-columns: 2rem 1fr auto;
+      grid-template-areas: 'no title value' 'no metric value' 'no status status';
+      align-items: center;
+      padding: var(--space-3) var(--space-4);
+    }
+    .hero__index-value {
+      margin-top: 0;
+      font-size: 1.25rem;
+      text-align: right;
+    }
+    .hero__index-status {
+      margin-top: var(--space-1);
     }
   }
 
@@ -357,10 +548,6 @@ const edu = education[0];
   @keyframes rise-mask {
     from { clip-path: inset(100% 0 0 0); }
     to { clip-path: inset(0 0 0 0); }
-  }
-  @keyframes letter-in {
-    from { opacity: 0; transform: translateY(0.32em); }
-    to { opacity: 1; transform: none; }
   }
   @keyframes fade-up {
     from { opacity: 0; transform: translateY(14px); }
@@ -370,36 +557,19 @@ const edu = education[0];
     from { opacity: 0; }
     to { opacity: 1; }
   }
-  @keyframes draw {
-    from { transform: scaleX(0); }
-    to { transform: scaleX(1); }
+  @keyframes plate-in {
+    from { opacity: 0; clip-path: inset(0 0 100% 0); }
+    to { opacity: 1; clip-path: inset(-20px -20px -20px -20px); }
   }
-  @keyframes card-in {
-    from { opacity: 0; transform: perspective(var(--perspective)) rotateX(14deg) rotateY(-4deg) translateY(24px); }
-    to { opacity: 1; transform: perspective(var(--perspective)) rotateX(2deg) rotateY(-4deg); }
-  }
-  :global(html.motion:not(.intro-seen)) .hero__fallback {
-    animation: rise-mask 1300ms var(--ease-in-out) 80ms backwards;
-  }
-  :global(html.motion:not(.intro-seen)) .hero__letter {
-    animation: letter-in 900ms var(--ease-settle) backwards;
-  }
-  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(1) { animation-delay: 260ms; }
-  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(2) { animation-delay: 300ms; }
-  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(3) { animation-delay: 340ms; }
-  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(4) { animation-delay: 380ms; }
-  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(5) { animation-delay: 420ms; }
-  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(6) { animation-delay: 460ms; }
-  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(7) { animation-delay: 500ms; }
-  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(8) { animation-delay: 540ms; }
-  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(9) { animation-delay: 580ms; }
-  :global(html.motion:not(.intro-seen)) .hero__letter:nth-child(10) { animation-delay: 620ms; }
-  :global(html.motion:not(.intro-seen)) .hero__roles { animation: fade-up 700ms var(--ease-out) 820ms backwards; }
-  :global(html.motion:not(.intro-seen)) .hero__statement { animation: fade-up 700ms var(--ease-out) 900ms backwards; }
-  :global(html.motion:not(.intro-seen)) .hero__actions { animation: fade-up 700ms var(--ease-out) 1000ms backwards; }
-  :global(html.motion:not(.intro-seen)) .hero__annot .mono { animation: fade-in 700ms ease 1100ms backwards; }
-  :global(html.motion:not(.intro-seen)) .hero__annot-rule { animation: draw 1100ms var(--ease-in-out) 950ms backwards; }
-  :global(html.motion:not(.intro-seen)) .hero__card { animation: card-in 1000ms var(--ease-settle) 1150ms backwards; }
-  :global(html.motion:not(.intro-seen)) .hero__foot { animation: fade-in 800ms ease 1250ms backwards; }
-  :global(html.motion:not(.intro-seen) .site-nav) { animation: fade-in 700ms ease 1050ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__fallback { animation: rise-mask 1200ms var(--ease-in-out) 60ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__eyebrow { animation: fade-up 600ms var(--ease-out) 120ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__first { animation: fade-up 800ms var(--ease-settle) 200ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__last { animation: fade-up 800ms var(--ease-settle) 300ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__plate { animation: plate-in 1100ms var(--ease-settle) 260ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__position { animation: fade-up 700ms var(--ease-out) 460ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__statement { animation: fade-up 700ms var(--ease-out) 560ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__open { animation: fade-up 700ms var(--ease-out) 640ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__actions { animation: fade-up 700ms var(--ease-out) 720ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__index { animation: fade-up 800ms var(--ease-out) 880ms backwards; }
+  :global(html.motion:not(.intro-seen) .site-nav) { animation: fade-in 600ms ease 400ms backwards; }
 </style>

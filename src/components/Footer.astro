@@ -4,15 +4,15 @@ import { identity, social, resume, meta } from '../content/site';
 import { url } from '../lib/url';
 const year = meta.updated.slice(0, 4);
 ---
-<footer class="footer surface-dark">
+<footer class="footer band-coffee">
   <div class="wrap wrap--wide">
     <div class="footer__horizon" aria-hidden="true">
       <span class="footer__sun"></span>
     </div>
     <div class="footer__grid">
       <div class="footer__sig">
-        <p class="footer__mark">{identity.handle}</p>
-        <p class="mono muted">Field archive · {identity.location.city} · {identity.location.coords}</p>
+        <p class="footer__mark">{identity.name}</p>
+        <p class="mono muted">Data Scientist · {identity.location.city} · {identity.location.coords}</p>
       </div>
       <nav class="footer__col" aria-label="Contact and profiles">
         <h2 class="mono muted">Correspondence</h2>
@@ -28,14 +28,14 @@ const year = meta.updated.slice(0, 4);
           <li><a href={url('#work')}>Selected work</a></li>
           <li><a href={url('#notes')}>Field notes</a></li>
           <li><a href={url('#toolkit')}>Toolkit</a></li>
-          <li><a href={url(resume.page)}>Résumé</a></li>
+          <li><a href={resume.pdf ? url(resume.pdf) : url(resume.page)}>CV (PDF)</a></li>
         </ul>
       </nav>
       <div class="footer__col">
         <h2 class="mono muted">Colophon</h2>
         <p>
-          Built with Astro and three.js. Set in Instrument Serif, IBM Plex Sans and IBM Plex Mono, all self-hosted.
-          No trackers, no cookies, no third-party scripts.
+          Built with Astro and three.js. Set in Newsreader, IBM Plex Sans and IBM Plex Mono, all self-hosted. No
+          trackers, no cookies, no third-party scripts.
         </p>
       </div>
     </div>
@@ -68,8 +68,8 @@ const year = meta.updated.slice(0, 4);
     width: 3.2rem;
     height: 1.6rem;
     border-radius: 3.2rem 3.2rem 0 0;
-    background: var(--accent-deco);
-    opacity: 0.9;
+    background: var(--c-gold);
+    opacity: 0.95;
   }
   .footer__grid {
     display: grid;
@@ -78,9 +78,10 @@ const year = meta.updated.slice(0, 4);
   }
   .footer__mark {
     font-family: var(--f-display);
-    font-size: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+    font-size: clamp(2rem, 1.4rem + 2.2vw, 3.4rem);
+    font-weight: 500;
     line-height: 1;
-    letter-spacing: 0.02em;
+    letter-spacing: -0.015em;
     margin-bottom: var(--space-3);
   }
   .footer__col h2 {

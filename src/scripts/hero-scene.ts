@@ -12,7 +12,6 @@
  */
 import {
   ACESFilmicToneMapping,
-  BoxGeometry,
   BufferAttribute,
   BufferGeometry,
   CircleGeometry,
@@ -129,7 +128,8 @@ export function createHeroScene(opts: HeroSceneOptions): HeroSceneHandle {
   const scene = new Scene();
   const sky = new Color();
   scene.background = sky;
-  const fog = new Fog(sky, 40, 300);
+  // Fog completes before the terrain's far edge (≈284 units from the camera), so no seam shows.
+  const fog = new Fog(sky, 40, 265);
   scene.fog = fog;
 
   const camera = new PerspectiveCamera(34, 1, 0.1, 420);
@@ -157,28 +157,6 @@ export function createHeroScene(opts: HeroSceneOptions): HeroSceneHandle {
   const terrain = new Mesh(terrainGeo, terrainMat);
   terrain.receiveShadow = true;
   scene.add(terrain);
-
-  // Monolith + fragment: the scene's scale anchor
-  const stoneMat = new MeshStandardMaterial({ roughness: 0.92, metalness: 0 });
-  const monoGeo = new BoxGeometry(2.3, 22, 1.3, 2, 12, 2);
-  const mp = monoGeo.attributes.position as BufferAttribute;
-  for (let i = 0; i < mp.count; i++) {
-    const y = mp.getY(i);
-    // weathering: slight taper and irregular erosion of the edges
-    const taper = 1 - (y + 11) / 22 * 0.12;
-    mp.setX(i, mp.getX(i) * taper + noise(i * 0.37, y * 0.3) * 0.08);
-    mp.setZ(i, mp.getZ(i) * taper + noise(y * 0.4, i * 0.21) * 0.06);
-  }
-  monoGeo.computeVertexNormals();
-  const monolith = new Mesh(monoGeo, stoneMat);
-  monolith.rotation.set(0.02, -0.5, -0.07);
-  monolith.castShadow = true;
-  scene.add(monolith);
-  const fragGeo = new BoxGeometry(1.8, 4.2, 1.6);
-  const fragment = new Mesh(fragGeo, stoneMat);
-  fragment.rotation.set(0.32, 0.6, 0.42);
-  fragment.castShadow = true;
-  scene.add(fragment);
 
   // Sun disc (unfogged), sits behind the light direction
   const sunMat = new MeshBasicMaterial({ fog: false });
@@ -238,15 +216,14 @@ export function createHeroScene(opts: HeroSceneOptions): HeroSceneHandle {
       colors[i * 3 + 2] = tmp.b + j;
     }
     (terrainGeo.attributes.color as BufferAttribute).needsUpdate = true;
-    stoneMat.color.copy(cssColor(section, '--scene-stone', '#3b2f25'));
     sunMat.color.copy(cssColor(section, '--scene-sun', '#f4e6c6'));
     key.color.copy(cssColor(section, '--scene-light', '#ffd9a6'));
     hemi.color.copy(cssColor(section, '--scene-hemi-sky', '#f1e2c4'));
     hemi.groundColor.copy(cssColor(section, '--scene-hemi-ground', '#8c6a4b'));
     if (dust) (dust.material as PointsMaterial).color.copy(cssColor(section, '--scene-dust', '#f6ead2'));
     const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-    key.intensity = dark ? 1.8 : 3.2;
-    hemi.intensity = dark ? 0.45 : 0.72;
+    key.intensity = dark ? 2.2 : 3.2;
+    hemi.intensity = dark ? 0.45 : 0.86;
     renderer.toneMappingExposure = dark ? 0.95 : 1.02;
     renderer.shadowMap.needsUpdate = true;
     invalidate();
@@ -265,24 +242,41 @@ export function createHeroScene(opts: HeroSceneOptions): HeroSceneHandle {
   let introStart = -1;
   const INTRO_MS = 2600;
 
-  // Composition depends on aspect: landscape keeps the monolith and sun in the empty sky on
-  // the left (text sits right); portrait puts them low and right of centre, below the copy.
+  // Composition depends on aspect. The copy sits top-left and the portrait top-right, so the
+  // horizon is kept low and the setting sun sits in the gap between them; on portrait screens
+  // the dunes form a band behind the project index.
   const sunBase = new Vector3();
-  let lightAz = -0.42;
+  let lightAz = 0.7;
+  const SUN_Z = -330;
+  const ray = new Vector3();
   function layout(aspect: number) {
     const portrait = aspect < 0.8;
-    const [x, z, sc] = portrait ? [9, -112, 0.5] : [-21, -104, 0.44];
-    monolith.scale.setScalar(sc);
-    monolith.position.set(x, duneHeight(x, z) + 9.4 * sc, z);
-    fragment.scale.setScalar(sc * 1.4);
-    fragment.position.set(x + 4, duneHeight(x + 4, z + 3) + 0.9 * sc, z + 3);
-    if (portrait) sunBase.set(52, 13, -330);
-    else sunBase.set(-126, 5, -330);
-    // Key light rakes from the side the sun is on, lower and wider than the disc itself,
+    // Key light rakes from the sun's side, lower and wider than the disc itself,
     // so the near dunes keep lit faces instead of sitting in full backlight.
-    lightAz = portrait ? 0.85 : -0.78;
-    restTarget.y = portrait ? 11.5 : 6.9;
-    introTarget.y = portrait ? 7 : 2.5;
+    lightAz = portrait ? 0.75 : 0.72;
+
+    // The horizon is placed just under the call-to-action row, measured from the page itself,
+    // so the dunes never run behind the copy at any viewport size or text length.
+    const box = host.getBoundingClientRect();
+    const anchor = section.querySelector<HTMLElement>('[data-horizon-anchor]');
+    let f = portrait ? 0.6 : 0.7; // horizon as a fraction of the canvas height, from the top
+    if (anchor && box.height > 0) {
+      const gap = portrait ? 0.06 : 0.04;
+      f = Math.min(0.86, Math.max(0.45, (anchor.getBoundingClientRect().bottom - box.top) / box.height + gap));
+    }
+    const tanPitch = (f - 0.5) * 2 * Math.tan((camera.fov * Math.PI) / 360);
+    restTarget.y = restPos.y + tanPitch * (restPos.z - restTarget.z);
+    introTarget.y = restTarget.y - 4.6;
+
+    // The sun sits just above that horizon: in the gap between copy and portrait on wide
+    // screens, towards the right edge on tall ones. Found by casting a ray through the screen.
+    camera.position.copy(restPos);
+    camera.lookAt(restTarget);
+    camera.updateMatrixWorld();
+    const sx = portrait ? 0.8 : 0.6;
+    const sy = f + (portrait ? 0.005 : -0.012);
+    ray.set(sx * 2 - 1, 1 - sy * 2, 0.5).unproject(camera).sub(restPos).normalize();
+    sunBase.copy(restPos).addScaledVector(ray, (SUN_Z - restPos.z) / Math.min(-0.05, ray.z));
     lastScrollP = -1; // force light + shadow refresh
   }
 
@@ -403,7 +397,8 @@ export function createHeroScene(opts: HeroSceneOptions): HeroSceneHandle {
       if (first) {
         first = false;
         // First-frame budget: a device that needs > 250 ms for one frame keeps the static scene.
-        if (performance.now() - t0 > 250) {
+        // ?3d=force (headless testing on software GL) skips the budget so the scene can be inspected.
+        if (!opts.allowSoftware && performance.now() - t0 > 250) {
           dispose();
           return;
         }
@@ -505,9 +500,6 @@ export function createHeroScene(opts: HeroSceneOptions): HeroSceneHandle {
     ro.disconnect();
     terrainGeo.dispose();
     terrainMat.dispose();
-    monoGeo.dispose();
-    fragGeo.dispose();
-    stoneMat.dispose();
     sun.geometry.dispose();
     sunMat.dispose();
     if (dust) {

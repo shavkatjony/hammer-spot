@@ -56,7 +56,6 @@ html {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   scroll-padding-top: calc(var(--nav-h) + 1rem);
-  hanging-punctuation: first;
 }
 @media (prefers-reduced-motion: no-preference) {
   html {
@@ -76,29 +75,32 @@ body {
   color: var(--ink);
 }
 
-/* Paper grain: a fixed, low-contrast print texture. Never intercepts input. */
+/* Aged-paper grain: fixed, low contrast, never intercepts input. */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
   z-index: 60;
   pointer-events: none;
-  background-image: url('/textures/grain.svg');
+  background-image: url('../assets/textures/grain.svg');
   background-size: 180px 180px;
-  opacity: 0.32;
+  opacity: 0.24;
 }
 :root[data-theme='dark'] body::after {
-  opacity: 0.18;
+  opacity: 0.14;
 }
 
 h1,
 h2,
-h3 {
+h3,
+h4 {
   font-family: var(--f-display);
-  font-weight: 400;
+  font-optical-sizing: auto;
+  font-weight: 500;
   line-height: var(--lh-head);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.012em;
   text-wrap: balance;
+  color: var(--ink);
 }
 h1 {
   font-size: var(--fs-h1);
@@ -112,13 +114,13 @@ h3 {
 p {
   text-wrap: pretty;
 }
-em {
-  font-style: italic;
+strong {
+  font-weight: 600;
 }
 code {
   font-family: var(--f-mono);
   font-size: 0.86em;
-  padding: 0.05em 0.3em;
+  padding: 0.06em 0.32em;
   background: var(--surface-2);
   border-radius: var(--radius);
   overflow-wrap: anywhere;
@@ -129,7 +131,7 @@ a {
   text-decoration-line: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.22em;
-  text-decoration-color: var(--rule);
+  text-decoration-color: var(--rule-strong);
   transition: color var(--dur-1) ease, text-decoration-color var(--dur-1) ease;
 }
 a:hover {
@@ -137,9 +139,9 @@ a:hover {
   text-decoration-color: currentColor;
 }
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--focus);
   outline-offset: 3px;
-  border-radius: 1px;
+  border-radius: 2px;
 }
 :focus:not(:focus-visible) {
   outline: none;
@@ -190,23 +192,30 @@ a:hover {
     padding-block: var(--space-8);
   }
 }
+.band-yale,
+.band-coffee {
+  background: var(--bg);
+  color: var(--ink);
+}
 
 /* ---------- typographic utilities ---------- */
 .mono {
   font-family: var(--f-mono);
   font-size: var(--fs-micro);
   letter-spacing: var(--tracking-mono);
-  text-transform: uppercase;
   line-height: 1.5;
+}
+.caps {
+  text-transform: uppercase;
 }
 .muted {
   color: var(--ink-3);
 }
 .lead {
   font-size: var(--fs-lead);
-  line-height: 1.5;
+  line-height: 1.55;
   color: var(--ink-2);
-  max-width: 46ch;
+  max-width: 52ch;
 }
 .prose {
   max-width: var(--measure);
@@ -215,30 +224,33 @@ a:hover {
   margin-top: var(--space-4);
 }
 .prose ul {
-  padding-left: 1.1em;
+  padding-left: 1.15em;
 }
 .prose li + li {
   margin-top: var(--space-2);
 }
 .prose li::marker {
-  color: var(--accent-deco);
+  color: var(--warm-ink);
+}
+.prose a {
+  color: var(--accent);
 }
 
-/* Section heading: number · title · rule */
+/* Section heading: number · title · rule · dek */
 .section-head {
   display: grid;
   grid-template-columns: auto 1fr;
-  align-items: end;
+  align-items: baseline;
   gap: var(--space-2) var(--space-5);
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-7);
 }
 .section-head__no {
-  color: var(--ink-3);
-  padding-bottom: 0.9em;
+  color: var(--warm-ink);
+  font-weight: 500;
 }
 .section-head__title {
   font-size: var(--fs-h2);
-  line-height: var(--lh-tight);
+  line-height: 1;
 }
 .section-head__rule {
   grid-column: 1 / -1;
@@ -248,9 +260,9 @@ a:hover {
 }
 .section-head__dek {
   grid-column: 2;
-  max-width: 52ch;
+  max-width: 56ch;
   color: var(--ink-2);
-  margin-top: var(--space-3);
+  margin-top: var(--space-2);
 }
 @media (max-width: 40rem) {
   .section-head {
@@ -259,21 +271,69 @@ a:hover {
   .section-head__dek {
     grid-column: 1;
   }
-  .section-head__no {
-    padding-bottom: 0;
-  }
+}
+
+/* ---------- actions ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55em;
+  min-height: 46px;
+  padding: 0.65rem 1.15rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-family: var(--f-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--dur-1) ease, color var(--dur-1) ease, border-color var(--dur-1) ease,
+    transform var(--dur-1) var(--ease-out);
+}
+.btn svg {
+  width: 1.05em;
+  height: 1.05em;
+  flex: none;
+  transition: transform var(--dur-1) var(--ease-out);
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn--primary {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.btn--primary:hover,
+.btn--primary:focus-visible {
+  color: var(--on-accent);
+  background: color-mix(in oklab, var(--accent) 86%, var(--ink));
+}
+.btn--primary:hover svg {
+  transform: translateY(2px);
+}
+.btn--ghost {
+  border-color: var(--ink);
+  color: var(--ink);
+  background: transparent;
+}
+.btn--ghost:hover,
+.btn--ghost:focus-visible {
+  background: var(--ink);
+  color: var(--bg);
 }
 
 /* Text link with an arrow and a drawn rule */
 .link-arrow {
   display: inline-flex;
   align-items: center;
-  gap: 0.55em;
+  gap: 0.5em;
   min-height: 44px;
   padding-block: 0.4rem;
   font-family: var(--f-mono);
   font-size: var(--fs-small);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.01em;
   text-decoration: none;
   position: relative;
   color: var(--ink);
@@ -283,10 +343,10 @@ a:hover {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0.45rem;
+  bottom: 0.5rem;
   height: 1px;
   background: currentColor;
-  transform: scaleX(0.28);
+  transform: scaleX(0.3);
   transform-origin: left;
   transition: transform var(--dur-2) var(--ease-out);
 }
@@ -308,44 +368,31 @@ a:hover {
 .link-arrow:focus-visible svg {
   transform: translate(2px, -2px);
 }
-.link-arrow[data-dir='down']:hover svg,
-.link-arrow[data-dir='down']:focus-visible svg {
-  transform: translateY(3px);
-}
 
-/* Outlined action (résumé) */
-.action {
+/* Availability chip: goldenrod with hickory text (6.2:1) */
+.chip-open {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5em;
-  min-height: 44px;
-  padding: 0.55rem 1rem;
-  border: 1px solid var(--ink);
-  border-radius: var(--radius);
+  gap: 0.5rem;
+  padding: 0.32rem 0.7rem 0.32rem 0.6rem;
+  background: var(--mark);
+  color: var(--on-mark);
+  border-radius: 999px;
   font-family: var(--f-mono);
-  font-size: var(--fs-small);
-  letter-spacing: 0.04em;
-  text-decoration: none;
-  color: var(--ink);
-  background: transparent;
-  cursor: pointer;
-  transition: background-color var(--dur-1) ease, color var(--dur-1) ease, transform var(--dur-1) ease;
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
 }
-.action:hover,
-.action:focus-visible {
-  background: var(--ink);
-  color: var(--bg);
-}
-.action:active {
-  transform: translateY(1px);
-}
-.action svg {
-  width: 1em;
-  height: 1em;
+.chip-open::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
 }
 
-/* Status tag: text always carries the meaning; the mark is a second channel */
+/* Status tag: the text carries the meaning; the mark is a second channel */
 .status {
   display: inline-flex;
   align-items: center;
@@ -358,23 +405,41 @@ a:hover {
 }
 .status::before {
   content: '';
-  width: 0.55em;
-  height: 0.55em;
-  border: 1px solid currentColor;
+  width: 0.6em;
+  height: 0.6em;
+  border: 1.5px solid currentColor;
   border-radius: 50%;
 }
 .status[data-status='Complete']::before {
   background: currentColor;
 }
 .status[data-status='Working']::before {
-  box-shadow: inset 0.28em 0 0 currentColor; /* half-filled: in progress */
+  box-shadow: inset 0.3em 0 0 currentColor; /* half-filled */
 }
 .status[data-status='In development']::before {
   border-style: dashed;
 }
 
+/* Small technology tags */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.tag {
+  display: inline-block;
+  padding: 0.16rem 0.5rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.01em;
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+
 /* ---------- reveal motion system ----------
-   Hidden start states apply only when JS is running AND motion is allowed (html.motion).
+   Hidden start states apply only when JS runs AND motion is allowed (html.motion).
    Without JS, or with reduced motion, everything is simply visible. */
 html.motion [data-reveal='mask'] {
   clip-path: inset(0 0 100% 0);
@@ -397,21 +462,19 @@ html.motion [data-reveal='image'] {
   clip-path: inset(0 100% 0 0);
   transition: clip-path var(--dur-3) var(--ease-in-out);
 }
-html.motion [data-reveal='image'] img,
-html.motion [data-reveal='image'] svg.plate-art {
-  transform: scale(1.06);
+html.motion [data-reveal='image'] img {
+  transform: scale(1.05);
   transition: transform calc(var(--dur-3) * 1.4) var(--ease-settle);
 }
 html.motion [data-reveal='image'].is-in {
   clip-path: inset(0 0 0 0);
 }
-html.motion [data-reveal='image'].is-in img,
-html.motion [data-reveal='image'].is-in svg.plate-art {
+html.motion [data-reveal='image'].is-in img {
   transform: none;
 }
 html.motion [data-reveal='fade'] {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(14px);
   transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-2) var(--ease-out);
 }
 html.motion [data-reveal='fade'].is-in {
@@ -441,15 +504,16 @@ html.motion [data-reveal='stagger'] > :nth-child(n + 7) { transition-delay: calc
 }
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 420ms;
+  animation-duration: 380ms;
   animation-timing-function: var(--ease-in-out);
 }
 .vt-telco-churn { view-transition-name: vt-telco-churn; }
 .vt-olist-delivery { view-transition-name: vt-olist-delivery; }
 .vt-retail-intelligence { view-transition-name: vt-retail-intelligence; }
 .vt-f1-pace-intelligence { view-transition-name: vt-f1-pace-intelligence; }
+.vt-document-scanner { view-transition-name: vt-document-scanner; }
 ::view-transition-group(*) {
-  animation-duration: 520ms;
+  animation-duration: 480ms;
   animation-timing-function: var(--ease-settle);
 }
 @media (prefers-reduced-motion: reduce) {
@@ -465,9 +529,9 @@ html.motion [data-reveal='stagger'] > :nth-child(n + 7) { transition-delay: calc
   body::after {
     display: none;
   }
-  .status::before {
-    forced-color-adjust: none;
-    border-color: CanvasText;
+  .chip-open,
+  .btn--primary {
+    border: 1px solid CanvasText;
   }
 }
 

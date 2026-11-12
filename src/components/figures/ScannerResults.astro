@@ -1,0 +1,41 @@
+---
+/** Stage 2 registration on the sample. Source: korean-document-scanner README (results on the sample). */
+const rows = [
+  { m: 'ORB', ratio: 300, inliers: 145, ransac: '0.8 px', lsq: '~510 px' },
+  { m: 'SIFT', ratio: 257, inliers: 131, ransac: '0.3 px', lsq: '~1,460 px' },
+];
+---
+<figure class="sr">
+  <div class="sr__scroll" tabindex="0" role="region" aria-label="Feature matching results">
+    <table class="sr__table">
+      <caption class="visually-hidden">Template registration error with and without RANSAC</caption>
+      <thead>
+        <tr>
+          <th scope="col">Keypoints</th><th scope="col">Ratio-test matches</th><th scope="col">RANSAC inliers</th>
+          <th scope="col">Corner error, RANSAC</th><th scope="col">Least squares, all matches</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr>
+            <th scope="row">{r.m}</th><td>{r.ratio}</td><td>{r.inliers}</td><td class="is-good">{r.ransac}</td><td>{r.lsq}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <figcaption class="sr__cap">
+    <span class="mono">Table.</span> Error = mean distance, in photo pixels, between where the recovered homography puts the
+    template’s four corners and where they truly are. Source: the project README; repository private.
+  </figcaption>
+</figure>
+
+<style>
+  .sr__scroll { overflow-x: auto; }
+  .sr__table { width: 100%; min-width: 34rem; font-size: var(--fs-small); }
+  .sr__table th, .sr__table td { text-align: left; padding: 0.6rem 1rem 0.6rem 0; border-bottom: 1px solid var(--rule); font-weight: 400; }
+  .sr__table thead th { font-family: var(--f-mono); font-size: var(--fs-micro); letter-spacing: var(--tracking-mono); text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--rule-strong); }
+  .sr__table td { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+  .sr__table td.is-good { font-weight: 600; color: var(--ink); }
+  .sr__cap { margin-top: var(--space-4); font-size: var(--fs-small); color: var(--ink-3); max-width: 66ch; }
+</style>

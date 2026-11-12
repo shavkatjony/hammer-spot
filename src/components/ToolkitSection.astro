@@ -9,25 +9,29 @@ const bySlug = Object.fromEntries(projects.map((p) => [p.slug, p]));
 <section class="section toolkit" id="toolkit" aria-labelledby="toolkit-title">
   <div class="wrap wrap--wide">
     <SectionHead no="03" title="Toolkit" id="toolkit-title">
-      No skill bars and no logo wall. Tools I use are linked to the projects that show them; tools I’m learning are labelled
-      as learning.
+      No skill bars and no logo wall. Tools in the first group are demonstrated in finished work and link to the case
+      study that shows them; the others are labelled for what they are.
     </SectionHead>
 
     <div class="tk">
       <div class="tk__col tk__col--use">
-        <h3 class="tk__head mono">In use, with evidence</h3>
+        <h3 class="tk__head"><span class="tk__no mono">A</span> Demonstrated in projects</h3>
         <ul role="list" class="tk__list">
-          {toolkit.use.map((t) => (
+          {toolkit.demonstrated.map((t) => (
             <li class="tk__item" data-reveal="fade">
               <ExtLink href={t.href} class="tk__name">{t.name}</ExtLink>
               <p class="tk__why">{t.why}</p>
-              {(t.evidence.length > 0 || ('repo' in t && t.repo)) && (
-                <p class="tk__ev mono">
-                  <span class="muted">Seen in</span>
-                  {t.evidence.map((s: string) => (
-                    <a href={url(`work/${s}/`)}>{bySlug[s]?.index} {bySlug[s]?.title.split(':')[0]}</a>
+              {(t.evidence.length > 0 || t.repo) && (
+                <p class="tk__ev">
+                  <span class="tk__ev-label mono">Shown in</span>
+                  {t.evidence.map((s) => (
+                    <a href={url(`work/${s}/`)} class="tk__chip">
+                      <span class="mono">{bySlug[s]?.index}</span> {bySlug[s]?.short}
+                    </a>
                   ))}
-                  {'repo' in t && t.repo && <ExtLink href={t.repo.href}>{t.repo.label}</ExtLink>}
+                  {t.repo && (
+                    <ExtLink href={t.repo.href} class="tk__chip tk__chip--repo">{t.repo.label}</ExtLink>
+                  )}
                 </p>
               )}
             </li>
@@ -37,8 +41,8 @@ const bySlug = Object.fromEntries(projects.map((p) => [p.slug, p]));
 
       <div class="tk__side">
         <div class="tk__col">
-          <h3 class="tk__head mono">Learning now</h3>
-          <ul role="list" class="tk__list">
+          <h3 class="tk__head"><span class="tk__no mono">B</span> Learning now</h3>
+          <ul role="list" class="tk__list tk__list--single">
             {toolkit.learning.map((t) => (
               <li class="tk__item" data-reveal="fade">
                 <ExtLink href={t.href} class="tk__name">{t.name}</ExtLink>
@@ -48,21 +52,13 @@ const bySlug = Object.fromEntries(projects.map((p) => [p.slug, p]));
           </ul>
         </div>
         <div class="tk__col">
-          <h3 class="tk__head mono">Open source I’ve studied</h3>
-          <ul role="list" class="tk__list">
+          <h3 class="tk__head"><span class="tk__no mono">C</span> Open source studied</h3>
+          <ul role="list" class="tk__list tk__list--single">
             {toolkit.studied.map((t) => (
               <li class="tk__item" data-reveal="fade">
                 <ExtLink href={t.href} class="tk__name">{t.name}</ExtLink>
                 <p class="tk__why">{t.why}</p>
               </li>
-            ))}
-          </ul>
-        </div>
-        <div class="tk__col">
-          <h3 class="tk__head mono">Datasets worked with</h3>
-          <ul role="list" class="tk__list tk__list--plain">
-            {toolkit.datasets.map((d) => (
-              <li><ExtLink href={d.href}>{d.name}</ExtLink></li>
             ))}
           </ul>
         </div>
@@ -78,7 +74,7 @@ const bySlug = Object.fromEntries(projects.map((p) => [p.slug, p]));
     gap: var(--space-7) var(--space-6);
   }
   .tk__col--use {
-    grid-column: 1 / span 7;
+    grid-column: 1 / span 8;
   }
   .tk__side {
     grid-column: 9 / span 4;
@@ -87,10 +83,18 @@ const bySlug = Object.fromEntries(projects.map((p) => [p.slug, p]));
     align-content: start;
   }
   .tk__head {
-    color: var(--ink-3);
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    font-size: var(--fs-h3);
     padding-bottom: var(--space-3);
-    border-bottom: 1px solid var(--ink);
-    margin-bottom: var(--space-2);
+    border-bottom: 1.5px solid var(--ink);
+    margin-bottom: var(--space-1);
+  }
+  .tk__no {
+    color: var(--warm-ink);
+    font-size: var(--fs-micro);
+    font-weight: 500;
   }
   .tk__col--use .tk__list {
     display: grid;
@@ -99,11 +103,11 @@ const bySlug = Object.fromEntries(projects.map((p) => [p.slug, p]));
   }
   .tk__item {
     padding: var(--space-4) 0;
-    border-bottom: 1px solid var(--rule-soft);
+    border-bottom: 1px solid var(--rule);
   }
   .tk__item :global(.tk__name) {
-    font-weight: 500;
-    text-decoration-color: var(--rule);
+    font-weight: 600;
+    text-decoration-color: var(--rule-strong);
   }
   .tk__why {
     margin-top: var(--space-1);
@@ -113,23 +117,42 @@ const bySlug = Object.fromEntries(projects.map((p) => [p.slug, p]));
   .tk__ev {
     display: flex;
     flex-wrap: wrap;
-    gap: 0 0.8rem;
-    margin-top: var(--space-2);
     align-items: center;
-    text-transform: none;
-    letter-spacing: 0.01em;
+    gap: 0.35rem;
+    margin-top: var(--space-3);
   }
-  .tk__ev a,
-  .tk__ev :global(a) {
+  .tk__ev-label {
+    color: var(--ink-3);
+    margin-right: 0.2rem;
+  }
+  .tk__ev :global(.tk__chip),
+  .tk__chip {
     display: inline-flex;
     align-items: center;
+    gap: 0.35rem;
     min-height: 28px;
+    padding: 0.1rem 0.55rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    font-size: 0.8rem;
     color: var(--ink-2);
+    text-decoration: none;
+    transition: background-color var(--dur-1) ease, color var(--dur-1) ease, border-color var(--dur-1) ease;
   }
-  .tk__list--plain li {
-    padding: var(--space-2) 0;
-    border-bottom: 1px solid var(--rule-soft);
-    font-size: var(--fs-small);
+  .tk__chip .mono {
+    color: var(--warm-ink);
+  }
+  .tk__ev :global(.tk__chip:hover),
+  .tk__chip:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
+  }
+  .tk__chip:hover .mono {
+    color: inherit;
+  }
+  .tk__ev :global(.tk__chip--repo) {
+    border-style: dashed;
   }
   @media (max-width: 72rem) {
     .tk__col--use,
@@ -137,7 +160,7 @@ const bySlug = Object.fromEntries(projects.map((p) => [p.slug, p]));
       grid-column: 1 / -1;
     }
     .tk__side {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: 1fr 1fr;
       gap: var(--space-6);
     }
   }

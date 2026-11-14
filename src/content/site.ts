@@ -271,7 +271,7 @@ export const skillGroups: SkillGroup[] = [
       { name: 'Seaborn', extra: NOTEBOOKS },
       { name: 'Plotly' },
       { name: 'D3.js', evidence: ['olist-delivery'] },
-      { name: 'Tableau', learning: true, note: 'the retail dashboard has a written spec; not yet published' },
+      { name: 'Tableau' },
       { name: 'LLM tool use (AI APIs and Ollama)', evidence: ['f1-pace-intelligence'] },
       // To show OpenCV / Tesseract in the hero boxes too, delete `hero: false` on their lines.
       { name: 'OpenCV', evidence: ['document-scanner'], hero: false },
@@ -992,7 +992,6 @@ export const toolkit: { learning: Tool[]; studied: Tool[] } = {
   learning: [
     { name: 'Convolutional networks from scratch', why: 'The next stage of the computer-vision plan: a small CNN compared with Tesseract on numeric fields.', href: 'https://pytorch.org/tutorials/' },
     { name: 'Probability calibration', why: 'The churn model ranks well but its scores run high; calibrating them is the next step.', href: 'https://scikit-learn.org/stable/modules/calibration.html' },
-    { name: 'Tableau', why: 'The retail dashboard has a written build spec; publishing it is next.', href: 'https://help.tableau.com/' },
   ],
   studied: [
     { name: 'f1-race-replay by Tom Shaw', why: 'Forked to study how a Python app replays FastF1 telemetry. The project is his; my own F1 work is DPEC.', href: 'https://github.com/IAmTomShaw/f1-race-replay' },

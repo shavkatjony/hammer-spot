@@ -3,7 +3,6 @@
 import type { FigureId } from '../../content/site';
 import ImagePlate from './ImagePlate.astro';
 import OlistReviews from './OlistReviews.astro';
-import TelcoThresholds from './TelcoThresholds.astro';
 import TelcoConfusion from './TelcoConfusion.astro';
 import TelcoModels from './TelcoModels.astro';
 import SurveyLog from './SurveyLog.astro';
@@ -52,7 +51,6 @@ const dpecSteps = [
   />
 )}
 {id === 'telco-models' && <TelcoModels />}
-{id === 'telco-thresholds' && <TelcoThresholds />}
 {id === 'telco-confusion' && <TelcoConfusion />}
 {id === 'olist-dashboard' && (
   <ImagePlate

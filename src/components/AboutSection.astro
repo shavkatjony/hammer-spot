@@ -4,6 +4,7 @@ import { identity, education, experience, languages, targetRoles, interests, pro
 import { url } from '../lib/url';
 const edu = education[0];
 const job = experience[0];
+const [years, delivered] = identity.credentials;
 ---
 <section class="section about" id="about" aria-labelledby="about-title">
   <div class="wrap wrap--wide">
@@ -11,17 +12,19 @@ const job = experience[0];
     <div class="about__grid">
       <div class="about__prose prose" data-reveal="fade">
         <p class="about__lead">
-          I’m {identity.name}, a data scientist in Busan. I studied Integrated Business Management at Dong-A University,
-          where econometrics and business statistics pulled me toward data.
+          I’m {identity.name}, a data scientist in Busan focused on machine learning, statistical modelling and applied
+          AI. I studied Integrated Business Management at Dong-A University, where statistics and econometrics pulled me
+          toward data.
         </p>
         <p>
-          Since then I’ve built projects end to end, to the standard I’d expect in production: tests and CI, data-quality
-          gates, models chosen against baselines, and evaluation on data the model never saw. My largest project, DPEC,
-          forecasts Formula 1 race pace from public timing data; its README traces every number to its source.
+          I have {years.value} {years.long} and {delivered.value} {delivered.long}, including my work as a data and business
+          analyst at {job.org}. I take a problem from data preparation and analysis through modelling, evaluation and
+          delivery: reproducible pipelines, data-quality checks, models chosen against baselines, and evaluation on data
+          the model never saw. My flagship project, DPEC, forecasts Formula 1 race pace from public timing data; its README
+          traces every number to its source.
         </p>
         <p>
-          I’m at the start of my career, so I’d rather show than tell: the code, the tests, the write-ups and the limits
-          of each project, stated plainly.
+          I’d rather show than tell: the code, the tests, the write-ups and the limits of each project, stated plainly.
         </p>
       </div>
 
@@ -65,7 +68,7 @@ const job = experience[0];
         <ul class="fact__list">
           {targetRoles.map((r) => <li>{r}</li>)}
         </ul>
-        <p class="fact__note">{identity.availability.detail}</p>
+        <p class="fact__note">Open to {identity.availability.scope}.</p>
         <a class="link-arrow" href={resume.pdf ? url(resume.pdf) : url(resume.page)}>Download the CV (PDF) →</a>
       </section>
       <section class="fact" aria-labelledby="f-int">

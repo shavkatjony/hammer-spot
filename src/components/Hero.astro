@@ -9,13 +9,16 @@ import type { ImageMetadata } from 'astro';
 import DuneFallback from './DuneFallback.astro';
 import Icon from './Icon.astro';
 import ExtLink from './ExtLink.astro';
-import { identity, social, resume, heroStack } from '../content/site';
+import { identity, social, resume, skillGroups, heroSkills, skillLabel } from '../content/site';
 import { url } from '../lib/url';
 
 // Drop a photo at src/assets/portrait.(jpg|jpeg|png|webp|avif) and it is used automatically.
 const found = import.meta.glob<{ default: ImageMetadata }>('../assets/portrait.{jpg,jpeg,png,webp,avif}', { eager: true });
 const portrait = Object.values(found)[0]?.default ?? null;
 const cvHref = resume.pdf ? url(resume.pdf) : url(resume.page);
+// The headline's emphasised words are set in the accent colour.
+const [headBefore, headAfter = ''] = identity.headline.split(identity.headlineEmphasis);
+const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.availability.scope.slice(1);
 ---
 <section class="hero" aria-labelledby="hero-name" data-hero>
   <div class="hero__scene hero-scene" data-hero-scene>
@@ -26,20 +29,26 @@ const cvHref = resume.pdf ? url(resume.pdf) : url(resume.page);
 
   <div class="hero__inner wrap wrap--wide">
     <div class="hero__copy">
-      <p class="hero__eyebrow mono caps">{identity.roles.join(' · ')}</p>
+      <p class="hero__eyebrow mono caps">{identity.positioning.replace(/\.$/, '')}</p>
       <h1 id="hero-name" class="hero__name">
         <span class="hero__first">{identity.firstName}</span>{' '}
         <span class="hero__last">{identity.lastName}</span>
       </h1>
       <p class="hero__position">
-        Data Scientist building <em>production-grade ML&nbsp;systems</em>.
+        {headBefore}<em>{identity.headlineEmphasis}</em>{headAfter}
       </p>
       <p class="hero__statement">{identity.statement}</p>
+      <p class="hero__support">{identity.support}</p>
+      <ul class="hero__creds" role="list">
+        {identity.credentials.map((c) => (
+          <li><span class="hero__cred-v">{c.value}</span>{' '}<span class="hero__cred-l">{c.label}</span></li>
+        ))}
+      </ul>
       {identity.availability.open && (
         <p class="hero__open">
-          <span class="chip-open">{identity.availability.short}</span>
+          <span class="chip-open">{identity.availability.short}</span>{' '}
           <span class="hero__open-text">
-            {identity.availability.detail} Based in {identity.location.city}, {identity.location.country}.
+            {scope} · Based in {identity.location.city}, {identity.location.country}
           </span>
         </p>
       )}
@@ -90,19 +99,19 @@ const cvHref = resume.pdf ? url(resume.pdf) : url(resume.page);
   </div>
 
   <section class="hero__stack wrap wrap--wide" aria-labelledby="stack-title">
-    <h2 id="stack-title" class="hero__stack-label mono caps">My stack</h2>
+    <h2 id="stack-title" class="hero__stack-label mono caps">Technical skills</h2>
     <dl class="hero__stack-grid">
-      {heroStack.map((g) => (
+      {skillGroups.map((g) => (
         <div class="hero__stack-group">
           <dt class="hero__stack-title mono caps">{g.title}</dt>
           <dd>
             {g.flow ? (
               <ol class="hero__stack-items hero__stack-items--flow" role="list">
-                {g.items.map((it) => (<><li>{it}</li>{' '}</>))}
+                {heroSkills(g).map((sk) => (<><li>{skillLabel(sk)}</li>{' '}</>))}
               </ol>
             ) : (
               <ul class="hero__stack-items" role="list">
-                {g.items.map((it) => (<><li>{it}</li>{' '}</>))}
+                {heroSkills(g).map((sk) => (<><li>{skillLabel(sk)}</li>{' '}</>))}
               </ul>
             )}
           </dd>
@@ -204,7 +213,7 @@ const cvHref = resume.pdf ? url(resume.pdf) : url(resume.page);
     line-height: 1.18;
     letter-spacing: -0.008em;
     color: var(--ink);
-    max-width: 24ch;
+    max-width: 30ch;
   }
   .hero__position em {
     font-style: italic;
@@ -217,15 +226,43 @@ const cvHref = resume.pdf ? url(resume.pdf) : url(resume.page);
     color: var(--ink-2);
     max-width: 50ch;
   }
+  .hero__support {
+    margin-top: var(--space-2);
+    font-size: 0.98rem;
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 56ch;
+  }
+  .hero__creds {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    margin-top: var(--space-3);
+  }
+  .hero__creds li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .hero__cred-v {
+    font-family: var(--f-display);
+    font-size: clamp(1.5rem, 1.2rem + 0.8vw, 1.9rem);
+    font-weight: 500;
+    line-height: 1;
+    color: var(--willow-ink);
+  }
+  .hero__cred-l {
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
   .hero__open {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-2) var(--space-3);
-    margin-top: var(--space-5);
+    margin-top: var(--space-4);
     font-size: var(--fs-small);
     color: var(--ink-2);
-    max-width: 58ch;
   }
   .hero__actions {
     display: flex;
@@ -361,6 +398,8 @@ const cvHref = resume.pdf ? url(resume.pdf) : url(resume.page);
     grid-template-columns: auto 1fr;
     align-items: stretch;
     gap: var(--space-5);
+    /* room for the horizon and the setting sun between the buttons and the skill boxes */
+    margin-top: clamp(2.5rem, 8vh, 5.5rem);
     padding-bottom: var(--space-4);
   }
   .hero__stack-label {
@@ -377,8 +416,6 @@ const cvHref = resume.pdf ? url(resume.pdf) : url(resume.page);
   .hero__stack-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-rows: repeat(2, auto);
-    grid-auto-flow: column;
     gap: 1px;
     margin: 0;
     background: var(--rule);
@@ -395,7 +432,7 @@ const cvHref = resume.pdf ? url(resume.pdf) : url(resume.page);
     margin-bottom: 0.3rem;
     font-size: var(--fs-micro);
     font-weight: 500;
-    color: var(--warm-ink);
+    color: var(--willow-ink);
   }
   .hero__stack-group dd {
     margin: 0;
@@ -423,7 +460,6 @@ const cvHref = resume.pdf ? url(resume.pdf) : url(resume.page);
   @media (max-width: 64rem) {
     .hero__stack-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-template-rows: repeat(3, auto);
     }
   }
   @media (max-width: 52rem) {
@@ -469,6 +505,8 @@ const cvHref = resume.pdf ? url(resume.pdf) : url(resume.page);
     }
     .hero__position,
     .hero__statement,
+    .hero__support,
+    .hero__creds,
     .hero__open,
     .hero__actions {
       grid-column: 1 / -1;
@@ -495,8 +533,6 @@ const cvHref = resume.pdf ? url(resume.pdf) : url(resume.page);
     }
     .hero__stack-grid {
       grid-template-columns: 1fr;
-      grid-template-rows: none;
-      grid-auto-flow: row;
     }
   }
 
@@ -524,6 +560,8 @@ const cvHref = resume.pdf ? url(resume.pdf) : url(resume.page);
   :global(html.motion:not(.intro-seen)) .hero__plate { animation: plate-in 1100ms var(--ease-settle) 260ms backwards; }
   :global(html.motion:not(.intro-seen)) .hero__position { animation: fade-up 700ms var(--ease-out) 460ms backwards; }
   :global(html.motion:not(.intro-seen)) .hero__statement { animation: fade-up 700ms var(--ease-out) 560ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__support { animation: fade-up 700ms var(--ease-out) 600ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__creds { animation: fade-up 700ms var(--ease-out) 620ms backwards; }
   :global(html.motion:not(.intro-seen)) .hero__open { animation: fade-up 700ms var(--ease-out) 640ms backwards; }
   :global(html.motion:not(.intro-seen)) .hero__actions { animation: fade-up 700ms var(--ease-out) 720ms backwards; }
   :global(html.motion:not(.intro-seen)) .hero__stack { animation: fade-up 800ms var(--ease-out) 880ms backwards; }

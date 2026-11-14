@@ -15,16 +15,18 @@ const caseHref = url(`work/${p.slug}/`);
 const dark = p.tone === 'coffee' || p.tone === 'yale';
 const toneClass = p.tone === 'coffee' ? 'band-coffee' : p.tone === 'yale' ? 'band-yale' : `tone-${p.tone}`;
 const secondary = p.tier === 'secondary';
+const flagship = !!p.flagship;
 const icon = (k: string) => (k === 'demo' ? 'play' : k === 'repo' ? 'github' : k === 'data' ? 'data' : 'doc');
 ---
 <article
-  class:list={['pf', toneClass, { 'pf--flip': flip, 'pf--dark': dark, 'pf--secondary': secondary }]}
+  class:list={['pf', toneClass, { 'pf--flip': flip, 'pf--dark': dark, 'pf--secondary': secondary, 'pf--flagship': flagship }]}
   aria-labelledby={`pf-${p.slug}`}
 >
   {dark && <div class="pf__topo" aria-hidden="true"></div>}
   <div class="pf__inner wrap wrap--wide">
     <header class="pf__head" data-reveal="stagger">
       <span class="pf__index" aria-hidden="true">{p.index}</span>{' '}
+      {flagship && <><span class="pf__flag mono caps">Flagship project</span>{' '}</>}
       <span class="pf__kicker mono caps">{p.kicker}</span>{' '}
       <span class="status" data-status={p.status}>{p.status}</span>{' '}
       {p.statusNote && <span class="pf__note">{p.statusNote}</span>}
@@ -32,10 +34,25 @@ const icon = (k: string) => (k === 'demo' ? 'play' : k === 'repo' ? 'github' : k
     </header>
 
     <div class="pf__grid">
-      <div class="pf__visual" data-parallax>
-        <a href={caseHref} class="pf__visual-link" tabindex="-1" aria-hidden="true">
+      <div class="pf__visual">
+        <a href={caseHref} class="pf__visual-link" tabindex="-1" aria-hidden="true" data-parallax>
           <Figure id={p.plate} compact frame={dark ? 'dark' : 'paper'} />
         </a>
+        {flagship && p.plateExtra && (
+          <div class="pf__extra" data-reveal="fade">
+            <Figure id={p.plateExtra} compact />
+          </div>
+        )}
+        {flagship && p.demonstrates && (
+          <div class="pf__demo" data-reveal="fade">
+            <p class="pf__demo-k mono caps">What it demonstrates</p>
+            <ol class="pf__demo-list" role="list">
+              {p.demonstrates.map((d, i) => (
+                <li><span class="mono">{String(i + 1).padStart(2, '0')}</span> {d}</li>
+              ))}
+            </ol>
+          </div>
+        )}
       </div>
 
       <div class="pf__body">
@@ -55,9 +72,10 @@ const icon = (k: string) => (k === 'demo' ? 'play' : k === 'repo' ? 'github' : k
             </li>
           ))}
         </ul>
-        <ul class="tags pf__tags" role="list" aria-label="Technologies">
-          {p.stack.map((t) => <li class="tag">{t}</li>)}
+        <ul class="tags pf__tags" role="list" aria-label="Methods">
+          {p.methods.map((t) => <li class="tag">{t}</li>)}
         </ul>
+        <p class="pf__stack mono"><span class="pf__stack-k">Stack</span> {p.stack.join(' · ')}</p>
         <div class="pf__actions">
           <a class="btn btn--primary" href={caseHref}>Read the case study <Icon name="arrow-ur" /></a>
           {p.links
@@ -146,12 +164,10 @@ const icon = (k: string) => (k === 'demo' ? 'play' : k === 'repo' ? 'github' : k
   .pf--flip .pf__visual {
     order: 2;
   }
-  .pf__visual {
-    transition: transform var(--dur-3) var(--ease-settle);
-  }
   .pf__visual-link {
     display: block;
     text-decoration: none;
+    transition: transform var(--dur-3) var(--ease-settle);
   }
   .pf__title {
     font-size: clamp(2rem, 1.35rem + 2vw, 3.2rem);
@@ -223,6 +239,22 @@ const icon = (k: string) => (k === 'demo' ? 'play' : k === 'repo' ? 'github' : k
   .pf__tags {
     margin-top: var(--space-5);
   }
+  .pf__stack {
+    margin-top: var(--space-3);
+    font-size: var(--fs-micro);
+    color: var(--ink-3);
+    line-height: 1.6;
+  }
+  .pf__stack-k {
+    color: var(--tone-ink, var(--ink-2));
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-right: 0.4rem;
+  }
+  .pf--dark .pf__stack-k {
+    color: var(--ink-2);
+  }
   .pf__actions {
     display: flex;
     flex-wrap: wrap;
@@ -245,12 +277,59 @@ const icon = (k: string) => (k === 'demo' ? 'play' : k === 'repo' ? 'github' : k
     text-decoration-color: currentColor;
   }
   @media (pointer: fine) {
-    .pf:hover .pf__visual {
+    .pf:hover .pf__visual-link {
       transform: perspective(var(--perspective)) rotateY(calc(var(--tilt-max) * 1)) translateY(var(--lift));
     }
-    .pf--flip:hover .pf__visual {
+    .pf--flip:hover .pf__visual-link {
       transform: perspective(var(--perspective)) rotateY(calc(var(--tilt-max) * -1)) translateY(var(--lift));
     }
+  }
+
+  /* flagship: the largest card, a badge and the capability row */
+  .pf__flag {
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background: var(--c-gold);
+    color: var(--c-hickory);
+    font-size: var(--fs-micro);
+    font-weight: 500;
+  }
+  .pf--flagship {
+    padding-block: clamp(4rem, 7vw, 7rem);
+  }
+  .pf--flagship .pf__grid {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+  .pf--flagship .pf__title {
+    font-size: clamp(2.3rem, 1.5rem + 2.5vw, 3.8rem);
+  }
+  .pf__extra {
+    margin-top: var(--space-6);
+  }
+  .pf__demo {
+    display: grid;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--rule-strong);
+  }
+  .pf__demo-k {
+    color: var(--c-gold);
+    font-weight: 500;
+  }
+  .pf__demo-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2) var(--space-5);
+    font-size: var(--fs-small);
+    color: var(--ink);
+  }
+  .pf__demo-list li {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .pf__demo-list .mono {
+    color: var(--warm-ink);
   }
 
   /* secondary project: same anatomy, quieter scale */
@@ -266,8 +345,12 @@ const icon = (k: string) => (k === 'demo' ? 'play' : k === 'repo' ? 'github' : k
 
   @media (max-width: 64rem) {
     .pf__grid,
-    .pf--secondary .pf__grid {
+    .pf--secondary .pf__grid,
+    .pf--flagship .pf__grid {
       grid-template-columns: 1fr;
+    }
+    .pf__demo-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
     .pf--flip .pf__visual {
       order: 0;

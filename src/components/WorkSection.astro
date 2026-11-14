@@ -3,14 +3,14 @@ import SectionHead from './SectionHead.astro';
 import ProjectFeature from './ProjectFeature.astro';
 import ExtLink from './ExtLink.astro';
 import Icon from './Icon.astro';
-import { primaryProjects, secondaryProjects, archive } from '../content/site';
+import { primaryProjects, secondaryProjects, archive, moreWork } from '../content/site';
 import { url } from '../lib/url';
 ---
 <section class="work" id="work" aria-labelledby="work-title">
   <div class="wrap wrap--wide">
     <SectionHead no="01" title="Selected work" id="work-title">
-      Four main projects, each with a full case study: the problem, the data, how it was built, what the numbers say and
-      where it falls short. Every number links back to the code or report it comes from.
+      Four featured projects, led by my flagship, DPEC. Each has a full case study: the problem, the data, how it was
+      built, what the numbers say and where it falls short. Every number links back to the code or report it comes from.
     </SectionHead>
   </div>
 
@@ -24,6 +24,8 @@ import { url } from '../lib/url';
   <div class="wrap wrap--wide">
     <div class="archive">
       <h3 class="archive__title mono caps">More work</h3>
+      <div class="archive__body">
+      <p class="archive__note">{moreWork.note}</p>
       <ul class="archive__list" role="list">
         {archive.map((a) => (
           <li class="archive__item" data-reveal="fade">
@@ -52,6 +54,7 @@ import { url } from '../lib/url';
           </li>
         ))}
       </ul>
+      </div>
     </div>
   </div>
 </section>
@@ -82,10 +85,20 @@ import { url } from '../lib/url';
     color: var(--warm-ink);
     font-weight: 500;
   }
-  .archive__list {
+  .archive__body {
     grid-column: 3 / -1;
+  }
+  .archive__note {
+    max-width: 62ch;
+    margin-bottom: var(--space-6);
+    font-family: var(--f-display);
+    font-size: clamp(1.15rem, 1rem + 0.4vw, 1.35rem);
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .archive__list {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-6) var(--space-6);
     align-items: start;
   }
@@ -121,14 +134,9 @@ import { url } from '../lib/url';
     width: 0.95rem;
     height: 0.95rem;
   }
-  @media (max-width: 72rem) {
-    .archive__list {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
   @media (max-width: 52rem) {
     .archive__title,
-    .archive__list {
+    .archive__body {
       grid-column: 1 / -1;
     }
     .archive__list {

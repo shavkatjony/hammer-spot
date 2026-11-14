@@ -1,86 +1,103 @@
 ---
+/**
+ * Toolkit: the same six skill groups as the hero, with evidence.
+ * A skill appears under "Demonstrated" when a featured project (`evidence`) or other public work (`extra`)
+ * shows it; the rest of the group is listed as "also used". Learning and studied tools stay separate.
+ * Everything here is edited in src/content/site.ts (skillGroups, toolkit).
+ */
 import SectionHead from './SectionHead.astro';
 import ExtLink from './ExtLink.astro';
-import { toolkit, projects } from '../content/site';
+import { skillGroups, toolkit, projects, type SkillGroup } from '../content/site';
 import { url } from '../lib/url';
 
 const bySlug = Object.fromEntries(projects.map((p) => [p.slug, p]));
+const shown = (g: SkillGroup) => g.skills.filter((sk) => !sk.learning && ((sk.evidence?.length ?? 0) > 0 || sk.extra));
+const also = (g: SkillGroup) => g.skills.filter((sk) => !sk.learning && !(sk.evidence?.length ?? 0) && !sk.extra);
 ---
-<section class="section toolkit" id="toolkit" aria-labelledby="toolkit-title">
+<section class="section toolkit tone-willow" id="toolkit" aria-labelledby="toolkit-title">
   <div class="wrap wrap--wide">
     <SectionHead no="03" title="Toolkit" id="toolkit-title">
-      No skill bars and no logo wall. Tools in the first group are demonstrated in finished work and link to the case
-      study that shows them; the others are labelled for what they are.
+      The six skill groups from the top of the page, each linked to the projects that show it. Tools I am still learning,
+      and open source I studied, are labelled separately.
     </SectionHead>
 
-    <div class="tk">
-      <div class="tk__col tk__col--use">
+    <div class="tk__a">
+      <div class="tk__a-head">
         <h3 class="tk__head"><span class="tk__no mono">A</span> Demonstrated in projects</h3>
+        <p class="tk__key">
+          <span class="mono">Project numbers:</span>
+          {projects.map((p) => (
+            <a href={url(`work/${p.slug}/`)} class="tk__key-item"><span class="mono">{p.index}</span> {p.short}</a>
+          ))}
+        </p>
+      </div>
+
+      <div class="tk__groups">
+        {skillGroups.map((g) => (
+          <section class="tk__group" aria-labelledby={`tk-${g.id}`} data-reveal="fade">
+            <h4 id={`tk-${g.id}`} class="tk__group-title mono caps">{g.title}</h4>
+            <ul class="tk__rows" role="list">
+              {shown(g).map((sk) => (
+                <li class="tk__row">
+                  <span class="tk__skill">
+                    {sk.name}
+                    {sk.note && <span class="tk__note">{sk.note}</span>}
+                  </span>
+                  <span class="tk__ev">
+                    {sk.evidence?.map((slug) => (
+                      <a
+                        href={url(`work/${slug}/`)}
+                        class="tk__chip"
+                        aria-label={`${bySlug[slug]?.index} ${bySlug[slug]?.title}, case study`}
+                      >
+                        {bySlug[slug]?.index}
+                      </a>
+                    ))}
+                    {sk.extra && <ExtLink href={sk.extra.href} class="tk__chip tk__chip--repo">{sk.extra.label}</ExtLink>}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            {also(g).length > 0 && (
+              <p class="tk__also">
+                <span class="mono">Also used at work or in coursework:</span> {also(g).map((sk) => sk.name).join(', ')}
+              </p>
+            )}
+          </section>
+        ))}
+      </div>
+    </div>
+
+    <div class="tk__side">
+      <div class="tk__col">
+        <h3 class="tk__head"><span class="tk__no mono">B</span> Learning now</h3>
         <ul role="list" class="tk__list">
-          {toolkit.demonstrated.map((t) => (
+          {toolkit.learning.map((t) => (
             <li class="tk__item" data-reveal="fade">
               <ExtLink href={t.href} class="tk__name">{t.name}</ExtLink>
               <p class="tk__why">{t.why}</p>
-              {(t.evidence.length > 0 || t.repo) && (
-                <p class="tk__ev">
-                  <span class="tk__ev-label mono">Shown in</span>
-                  {t.evidence.map((s) => (
-                    <a href={url(`work/${s}/`)} class="tk__chip">
-                      <span class="mono">{bySlug[s]?.index}</span> {bySlug[s]?.short}
-                    </a>
-                  ))}
-                  {t.repo && (
-                    <ExtLink href={t.repo.href} class="tk__chip tk__chip--repo">{t.repo.label}</ExtLink>
-                  )}
-                </p>
-              )}
             </li>
           ))}
         </ul>
       </div>
-
-      <div class="tk__side">
-        <div class="tk__col">
-          <h3 class="tk__head"><span class="tk__no mono">B</span> Learning now</h3>
-          <ul role="list" class="tk__list tk__list--single">
-            {toolkit.learning.map((t) => (
-              <li class="tk__item" data-reveal="fade">
-                <ExtLink href={t.href} class="tk__name">{t.name}</ExtLink>
-                <p class="tk__why">{t.why}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div class="tk__col">
-          <h3 class="tk__head"><span class="tk__no mono">C</span> Open source studied</h3>
-          <ul role="list" class="tk__list tk__list--single">
-            {toolkit.studied.map((t) => (
-              <li class="tk__item" data-reveal="fade">
-                <ExtLink href={t.href} class="tk__name">{t.name}</ExtLink>
-                <p class="tk__why">{t.why}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div class="tk__col">
+        <h3 class="tk__head"><span class="tk__no mono">C</span> Open source studied</h3>
+        <ul role="list" class="tk__list">
+          {toolkit.studied.map((t) => (
+            <li class="tk__item" data-reveal="fade">
+              <ExtLink href={t.href} class="tk__name">{t.name}</ExtLink>
+              <p class="tk__why">{t.why}</p>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .tk {
-    display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: var(--space-7) var(--space-6);
-  }
-  .tk__col--use {
-    grid-column: 1 / span 8;
-  }
-  .tk__side {
-    grid-column: 9 / span 4;
-    display: grid;
-    gap: var(--space-7);
-    align-content: start;
+  .toolkit {
+    background: var(--tone-bg);
   }
   .tk__head {
     display: flex;
@@ -96,10 +113,126 @@ const bySlug = Object.fromEntries(projects.map((p) => [p.slug, p]));
     font-size: var(--fs-micro);
     font-weight: 500;
   }
-  .tk__col--use .tk__list {
+  .tk__a-head {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0 var(--space-6);
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+  }
+  .tk__key {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem var(--space-4);
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+  .tk__key .mono {
+    color: var(--ink-3);
+  }
+  .tk__key-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 28px;
+    color: var(--ink);
+    text-decoration-color: var(--rule-strong);
+  }
+  .tk__key-item .mono {
+    color: var(--warm-ink);
+  }
+
+  /* six evidence cards, in the same order as the hero boxes */
+  .tk__groups {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+    align-items: start;
+  }
+  .tk__group {
+    padding: var(--space-4);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+  }
+  .tk__group-title {
+    padding-bottom: var(--space-2);
+    margin-bottom: var(--space-1);
+    border-bottom: 1px solid var(--rule-strong);
+    color: var(--willow-ink);
+    font-size: var(--fs-micro);
+    font-weight: 500;
+  }
+  .tk__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .tk__skill {
+    display: grid;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .tk__note {
+    font-size: var(--fs-micro);
+    font-weight: 400;
+    color: var(--ink-3);
+  }
+  .tk__ev {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    flex: none;
+    max-width: 55%;
+  }
+  .tk__ev :global(.tk__chip),
+  .tk__chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    min-height: 28px;
+    padding: 0 0.4rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    font-family: var(--f-mono);
+    font-size: 0.74rem;
+    color: var(--warm-ink);
+    text-decoration: none;
+    transition: background-color var(--dur-1) ease, color var(--dur-1) ease, border-color var(--dur-1) ease;
+  }
+  .tk__ev :global(.tk__chip--repo) {
+    border-style: dashed;
+    font-family: var(--f-body);
+    color: var(--ink-2);
+  }
+  .tk__ev :global(.tk__chip:hover),
+  .tk__chip:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
+  }
+  .tk__also {
+    margin-top: var(--space-3);
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+  .tk__also .mono {
+    display: block;
+    font-size: var(--fs-micro);
+    color: var(--ink-3);
+  }
+
+  /* learning and studied */
+  .tk__side {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-7) var(--space-6);
+    margin-top: var(--space-8);
   }
   .tk__item {
     padding: var(--space-4) 0;
@@ -114,58 +247,13 @@ const bySlug = Object.fromEntries(projects.map((p) => [p.slug, p]));
     font-size: var(--fs-small);
     color: var(--ink-2);
   }
-  .tk__ev {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.35rem;
-    margin-top: var(--space-3);
-  }
-  .tk__ev-label {
-    color: var(--ink-3);
-    margin-right: 0.2rem;
-  }
-  .tk__ev :global(.tk__chip),
-  .tk__chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    min-height: 28px;
-    padding: 0.1rem 0.55rem;
-    border: 1px solid var(--rule-strong);
-    border-radius: 999px;
-    font-size: 0.8rem;
-    color: var(--ink-2);
-    text-decoration: none;
-    transition: background-color var(--dur-1) ease, color var(--dur-1) ease, border-color var(--dur-1) ease;
-  }
-  .tk__chip .mono {
-    color: var(--warm-ink);
-  }
-  .tk__ev :global(.tk__chip:hover),
-  .tk__chip:hover {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--on-accent);
-  }
-  .tk__chip:hover .mono {
-    color: inherit;
-  }
-  .tk__ev :global(.tk__chip--repo) {
-    border-style: dashed;
-  }
   @media (max-width: 72rem) {
-    .tk__col--use,
-    .tk__side {
-      grid-column: 1 / -1;
-    }
-    .tk__side {
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-6);
+    .tk__groups {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
   @media (max-width: 52rem) {
-    .tk__col--use .tk__list,
+    .tk__groups,
     .tk__side {
       grid-template-columns: 1fr;
     }

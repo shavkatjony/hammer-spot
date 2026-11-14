@@ -1,6 +1,24 @@
 # Content inventory
 
-Audit of 2026-10-12, updated 2026-11-12 for the redesign (section 0). Where section 0 and the older sections disagree, section 0 is current.
+Audit of 2026-10-12, updated 2026-11-12 for the redesign (section 0) and 2026-11-14 (section 0a). Where the sections disagree, the newest one (0a, then 0) is current.
+
+## 0a. Update of 2026-11-14 (positioning, order, skills)
+
+| Item | Now | Status |
+|---|---|---|
+| Positioning | "Data Scientist building end-to-end data products." Headline, introduction and supporting sentence as supplied by the owner. "Production-grade ML systems" removed everywhere | Owner's copy (EDITORIAL) |
+| Project order | 01 DPEC (flagship), 02 Telco, 03 Retail, 04 Olist; 05 invoice scanner secondary | Owner's decision |
+| DPEC status | **Complete**, with "public forecast ledger: 0 live weekends" kept visible on the card and the owner's limitation sentence in the case study. 58% vs 46% stop-count agreement over 78 dry races; 15 linked windows and 4 layouts; per-year model better ordering after qualifying (Spearman 0.843 vs 0.821); first five 2026 races 68% coverage | VERIFIED against the current README (commit 917c477) |
+| Telco | Threshold sweep from the earlier notebook model removed from the site (stale). Case study now names the three classifiers and explains why the most accurate model (random forest, accuracy 0.788, recall 0.465) was not selected | VERIFIED |
+| Retail | Positioned as data engineering, modelling and decision support; Tableau shown as not yet published; findings labelled synthetic | VERIFIED |
+| Olist | Limitation added: data ends October 2018 | VERIFIED |
+| Statistical modelling notebooks | Added to More work: used-car price test R² 0.7727 (shown 0.773), 5-fold CV mean 0.749; repo first commit 2026-04-20 | VERIFIED (notebook outputs) |
+| KVENTS | "CHUST KVENTS", Data & Business Analyst, remote. Period shown as **Nov 2023 – Mar 2026** from the owner's text "November 2023 january – 2026 march" | SELF-REPORTED. **CONFIRM** the start month |
+| KVENTS responsibilities | Four bullets as supplied (Python and SQL workflows; demand forecasting, segmentation; profitability and pricing; automation) | SELF-REPORTED |
+| Credentials | "3+ years’ experience", "20+ projects delivered" (the featured ones are named; the rest are not) | SELF-REPORTED |
+| Education focus | Statistics, econometrics, business statistics and strategy, marketing and marketing research | SELF-REPORTED |
+| Availability | Open to remote, full-time and project-based roles; "junior" removed everywhere | Owner's decision |
+| Skills | The six groups exactly as supplied. Evidence links: SciPy, Seaborn, OLS and hypothesis testing → `data-science-portfolio`; PyTorch → MNIST explorer. **No public project evidence** for R, MySQL, PostgreSQL, Postman and Plotly: shown in the skill boxes and CV as supplied, and in the Toolkit under "Also used at work or in coursework". Tableau shown as "(learning)" | Mixed: see `skillGroups` in `src/content/site.ts` |
 
 ## 0. Update of 2026-11-12 (redesign)
 

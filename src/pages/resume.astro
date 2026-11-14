@@ -2,22 +2,16 @@
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import ExtLink from '../components/ExtLink.astro';
-import { identity, social, email, education, experience, languages, projects, resume } from '../content/site';
+import { identity, social, email, education, experience, languages, projects, resume, skillGroups, heroSkills, skillLabel } from '../content/site';
 import { url } from '../lib/url';
 const site = new URL(url(), Astro.site).href.replace(/^https?:\/\//, '').replace(/\/$/, '');
 const strip = (t: string) => t.replaceAll('`', '');
 const repoOf = (p: (typeof projects)[number]) => p.links.find((l) => l.kind === 'repo');
-const skills = [
-  { k: 'Programming', v: 'Python (pandas, NumPy), SQL (DuckDB, SQLite)' },
-  { k: 'ML & statistics', v: 'scikit-learn pipelines, stratified CV, statsmodels (WLS, OLS, logit), walk-forward backtesting, split-conformal ranges, Monte Carlo simulation' },
-  { k: 'Data engineering', v: 'Parquet/PyArrow, DuckDB star schemas, data-quality gates, idempotent ingestion' },
-  { k: 'Serving & practice', v: 'FastAPI, Docker, Streamlit, pytest, Ruff, GitHub Actions CI' },
-  { k: 'Computer vision', v: 'OpenCV (contours, homography, ORB/SIFT + RANSAC), Tesseract OCR, PyTorch (MNIST)' },
-  { k: 'Applied AI', v: 'LLM tool use with the Claude API and Ollama, graded by an automatic exam' },
-  { k: 'Learning', v: 'Probability calibration, CNNs, Tableau, R (coursework)' },
-];
+// Skills come from the same six groups as the hero boxes (src/content/site.ts → skillGroups).
+const skills = skillGroups.map((g) => ({ k: g.title, v: heroSkills(g).map(skillLabel).join(', ') }));
+const [years, delivered] = identity.credentials;
 ---
-<Base title="CV · Shavkatjon Yuldashev · Data Scientist" description="One-page CV of Shavkatjon Yuldashev, data scientist in Busan, South Korea: machine learning, forecasting, SQL and applied AI.">
+<Base title="CV · Shavkatjon Yuldashev · Data Scientist" description="One-page CV of Shavkatjon Yuldashev, Data Scientist building end-to-end data products: machine learning, statistical modelling and applied AI.">
   <div class="cv-tools wrap no-print">
     <a class="link-arrow" href={url()}><Icon name="arrow-left" /> Back to site</a>
     <div class="cv-tools__right">
@@ -32,7 +26,7 @@ const skills = [
     <header class="cv__head">
       <div>
         <h1 id="cv-name" class="cv__name">{identity.name}</h1>
-        <p class="cv__role">{[identity.title, ...identity.roles.filter((r) => r !== 'Data Science')].join(' · ')}</p>
+        <p class="cv__role">{[identity.title, ...identity.roles].join(' · ')}</p>
       </div>
       <p class="cv__contact">
         <span>{identity.location.city}, {identity.location.country}</span>
@@ -46,9 +40,13 @@ const skills = [
     <section class="cv__sec" aria-labelledby="cv-sum">
       <h2 id="cv-sum" class="cv__h">Profile</h2>
       <p>
-        Data scientist building ML systems to a production standard: tested pipelines, models chosen against
-        baselines, evaluation on data the model never saw, and services people can use. Background in econometrics and
-        business statistics. Open to {identity.availability.detail.charAt(0).toLowerCase() + identity.availability.detail.slice(1)}
+        {[
+          identity.positioning,
+          identity.statement,
+          identity.support,
+          `${years.value} ${years.long}; ${delivered.value} ${delivered.long}.`,
+          `Open to ${identity.availability.scope}.`,
+        ].join(' ')}
       </p>
     </section>
 
@@ -59,7 +57,7 @@ const skills = [
         return (
           <div class="cv__item">
             <p class="cv__item-head">
-              <strong>{p.title}</strong>
+              <strong>{p.title}{p.flagship && ' (flagship)'}</strong>
               <span class="cv__meta">{p.kicker} · {p.year} · {p.status}</span>
             </p>
             <ul>
@@ -217,7 +215,7 @@ const skills = [
   }
   .cv__skills div {
     display: grid;
-    grid-template-columns: 9rem 1fr;
+    grid-template-columns: 13rem 1fr;
     gap: var(--space-3);
   }
   .cv__skills dt {
@@ -316,7 +314,7 @@ const skills = [
       gap: 1pt;
     }
     .cv__skills div {
-      grid-template-columns: 7.4em 1fr;
+      grid-template-columns: 11em 1fr;
       gap: 6pt;
     }
     .cv__skills dt {

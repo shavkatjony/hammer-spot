@@ -1,6 +1,6 @@
 # Shavkatjon Yuldashev: professional portfolio
 
-The recruiter-facing portfolio of a data scientist building production-grade ML systems. It has an editorial "desert archive" design in light and dark, a progressive-enhancement three.js hero, and five case studies built only from verifiable project evidence.
+The recruiter-facing portfolio of a data scientist building end-to-end data products. It has an editorial "desert archive" design in light and dark, a progressive-enhancement three.js hero, and five case studies built only from verifiable project evidence.
 
 - **Stack:** Astro 7 (static output), three.js (lazy, hero only), self-hosted fonts (Newsreader, IBM Plex Sans, IBM Plex Mono). No backend, no analytics, no cookies.
 - **Scope:** professional work only. Personal notes, study material (Korean/TOPIK, general Python/SQL learning), productivity notes, hobby collections and the command-center / learning-platform repositories stay out of this site.
@@ -41,12 +41,14 @@ Run `npm run assets` and rebuild after changing content, so the PDF résumé and
 
 ## Editing content
 
+**Step-by-step guide: [docs/EDITING_GUIDE.md](docs/EDITING_GUIDE.md)** (skills, headline, projects, links, photo, CV PDF).
+
 Everything personal lives in `src/content/site.ts`:
 
-- `identity`: name, positioning line, statement, location and availability (`availability.open`).
-- `heroStack`: the "My stack" panel at the foot of the hero, in six groups (languages and data, ML libraries, ML models, ML process, deploy and MLOps, analytics/vision/AI). List only tools a project actually uses; the toolkit section shows where.
+- `identity`: name, positioning line, headline, introduction, supporting sentence, credentials (3+ years, 20+ projects), location and availability (`availability.open`, `availability.scope`).
+- `skillGroups`: the six technical-skill groups (Programming & Data; Statistics & Modelling; Machine Learning; Model Development & Validation; APIs & Deployment; Visualization & Applied AI). One list feeds the hero's skill boxes, the Toolkit's evidence links and the CV.
 - `social`: the only place external profile URLs are defined.
-- `projects`: four primary projects (Telco churn, Olist SQL, Retail BI, DPEC Formula 1, marked *In development*) and one secondary computer-vision project. Each case study has six sections (problem; objectives and questions; data and methodology; technical implementation; findings and verified results; limitations and lessons) plus the repository and demo links. Text can contain `` `code` `` in backticks; it's rendered as `<code>`, never as HTML.
+- `projects`: four primary projects in this order: DPEC Formula 1 (the flagship, marked Complete with its 0-live-weekend limitation), Telco churn, Retail commercial intelligence and Olist SQL, plus one secondary computer-vision project. Each case study has six sections (problem; objectives and questions; data and methodology; technical implementation; findings and verified results; limitations and lessons) plus the repository and demo links. Text can contain `` `code` `` in backticks; it's rendered as `<code>`, never as HTML.
 - `archive` (smaller work, including Lotte World), `notes` (seven field notes), `toolkit` (demonstrated / learning / open source studied, each demonstrated tool linked to the projects that show it), `education`, `experience`, `languages`, `targetRoles`, `interests`.
 - A private repository is shown with `repoPublic: false` and a `privateNote`; no code link is rendered for it.
 

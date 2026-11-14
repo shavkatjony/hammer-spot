@@ -42,6 +42,15 @@ Mobile LCP is the hero statement. Most of its delay is the first-visit intro cho
 
 The five-metric "At a glance" strip mixed unrelated numbers without context, so it was replaced with a "My stack" panel: six labelled groups of tools, models and the ML process, all taken from the projects. It fits inside the first 1440×900 screen (hero height 900 px), stacks to one column on mobile, and `verify.mjs` passes again (axe WCAG 2.2 AA, light and dark). The share image hides the panel, which the 630 px frame would cut.
 
+### Follow-up: positioning, project order and skills (2026-11-14)
+
+New positioning and introduction; DPEC first and marked Complete; the six technical-skill groups in the hero boxes, the Toolkit (with evidence) and the CV; CHUST KVENTS; 3+ years and 20+ projects. Re-run on the production build:
+
+- `astro check`: 0 errors, 0 warnings.
+- `verify.mjs`: all checks passed (axe WCAG 2.2 AA in light and dark on 8 routes, CSP, headings, images, links). One failure found and fixed first: the "DPEC" tag in the results table was 4.23:1 on the dark flagship band; it is now a filled badge.
+- CV PDF: 1 A4 page, text extracts cleanly, no phone number. Fixed a missing space ("limitations.3+", "20+projects") caused by line breaks between template values.
+- Hero at 1440×900: 1014 px tall. The skill boxes start inside the first screen, with room above them for the horizon and the sun.
+
 ### Not tested / gaps (this run)
 
 - External links were not fetched (network policy). In particular the DPEC Render app, the Streamlit demo and LinkedIn could not be opened from here.

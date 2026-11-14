@@ -6,6 +6,8 @@
  *  - `confirm: true` marks a value still awaiting the owner's confirmation; it is rendered,
  *    so check those entries before each deploy.
  *  - Text may contain `inline code` in backticks. It renders as <code>, never as raw HTML.
+ *
+ * How to edit (skills, projects, links, experience) step by step: docs/EDITING_GUIDE.md
  */
 
 export type Status = 'Complete' | 'Working' | 'In development' | 'Archived';
@@ -23,10 +25,21 @@ export const identity = {
   lastName: 'Yuldashev',
   handle: 'SHAVKATJON',
   title: 'Data Scientist',
-  positioning: 'Data Scientist building production-grade ML systems.',
-  roles: ['Data Science', 'Machine Learning', 'Applied AI'],
+  /** Shown above the name in the hero, and in the CV, footer, search and share text. */
+  positioning: 'Data Scientist building end-to-end data products.',
+  /** Professional direction: Data Scientist focused on these three areas. */
+  roles: ['Machine Learning', 'Statistical Modelling', 'Applied AI'],
+  /** The hero's large line. `emphasis` is the part set in the accent colour. */
+  headline: 'Building data products that turn complex data into useful decisions.',
+  headlineEmphasis: 'useful decisions',
   statement:
-    'I take raw, messy data through tested pipelines to evaluated models and tools people can use, and I publish the numbers, including where a model loses.',
+    'I build reproducible pipelines, apply statistical modelling and machine learning, and deliver evaluated results through applications people can use.',
+  support: 'My work emphasises rigorous validation, reproducibility, and clear reporting of both results and limitations.',
+  /** Credentials shown in the hero, About and CV. Self-reported: see docs/CONTENT_INVENTORY.md. */
+  credentials: [
+    { value: '3+', label: 'years’ experience', long: 'years of experience in data analysis and modelling' },
+    { value: '20+', label: 'projects delivered', long: 'projects delivered across analytics, statistical modelling and machine learning' },
+  ],
   location: {
     city: 'Busan',
     country: 'South Korea',
@@ -35,7 +48,8 @@ export const identity = {
   availability: {
     open: true, // CONFIRM before each deploy
     short: 'Open to work',
-    detail: 'Junior data science and ML roles, in Korea or with international English-speaking teams.',
+    /** Read as "Open to remote, full-time and project-based roles." */
+    scope: 'remote, full-time and project-based roles',
   },
 } as const;
 
@@ -67,20 +81,21 @@ export const education = [
     place: 'Busan, South Korea',
     degree: 'Bachelor of Integrated Business Management (IBM)',
     year: '2026',
-    focus: 'Econometrics, business statistics and strategy, marketing research',
+    focus: 'Statistics, econometrics, business statistics and strategy, marketing and marketing research',
   },
 ];
 
 export const experience = [
   {
-    org: 'KVENTS',
+    org: 'CHUST KVENTS',
     place: 'Chust, Namangan, Uzbekistan · remote',
     role: 'Data & Business Analyst',
-    period: 'Nov 2024 – Dec 2025',
+    period: 'Nov 2023 – Mar 2026', // CONFIRM: owner gave "November 2023 january – 2026 march"
     points: [
-      'Digitised sales, inventory and expense records into structured datasets in Excel and Google Sheets.',
-      'Business and financial analysis of sales, inventory and costs.',
-      'Time-series forecasts of sales and expenses to plan resources.',
+      'Developed Python and SQL workflows to analyze sales, inventory, product, and customer data across the head office and three retail locations.',
+      'Applied statistical analysis and machine learning for product demand forecasting, customer segmentation, and purchasing behavior analysis.',
+      'Analyzed product profitability, sales trends, and pricing performance to identify business improvement opportunities.',
+      'Automated data processing, reporting, and predictive workflows to support data-driven business decisions.',
     ],
   },
 ];
@@ -93,11 +108,10 @@ export const languages = [
 ];
 
 export const targetRoles = [
-  'Junior data scientist',
-  'Junior machine-learning engineer',
-  'Data analyst with modelling scope',
-  'ML and analytics internships',
-  'Research assistant in applied statistics or ML',
+  'Data scientist',
+  'Machine learning engineer',
+  'Applied AI and LLM application roles',
+  'Forecasting and statistical modelling roles',
 ];
 
 export const interests = [
@@ -109,26 +123,169 @@ export const interests = [
   'Sports analytics, especially Formula 1',
 ];
 
+/* ------------------------------------------------------------------ */
+/* Links used below                                                    */
+/* ------------------------------------------------------------------ */
+
+const GH = 'https://github.com/shavkatjony';
+const TELCO = `${GH}/telco-churn-prediction`;
+const OLIST = `${GH}/brazilian-e-market`;
+const RETAIL = `${GH}/retail-commercial-intelligence`;
+const DPEC = `${GH}/F1-pace-intelligence`;
+const NOTEBOOKS = { label: 'Modelling notebooks', href: `${GH}/data-science-portfolio` };
+const MNIST = { label: 'MNIST explorer', href: `${GH}/mnist-classifier-fullstack` };
+
+/* ------------------------------------------------------------------ */
+/* Technical skills                                                    */
+/* ------------------------------------------------------------------ */
+
 /**
- * The hero's "My stack" panel: only what the projects below actually use, grouped so a recruiter
- * can scan it in seconds. Evidence for each item: the toolkit's "Shown in" links and the case studies.
- * `flow: true` renders the items as ordered steps (→) instead of a list (·).
+ * The six skill groups. This one list feeds three places, so they always agree:
+ *   1. the skill boxes at the foot of the hero (every skill, unless `hero: false`), in this order;
+ *   2. the Toolkit section, where a skill with `evidence` or `extra` links to the work that shows it;
+ *   3. the Skills section of the CV page and PDF.
+ *
+ * TO ADD A SKILL: copy one line, change the name, save. That's all.
+ *   - Add `evidence` only when a featured project really uses it. Project ids:
+ *       'f1-pace-intelligence'  'telco-churn'  'retail-intelligence'  'olist-delivery'  'document-scanner'
+ *   - `extra: NOTEBOOKS` or `extra: MNIST` points to other public work.
+ *   - `hero: false`  keeps a skill out of the hero boxes and the CV (Toolkit evidence only).
+ *   - `learning: true` shows it as "(learning)".
+ * Ready-made examples are commented out (lines starting with //): delete the // to switch one on.
  */
-export const heroStack: { title: string; items: string[]; flow?: boolean }[] = [
-  { title: 'Languages & data', items: ['Python', 'SQL', 'pandas', 'NumPy', 'DuckDB', 'SQLite', 'Parquet'] },
-  { title: 'ML libraries', items: ['scikit-learn', 'statsmodels', 'PyTorch'] },
+export interface Skill {
+  name: string;
+  /** Case studies that show this skill (project ids). */
+  evidence?: string[];
+  /** Other public work that shows it. */
+  extra?: { label: string; href: string };
+  /** Short qualifier shown in the Toolkit. */
+  note?: string;
+  /** false = Toolkit evidence only, not in the hero boxes or the CV. */
+  hero?: boolean;
+  /** true = still learning. */
+  learning?: boolean;
+}
+export interface SkillGroup {
+  id: string;
+  title: string;
+  /** true = the skills are steps in order, shown with arrows. */
+  flow?: boolean;
+  skills: Skill[];
+}
+
+export const skillGroups: SkillGroup[] = [
   {
-    title: 'ML models',
-    items: ['Logistic regression', 'Random forest', 'Gradient boosting', 'Linear regression (WLS)', 'Neural network (MLP)'],
+    id: 'programming',
+    title: 'Programming & Data',
+    skills: [
+      { name: 'Python', evidence: ['f1-pace-intelligence', 'telco-churn', 'retail-intelligence', 'olist-delivery', 'document-scanner'] },
+      { name: 'SQL (MySQL, PostgreSQL)', note: 'DuckDB and SQLite in the projects', evidence: ['f1-pace-intelligence', 'retail-intelligence', 'olist-delivery'] },
+      { name: 'R' },
+      { name: 'pandas', evidence: ['f1-pace-intelligence', 'telco-churn', 'retail-intelligence', 'olist-delivery'] },
+      { name: 'NumPy', evidence: ['f1-pace-intelligence', 'retail-intelligence', 'document-scanner'] },
+      { name: 'JSON', evidence: ['f1-pace-intelligence', 'retail-intelligence'] },
+      { name: 'CSV', evidence: ['telco-churn', 'retail-intelligence', 'olist-delivery'] },
+      { name: 'Parquet', evidence: ['f1-pace-intelligence', 'retail-intelligence'] },
+      // { name: 'Polars' },
+      // { name: 'Excel / Google Sheets' },
+    ],
   },
   {
-    title: 'ML process',
+    id: 'statistics',
+    title: 'Statistics & Modelling',
+    skills: [
+      { name: 'Probability', evidence: ['f1-pace-intelligence'], note: 'race chances scored with the Brier score' },
+      { name: 'Descriptive & inferential statistics', evidence: ['olist-delivery', 'f1-pace-intelligence'] },
+      { name: 'EDA', evidence: ['telco-churn', 'olist-delivery'] },
+      { name: 'Hypothesis testing', extra: NOTEBOOKS },
+      { name: 'Weighted least squares', evidence: ['f1-pace-intelligence'] },
+      { name: 'OLS', extra: NOTEBOOKS },
+      { name: 'Regression', evidence: ['f1-pace-intelligence'], extra: NOTEBOOKS },
+      { name: 'Correlation analysis', evidence: ['olist-delivery', 'f1-pace-intelligence'] },
+      { name: 'Bootstrap intervals', evidence: ['f1-pace-intelligence'] },
+      { name: 'SciPy', extra: NOTEBOOKS },
+      { name: 'statsmodels', evidence: ['f1-pace-intelligence'], extra: NOTEBOOKS },
+      { name: 'Monte Carlo simulation', evidence: ['f1-pace-intelligence'], hero: false },
+      // { name: 'Time-series analysis' },
+      // { name: 'A/B testing' },
+    ],
+  },
+  {
+    id: 'ml',
+    title: 'Machine Learning',
+    skills: [
+      { name: 'scikit-learn', evidence: ['telco-churn'] },
+      { name: 'Supervised & unsupervised learning', evidence: ['telco-churn'], note: 'unsupervised: customer segmentation at work' },
+      { name: 'Regression', evidence: ['f1-pace-intelligence'] },
+      { name: 'Classification', evidence: ['telco-churn'] },
+      { name: 'Decision trees', evidence: ['telco-churn'], note: 'tree ensembles in the churn comparison' },
+      { name: 'Random forest', evidence: ['telco-churn'] },
+      { name: 'Gradient boosting', evidence: ['telco-churn'], note: 'HistGradientBoostingClassifier' },
+      { name: 'Logistic regression', evidence: ['telco-churn'], hero: false, note: 'the selected churn model' },
+      { name: 'PyTorch', extra: MNIST, hero: false, note: 'secondary: a small network on MNIST' },
+      // { name: 'Hyperparameter tuning (GridSearchCV, Optuna)' },
+      // { name: 'XGBoost' },
+      // { name: 'LightGBM' },
+      // { name: 'TensorFlow / Keras' },
+      // { name: 'Clustering (k-means)' },
+    ],
+  },
+  {
+    id: 'validation',
+    title: 'Model Development & Validation',
     flow: true,
-    items: ['Data cleaning', 'Feature engineering', 'Cross-validation', 'Baselines', 'Evaluation', 'Backtesting', 'Deployment'],
+    skills: [
+      { name: 'Data cleaning', evidence: ['f1-pace-intelligence', 'telco-churn', 'retail-intelligence'] },
+      { name: 'Preprocessing', evidence: ['telco-churn'] },
+      { name: 'Feature engineering', evidence: ['telco-churn'] },
+      { name: 'Stratified cross-validation', evidence: ['telco-churn'] },
+      { name: 'Baseline comparison', evidence: ['f1-pace-intelligence', 'telco-churn'] },
+      { name: 'Model evaluation', evidence: ['telco-churn', 'f1-pace-intelligence'] },
+      { name: 'Walk-forward backtesting', evidence: ['f1-pace-intelligence'] },
+      { name: 'Split-conformal uncertainty ranges', evidence: ['f1-pace-intelligence'], hero: false },
+    ],
   },
-  { title: 'Deploy & MLOps', items: ['FastAPI', 'Docker', 'Streamlit', 'pytest', 'GitHub Actions CI', 'Git'] },
-  { title: 'Analytics, vision & AI', items: ['matplotlib', 'd3.js', 'OpenCV', 'Tesseract OCR', 'LLM tool use (Claude API, Ollama)'] },
+  {
+    id: 'deployment',
+    title: 'APIs & Deployment',
+    skills: [
+      { name: 'APIs', evidence: ['f1-pace-intelligence'], note: 'FastF1 timing data and the Claude API' },
+      { name: 'REST APIs', evidence: ['f1-pace-intelligence', 'telco-churn'] },
+      { name: 'FastAPI', evidence: ['f1-pace-intelligence', 'telco-churn'], extra: MNIST },
+      { name: 'Streamlit', evidence: ['telco-churn'] },
+      { name: 'Docker', evidence: ['f1-pace-intelligence'], note: 'release image, hosted on Render' },
+      { name: 'Postman' },
+      { name: 'Git', evidence: ['f1-pace-intelligence', 'telco-churn', 'retail-intelligence', 'olist-delivery'] },
+      { name: 'GitHub', evidence: ['f1-pace-intelligence', 'telco-churn', 'retail-intelligence', 'olist-delivery'] },
+      { name: 'Testing & CI (pytest, Ruff, GitHub Actions)', evidence: ['f1-pace-intelligence', 'telco-churn'], hero: false },
+      // { name: 'MLflow' },
+      // { name: 'AWS' },
+    ],
+  },
+  {
+    id: 'visualization',
+    title: 'Visualization & Applied AI',
+    skills: [
+      { name: 'Matplotlib', evidence: ['olist-delivery', 'telco-churn', 'document-scanner'] },
+      { name: 'Seaborn', extra: NOTEBOOKS },
+      { name: 'Plotly' },
+      { name: 'D3.js', evidence: ['olist-delivery'] },
+      { name: 'Tableau', learning: true, note: 'the retail dashboard has a written spec; not yet published' },
+      { name: 'LLM tool use (AI APIs and Ollama)', evidence: ['f1-pace-intelligence'] },
+      // To show OpenCV / Tesseract in the hero boxes too, delete `hero: false` on their lines.
+      { name: 'OpenCV', evidence: ['document-scanner'], hero: false },
+      { name: 'Tesseract OCR', evidence: ['document-scanner'], hero: false },
+      // { name: 'Power BI' },
+      // { name: 'Computer vision: image classification (CNN)' },
+      // { name: 'Object detection (YOLO)' },
+    ],
+  },
 ];
+
+/** Skills shown in the hero boxes and the CV: everything except `hero: false`. */
+export const heroSkills = (g: SkillGroup) => g.skills.filter((sk) => sk.hero !== false);
+export const skillLabel = (sk: Skill) => (sk.learning ? `${sk.name} (learning)` : sk.name);
 
 /* ------------------------------------------------------------------ */
 /* Projects                                                            */
@@ -138,7 +295,6 @@ export type FigureId =
   | 'telco-app'
   | 'telco-models'
   | 'telco-confusion'
-  | 'telco-thresholds'
   | 'olist-dashboard'
   | 'olist-reviews'
   | 'olist-states'
@@ -173,6 +329,12 @@ export interface Project {
   status: Status;
   statusNote?: string;
   tier: 'primary' | 'secondary';
+  /** The flagship gets the largest card, a "Flagship project" badge and the `demonstrates` row. */
+  flagship?: boolean;
+  /** Flagship only: the capabilities the project demonstrates. */
+  demonstrates?: string[];
+  /** Flagship only: a second figure under the card's main image. */
+  plateExtra?: FigureId;
   tone: Tone;
   problem: string;
   contribution: string;
@@ -188,19 +350,137 @@ export interface Project {
   caseStudy: { summary: string; sections: CaseSection[] };
 }
 
-const GH = 'https://github.com/shavkatjony';
-const TELCO = `${GH}/telco-churn-prediction`;
-const OLIST = `${GH}/brazilian-e-market`;
-const RETAIL = `${GH}/retail-commercial-intelligence`;
-const DPEC = `${GH}/F1-pace-intelligence`;
-
 export const projects: Project[] = [
   {
-    slug: 'telco-churn',
+    slug: 'f1-pace-intelligence',
     index: '01',
+    title: 'DPEC: Formula 1 Pace Intelligence',
+    short: 'F1 pace forecasting',
+    kicker: 'Forecasting · uncertainty · applied AI',
+    year: '2026',
+    status: 'Complete',
+    statusNote: 'Built, backtested and deployed · public forecast ledger: 0 live weekends',
+    tier: 'primary',
+    flagship: true,
+    demonstrates: [
+      'Data engineering',
+      'Statistical research',
+      'Forecasting',
+      'Validation & uncertainty',
+      'Strategy modelling',
+      'API engineering',
+      'App & deployment',
+      'Applied AI & evaluation',
+    ],
+    tone: 'coffee',
+    problem:
+      'Before each race, how fast will each car really be over a race distance, how sure can we be, and how many pit stops make sense, using public data only?',
+    contribution:
+      'Built it solo, end to end: a 545-session pipeline and 15-table DuckDB warehouse, research on what predicts race pace, one shared weighted regression tested walk-forward with split-conformal 80% ranges, a Monte Carlo strategy model, a read-only FastAPI service and web app on Render, and an AI race engineer graded by an automatic exam.',
+    result:
+      'On 37 race weekends held out from every modelling choice, race-pace error after qualifying was 0.548% of a lap (about 0.49 s), against 0.589% for the best of five baselines, and 79.9% of real results fell inside the 80% ranges.',
+    metrics: [
+      { value: '0.548%', label: 'Race-pace error after qualifying (best baseline 0.589%)' },
+      { value: '79.9%', label: 'Real results inside the 80% ranges' },
+      { value: '58%', label: 'Pit-stop count matched, 78 dry races (always one stop: 46%)' },
+    ],
+    methods: ['Weighted regression', 'Walk-forward backtest', 'Split-conformal ranges', 'Monte Carlo strategy', 'LLM tool use'],
+    stack: ['Python', 'DuckDB SQL', 'Parquet', 'statsmodels', 'FastAPI', 'Docker', 'Claude API · Ollama', 'pytest'],
+    links: [
+      { label: 'Source code', href: DPEC, kind: 'repo' },
+      { label: 'Live app (Render, wakes in ~1 min)', href: 'https://f1-pace-intelligence.onrender.com', kind: 'demo' },
+      { label: 'Model card', href: `${DPEC}/blob/main/docs/model-card.md`, kind: 'doc' },
+      { label: 'Numbers check', href: `${DPEC}/blob/main/reports/numbers-check.md`, kind: 'doc' },
+    ],
+    repoPublic: true,
+    plate: 'dpec-pitwall',
+    plateExtra: 'dpec-results',
+    caseStudy: {
+      summary:
+        'My flagship project: a complete forecasting product on public Formula 1 timing data, built solo and proved on races the model never saw. Formula 1 is the setting, not the point: the same problem appears in demand, energy and logistics forecasting.',
+      sections: [
+        {
+          id: 'problem',
+          title: 'Problem',
+          body: [
+            'Before every race a team has to work out how fast each car will really be over a full race distance, and how many times to stop for new tyres. It has a few practice sessions and one qualifying session to go on, and that data is noisy: only 55% of laps show a car’s real pace (78% in races, 27% in qualifying), and the facts that matter most, such as fuel loads, are never published.',
+            'The question was how well public data alone can answer this, proved on races the model had never seen.',
+          ],
+        },
+        {
+          id: 'objectives',
+          title: 'Objectives and questions',
+          body: [],
+          list: [
+            'How fast will each car be on Sunday, over a whole race (median clean race lap, as % behind the fastest car)?',
+            'How sure can we be? Every forecast carries an 80% range and three chances: best race pace, top-3 race pace, beating the teammate.',
+            'What should the team do: how many pit stops, roughly when?',
+            'After the race: was the forecast right, and where did the time go?',
+          ],
+        },
+        {
+          id: 'data',
+          title: 'Data and methodology',
+          body: [
+            '545 sessions and 297,724 laps, from the 2022 Bahrain Grand Prix to the 2026 Singapore Grand Prix, downloaded once through FastF1 and stored untouched as Parquet with a SHA-256 for every file. A DuckDB warehouse of 15 tables is rebuilt from plain SQL; every lap gets one reason code, `clean` or the first of 13 rules it breaks, and 21 data checks run after every build.',
+            'Research came before modelling. Qualifying predicted race pace far better than practice long runs (median Spearman 0.80 against 0.39 over 86 dry weekends; the bootstrap 95% interval for the difference runs from −0.48 to −0.34), so the forecaster is built on qualifying and recent form.',
+            'The forecaster is one shared weighted regression for every track and year. Evaluation is walk-forward: before each weekend the model is refitted on earlier races only. Every setting was chosen on 2023–24, and results are reported on 2025–26 (37 weekends, 726 driver-races) that played no part in any choice. The 80% ranges are split-conformal, built from the model’s own recent errors; the chances come from 4,000 simulated race orders.',
+          ],
+          figures: ['dpec-practice'],
+        },
+        {
+          id: 'implementation',
+          title: 'Technical implementation',
+          body: [
+            'One codebase serves a local app and a read-only public copy. Data flows one way, models only see the past, and serving only reads.',
+          ],
+          list: [
+            'A read-only FastAPI service with 18 endpoints, and a framework-free web app with 15 linked windows and 4 layouts.',
+            'An AI race engineer: an LLM agent with 8 read-only tools and a SQL guard, on the Claude API or a local Ollama model. Every number must name the tool it came from; anything public data can’t show gets “not public”.',
+            '129 tests on fake data with no internet, plus Ruff, in GitHub Actions on every push. A second CI job protects the public record: it rejects a forecast that arrives after its deadline or a frozen file that changes.',
+            'A release workflow builds a Docker image with the data snapshot inside, checks it behaves like the public copy, and pushes it to GitHub’s container registry; Render hosts the public copy.',
+          ],
+          figures: ['dpec-pipeline', 'dpec-pitwall'],
+        },
+        {
+          id: 'findings',
+          title: 'Findings and verified results',
+          body: [
+            'Every number in the project README is traced to its source in a published numbers check. On the 37 held-out weekends:',
+          ],
+          list: [
+            'Race-pace error after qualifying 0.548% (about 0.49 s a lap) against 0.589% for the best of five baselines; after practice 0.648% against 0.674%.',
+            'Ranges that mean what they say: 78.5% (after practice) and 79.9% (after qualifying) of real results fell inside the 80% ranges. Top-3 chance Brier score 0.070 against 0.129 for no information.',
+            'Strategy, replayed on 78 dry races with only earlier data: the stop count matched what most of the top 10 did in 58% of races, against 46% for “always one stop” (67% against 57% when the call was clear).',
+            'The live code path, replayed on 16 races of 2026, gave exactly the backtest’s error (0.573%).',
+            'The AI assistant passed a 50-question exam, including 5 trap questions it had to turn down, graded against the warehouse on 8 November 2026.',
+          ],
+          figures: ['dpec-results'],
+        },
+        {
+          id: 'limitations',
+          title: 'Limitations and lessons',
+          body: [
+            'Lesson: a leaky baseline beat every honest model. Copying a teammate’s pace from the same race, under a random row split, scored 0.51%, better than any real forecaster and useless before a race. Walk-forward evaluation by race date, with future columns hidden in code, made leakage a test failure.',
+          ],
+          list: [
+            'The system is built and backtested. Its public pre-race forecast ledger has zero live weekends; the deployed application uses a dated data snapshot rather than a live timing feed. Since October 2026 F1’s timing data needs a paid login, so no forecast could be frozen before a race.',
+            'The public app shows a dated snapshot that ends at the 2026 Singapore Grand Prix, on free hosting that sleeps after 15 minutes without visitors.',
+            'It doesn’t win every comparison: a separate model for each year orders drivers slightly better after qualifying (median Spearman 0.843 against 0.821), and in the first five races under the 2026 regulations simpler methods did as well or better, with only 68% of real race paces inside the after-practice ranges.',
+            'Public data only: fuel loads, setups, tyre temperatures and pressures, engine modes and other private team data are not available. Where the model needs their effect it estimates it (fuel: an assumed 0.06 s per lap), and an estimate is never reported as a measurement.',
+            'Simple models on purpose: one regression with at most three inputs, and no weather, upgrades or penalties as inputs. The chances are a little too flat: favourites make the top 3 more often than the model says.',
+          ],
+          figures: ['dpec-debrief'],
+        },
+      ],
+    },
+  },
+  {
+    slug: 'telco-churn',
+    index: '02',
     title: 'Telco Customer Churn',
     short: 'Telco churn',
-    kicker: 'Classification · retention',
+    kicker: 'Traditional machine learning · classification',
     year: '2026',
     status: 'Complete',
     tier: 'primary',
@@ -255,7 +535,7 @@ export const projects: Project[] = [
           body: [
             'The IBM Telco Customer Churn sample: 7,043 customers of a fictional telecom company, 26.5% of whom churned. A model that predicts “nobody leaves” scores 73.5% accuracy and catches no one.',
             'One real data-quality bug: `TotalCharges` was stored as text with 11 blanks, all for customers with `tenure = 0`. They are legitimately $0, not missing, so they were set to zero instead of being dropped or imputed.',
-            'A stratified 80/20 split (5,634 training, 1,409 test customers). Three classifiers, all with `class_weight="balanced"`, were compared with 5-fold stratified cross-validation on the training split. Two engineered features: `num_addon_services` and `tenure_group`. Selection used ROC-AUC, with churn recall as the deciding business metric.',
+            'A stratified 80/20 split (5,634 training, 1,409 test customers). Three classifiers (logistic regression, random forest and `HistGradientBoostingClassifier`), all with `class_weight="balanced"`, were compared with 5-fold stratified cross-validation on the training split. Two engineered features: `num_addon_services` and `tenure_group`. Selection used ROC-AUC, with churn recall as the deciding business metric.',
           ],
           figures: ['telco-models'],
         },
@@ -279,6 +559,7 @@ export const projects: Project[] = [
           title: 'Findings and verified results',
           body: [
             'The 1,409-customer test split was used once, after model selection. Logistic regression scored ROC-AUC 0.842, recall 0.791, precision 0.498, F1 0.612 and accuracy 0.733: 296 of 374 churners caught, at the cost of 298 false alarms.',
+            'Why not the most accurate model? The random forest had the best cross-validated accuracy (0.788) but caught fewer than half the churners (recall 0.465). A missed churner is lost recurring revenue, while a false alarm costs one retention call, so logistic regression was selected on ROC-AUC and recall.',
             'The risk bands order risk: on the test split the observed churn rate was about 56% in High, 26% in Medium and 5% in Low.',
             'The strongest associations with churn are month-to-month contracts, short tenure, high-priced fibre-optic plans, electronic-check payment and having no tech-support or online-security add-ons. These are associations, not causes.',
           ],
@@ -295,19 +576,111 @@ export const projects: Project[] = [
             'At the 0.50 threshold about half of flagged customers would have stayed. That suits a cheap call, not an expensive discount; the threshold should follow retention cost and capacity.',
             'A small, fictional, single-snapshot sample: no time-to-churn and no drift monitoring.',
             '`gender` and `SeniorCitizen` are model inputs and the model has not been audited for group fairness.',
-            'The committed threshold sweep below comes from the earlier, unweighted notebook model; regenerating it for the shipped pipeline is the next step.',
           ],
-          figures: ['telco-thresholds'],
+        },
+      ],
+    },
+  },
+  {
+    slug: 'retail-intelligence',
+    index: '03',
+    title: 'Retail Commercial Intelligence',
+    short: 'Retail data model',
+    kicker: 'Data engineering · data modelling · decision support',
+    year: '2026',
+    status: 'Working',
+    statusNote: 'Pipeline complete · findings from a synthetic sample',
+    tier: 'primary',
+    tone: 'brick',
+    problem:
+      'Turn years of item × store × day retail data into a governed model that answers three questions: what changed, why, and where should management look first?',
+    contribution:
+      'Designed a star schema with an explicit grain, staged DuckDB SQL, a data-quality build gate, a metrics engine with a transparent priority score, and a self-contained three-page HTML dashboard.',
+    result:
+      'At full M5 shape the build processed 59.1M rows end to end in 84 s, with peak memory cut from 8.8 GB to 2.6 GB. The business findings shown are illustrative: the repo runs on a synthetic, M5-shaped sample.',
+    metrics: [
+      { value: '59.1M', label: 'Rows in the full-shape stress test' },
+      { value: '2.6 GB', label: 'Peak memory at full shape, down from 8.8 GB' },
+      { value: '8', label: 'Data-quality checks gating the build' },
+    ],
+    methods: ['Star schema', 'Like-for-like YoY', 'Contribution analysis', 'Exception scoring', 'HHI concentration'],
+    stack: ['Python', 'DuckDB SQL', 'Parquet', 'Make', 'HTML dashboard'],
+    links: [
+      { label: 'Source code', href: RETAIL, kind: 'repo' },
+      { label: 'Live HTML dashboard', href: 'https://shavkatjony.github.io/retail-commercial-intelligence/dashboard/', kind: 'demo' },
+      { label: 'Architecture notes', href: `${RETAIL}/blob/main/docs/architecture.md`, kind: 'doc' },
+      { label: 'M5 dataset (Kaggle)', href: 'https://www.kaggle.com/c/m5-forecasting-accuracy/data', kind: 'data' },
+    ],
+    repoPublic: true,
+    plate: 'retail-tower',
+    caseStudy: {
+      summary:
+        'A data-modelling project where the hard parts were honesty and scale: stating the grain, gating the build on data quality, and fitting the real data size on an 8 GB laptop.',
+      sections: [
+        {
+          id: 'problem',
+          title: 'Problem',
+          body: [
+            'Commercial and category leadership asks one question: what changed in the business, why, and what should we do about it? The goal was a triage list ranked by impact, not a wall of charts. Scope is descriptive and diagnostic by design; there is no forecasting.',
+          ],
+        },
+        {
+          id: 'objectives',
+          title: 'Objectives and questions',
+          body: [],
+          list: [
+            'Where is demand growing or deteriorating, and which products and stores drive the change?',
+            'How do price moves relate to demand?',
+            'How exposed is the business to a few products or stores?',
+            'Can the real data size be processed on an ordinary laptop?',
+          ],
+        },
+        {
+          id: 'data',
+          title: 'Data and methodology',
+          body: [
+            'The model is built for the shape of the M5 (Walmart) data: daily unit sales, weekly prices and an event/SNAP calendar across 3 states and 10 stores (30,490 item-store series in the real data). The repo ships a synthetic, M5-shaped generator so it runs in seconds without downloads; switching to the real files is one config change.',
+            'Every table states its grain: `fact_daily_sales` is one row per item × store × date. Units × price is labelled Estimated Sales Value, not revenue, because M5 has no refunds, tax or cost of goods. Growth is like-for-like against the same window a year earlier, contribution analysis splits the change by category and store, and concentration is measured with an adaptive top-k share and the HHI.',
+            'The exception engine gives every store × category at most one signal (growth, deterioration or price risk) and ranks it by a transparent score: Impact × Magnitude × Confidence. Price–demand links are reported as association only.',
+          ],
+        },
+        {
+          id: 'implementation',
+          title: 'Technical implementation',
+          body: [
+            'Raw CSVs are reshaped from wide to long in Python, staged as Parquet and modelled in DuckDB SQL (staging → dimensions → facts → marts). Eight data-quality checks run on every build: unique grain, referential integrity, impossible values and null keys fail it; price coverage and calendar continuity only warn.',
+          ],
+          figures: ['retail-pipeline'],
+        },
+        {
+          id: 'findings',
+          title: 'Findings and verified results',
+          body: [
+            'The pipeline was stress-tested at full M5 shape: 30,450 series × 1,941 days = 59.1M rows. The first version peaked at 8.8 GB. Four changes, each measured on its own, brought it to 2.6 GB: streaming the reshape store by store, categorical encoding for every text column, running ingestion in its own process, and capping DuckDB at 1.5 GB so it spills to disk.',
+          ],
+          figures: ['retail-scale', 'retail-tower'],
+        },
+        {
+          id: 'limitations',
+          title: 'Limitations and lessons',
+          body: [
+            'Lesson: profile before optimising, and measure each change on its own. Inside DuckDB the memory peak came from the full-key duplicate-grain check (a 59M-group aggregate), and capping DuckDB at 1.5 GB cost no wall time at all.',
+          ],
+          list: [
+            'The mechanics are real; the numbers in the repo are not business findings. They must be regenerated from the real Kaggle M5 files before being presented as insight.',
+            'The Tableau Public edition is specified in a build guide but not yet published; the HTML edition is live.',
+            'Next: unit tests for the metric functions (growth windows, contribution, priority score).',
+          ],
         },
       ],
     },
   },
   {
     slug: 'olist-delivery',
-    index: '02',
+    index: '04',
     title: 'Olist Marketplace: Delivery & Loyalty',
     short: 'Olist SQL analysis',
-    kicker: 'SQL-first analytics · live dashboard',
+    kicker: 'SQL-first business analysis · live dashboard',
     year: '2026',
     status: 'Complete',
     tier: 'primary',
@@ -398,216 +771,12 @@ export const projects: Project[] = [
             'Lesson: check the denominator. My first seller-concentration figure divided item revenue by total payments, which include freight, and reported 14.6% for the top 15. On a like-for-like basis it is 17.6%, and it overturned my “long tail carries the business” conclusion. The correction is published in the findings.',
           ],
           list: [
+            'The data ends in October 2018, so every finding describes 2016–2018, not today’s marketplace.',
             'No acquisition-cost data, so “retention is low” is a strong signal but not a full ROI case.',
             'Lateness, region and carrier are tangled together: the drop in reviews is an association, not a measured causal effect.',
             'Review scores are voluntary, which brings selection bias; the northern states are small samples.',
             'Next: segment by product category and region to separate “late because far” from “late because of seller or handling”.',
           ],
-        },
-      ],
-    },
-  },
-  {
-    slug: 'retail-intelligence',
-    index: '03',
-    title: 'Retail Commercial Intelligence',
-    short: 'Retail BI model',
-    kicker: 'Data modelling · BI',
-    year: '2026',
-    status: 'Working',
-    statusNote: 'Pipeline complete · findings from a synthetic sample',
-    tier: 'primary',
-    tone: 'brick',
-    problem:
-      'Turn years of item × store × day retail data into a governed model that answers three questions: what changed, why, and where should management look first?',
-    contribution:
-      'Designed a star schema with an explicit grain, staged DuckDB SQL, a data-quality build gate, a metrics engine with a transparent priority score, and a self-contained three-page HTML dashboard.',
-    result:
-      'At full M5 shape the build processed 59.1M rows end to end in 84 s, with peak memory cut from 8.8 GB to 2.6 GB. The business findings shown are illustrative: the repo runs on a synthetic, M5-shaped sample.',
-    metrics: [
-      { value: '59.1M', label: 'Rows in the full-shape stress test' },
-      { value: '2.6 GB', label: 'Peak memory at full shape, down from 8.8 GB' },
-      { value: '8', label: 'Data-quality checks gating the build' },
-    ],
-    methods: ['Star schema', 'Like-for-like YoY', 'Contribution analysis', 'Exception scoring', 'HHI concentration'],
-    stack: ['Python', 'DuckDB SQL', 'Parquet', 'Make', 'Tableau (guide)'],
-    links: [
-      { label: 'Source code', href: RETAIL, kind: 'repo' },
-      { label: 'Live HTML dashboard', href: 'https://shavkatjony.github.io/retail-commercial-intelligence/dashboard/', kind: 'demo' },
-      { label: 'Architecture notes', href: `${RETAIL}/blob/main/docs/architecture.md`, kind: 'doc' },
-      { label: 'M5 dataset (Kaggle)', href: 'https://www.kaggle.com/c/m5-forecasting-accuracy/data', kind: 'data' },
-    ],
-    repoPublic: true,
-    plate: 'retail-tower',
-    caseStudy: {
-      summary:
-        'A data-modelling project where the hard parts were honesty and scale: stating the grain, gating the build on data quality, and fitting the real data size on an 8 GB laptop.',
-      sections: [
-        {
-          id: 'problem',
-          title: 'Problem',
-          body: [
-            'Commercial and category leadership asks one question: what changed in the business, why, and what should we do about it? The goal was a triage list ranked by impact, not a wall of charts. Scope is descriptive and diagnostic by design; there is no forecasting.',
-          ],
-        },
-        {
-          id: 'objectives',
-          title: 'Objectives and questions',
-          body: [],
-          list: [
-            'Where is demand growing or deteriorating, and which products and stores drive the change?',
-            'How do price moves relate to demand?',
-            'How exposed is the business to a few products or stores?',
-            'Can the real data size be processed on an ordinary laptop?',
-          ],
-        },
-        {
-          id: 'data',
-          title: 'Data and methodology',
-          body: [
-            'The model is built for the shape of the M5 (Walmart) data: daily unit sales, weekly prices and an event/SNAP calendar across 3 states and 10 stores (30,490 item-store series in the real data). The repo ships a synthetic, M5-shaped generator so it runs in seconds without downloads; switching to the real files is one config change.',
-            'Every table states its grain: `fact_daily_sales` is one row per item × store × date. Units × price is labelled Estimated Sales Value, not revenue, because M5 has no refunds, tax or cost of goods. Growth is like-for-like against the same window a year earlier, contribution analysis splits the change by category and store, and concentration is measured with an adaptive top-k share and the HHI.',
-            'The exception engine gives every store × category at most one signal (growth, deterioration or price risk) and ranks it by a transparent score: Impact × Magnitude × Confidence. Price–demand links are reported as association only.',
-          ],
-        },
-        {
-          id: 'implementation',
-          title: 'Technical implementation',
-          body: [
-            'Raw CSVs are reshaped from wide to long in Python, staged as Parquet and modelled in DuckDB SQL (staging → dimensions → facts → marts). Eight data-quality checks run on every build: unique grain, referential integrity, impossible values and null keys fail it; price coverage and calendar continuity only warn.',
-          ],
-          figures: ['retail-pipeline'],
-        },
-        {
-          id: 'findings',
-          title: 'Findings and verified results',
-          body: [
-            'The pipeline was stress-tested at full M5 shape: 30,450 series × 1,941 days = 59.1M rows. The first version peaked at 8.8 GB. Four changes, each measured on its own, brought it to 2.6 GB: streaming the reshape store by store, categorical encoding for every text column, running ingestion in its own process, and capping DuckDB at 1.5 GB so it spills to disk.',
-          ],
-          figures: ['retail-scale', 'retail-tower'],
-        },
-        {
-          id: 'limitations',
-          title: 'Limitations and lessons',
-          body: [
-            'Lesson: profile before optimising, and measure each change on its own. Inside DuckDB the memory peak came from the full-key duplicate-grain check (a 59M-group aggregate), and capping DuckDB at 1.5 GB cost no wall time at all.',
-          ],
-          list: [
-            'The mechanics are real; the numbers in the repo are not business findings. They must be regenerated from the real Kaggle M5 files before being presented as insight.',
-            'The Tableau Public edition is specified in a build guide but not published yet; the HTML edition is live.',
-            'Next: unit tests for the metric functions (growth windows, contribution, priority score).',
-          ],
-        },
-      ],
-    },
-  },
-  {
-    slug: 'f1-pace-intelligence',
-    index: '04',
-    title: 'DPEC: Formula 1 Pace Intelligence',
-    short: 'F1 pace forecasting',
-    kicker: 'Forecasting · uncertainty · applied AI',
-    year: '2026',
-    status: 'In development',
-    statusNote: 'Backtested on held-out races · live record not started',
-    tier: 'primary',
-    tone: 'coffee',
-    problem:
-      'Before each race, how fast will each car really be over a race distance, how sure can we be, and how many pit stops make sense, using public data only?',
-    contribution:
-      'Built it solo from first download to deployed app: a 545-session pipeline and DuckDB warehouse, a walk-forward forecaster with calibrated 80% ranges, a strategy model, a read-only FastAPI service and web app, and an AI assistant graded by an automatic exam.',
-    result:
-      'On 37 race weekends held out from every modelling choice, race-pace error after qualifying was 0.548% of a lap (about 0.49 s), against 0.589% for the best of five baselines, and 79.9% of real results fell inside the 80% ranges.',
-    metrics: [
-      { value: '0.548%', label: 'Race-pace error after qualifying (best baseline 0.589%)' },
-      { value: '79.9%', label: 'Real results inside the 80% ranges' },
-      { value: '129', label: 'Tests run in CI on every push' },
-    ],
-    methods: ['Walk-forward backtest', 'Split-conformal ranges', 'Monte Carlo strategy', 'LLM tool use'],
-    stack: ['Python', 'DuckDB SQL', 'statsmodels', 'FastAPI', 'Docker', 'Claude API · Ollama', 'pytest'],
-    links: [
-      { label: 'Source code', href: DPEC, kind: 'repo' },
-      { label: 'Live app (Render, wakes in ~1 min)', href: 'https://f1-pace-intelligence.onrender.com', kind: 'demo' },
-      { label: 'Model card', href: `${DPEC}/blob/main/docs/model-card.md`, kind: 'doc' },
-      { label: 'Numbers check', href: `${DPEC}/blob/main/reports/numbers-check.md`, kind: 'doc' },
-    ],
-    repoPublic: true,
-    plate: 'dpec-pitwall',
-    caseStudy: {
-      summary:
-        'A complete forecasting product on public Formula 1 timing data, proved on races the model never saw. Formula 1 is the setting, not the point: the same problem appears in demand, energy and logistics forecasting.',
-      sections: [
-        {
-          id: 'problem',
-          title: 'Problem',
-          body: [
-            'Before every race a team has to work out how fast each car will really be over a full race distance, and how many times to stop for new tyres. It has a few practice sessions and one qualifying session to go on, and that data is noisy: only 55% of laps show a car’s real pace (78% in races, 27% in qualifying), and the facts that matter most, such as fuel loads, are never published.',
-            'The question was how well public data alone can answer this, proved on races the model had never seen.',
-          ],
-        },
-        {
-          id: 'objectives',
-          title: 'Objectives and questions',
-          body: [],
-          list: [
-            'How fast will each car be on Sunday, over a whole race (median clean race lap, as % behind the fastest car)?',
-            'How sure can we be? Every forecast carries an 80% range and three chances: best race pace, top-3 race pace, beating the teammate.',
-            'What should the team do: how many pit stops, roughly when?',
-            'After the race: was the forecast right, and where did the time go?',
-          ],
-        },
-        {
-          id: 'data',
-          title: 'Data and methodology',
-          body: [
-            '545 sessions and 297,724 laps, from the 2022 Bahrain Grand Prix to the 2026 Singapore Grand Prix, downloaded once through FastF1 and stored untouched as Parquet with a SHA-256 for every file. A DuckDB warehouse of 15 tables is rebuilt from plain SQL; every lap gets one reason code, `clean` or the first of 13 rules it breaks, and 21 data checks run after every build.',
-            'Research came before modelling. Qualifying predicted race pace far better than practice long runs (median Spearman 0.80 against 0.39 over 86 dry weekends; the bootstrap 95% interval for the difference runs from −0.48 to −0.34), so the forecaster is built on qualifying and recent form.',
-            'Evaluation is walk-forward: before each weekend the model is refitted on earlier races only. Every setting was chosen on 2023–24, and results are reported on 2025–26 (37 weekends, 726 driver-races) that played no part in any choice. The 80% ranges are split-conformal, built from the model’s own recent errors; the chances come from 4,000 simulated race orders.',
-          ],
-          figures: ['dpec-practice'],
-        },
-        {
-          id: 'implementation',
-          title: 'Technical implementation',
-          body: [
-            'One codebase serves a local app and a read-only public copy. Data flows one way, models only see the past, and serving only reads.',
-          ],
-          list: [
-            'A read-only FastAPI service with 18 endpoints, and a framework-free web app with 15 linked windows.',
-            'An AI race engineer: an LLM agent with 8 read-only tools and a SQL guard, on the Claude API or a local Ollama model. Every number must name the tool it came from; anything public data can’t show gets “not public”.',
-            '129 tests on fake data with no internet, plus Ruff, in GitHub Actions on every push. A second CI job protects the public record: it rejects a forecast that arrives after its deadline or a frozen file that changes.',
-            'A release workflow builds a Docker image with the data snapshot inside, checks it behaves like the public copy, and pushes it to GitHub’s container registry; Render hosts the public copy.',
-          ],
-          figures: ['dpec-pipeline', 'dpec-pitwall'],
-        },
-        {
-          id: 'findings',
-          title: 'Findings and verified results',
-          body: [
-            'Every number in the project README is traced to its source in a published numbers check. On the 37 held-out weekends:',
-          ],
-          list: [
-            'Race-pace error after qualifying 0.548% (about 0.49 s a lap) against 0.589% for the best of five baselines; after practice 0.648% against 0.674%.',
-            'Ranges that mean what they say: 78.5% (after practice) and 79.9% (after qualifying) of real results fell inside the 80% ranges. Top-3 chance Brier score 0.070 against 0.129 for no information.',
-            'Strategy, replayed on 78 dry races with only earlier data: the stop count matched what most of the top 10 did in 58% of races, against 46% for “always one stop” (67% against 57% when the call was clear).',
-            'The live code path, replayed on 16 races of 2026, gave exactly the backtest’s error (0.573%).',
-            'The AI assistant passed a 50-question exam, including 5 trap questions it had to turn down, graded against the warehouse on 8 November 2026.',
-          ],
-          figures: ['dpec-results'],
-        },
-        {
-          id: 'limitations',
-          title: 'Limitations and lessons',
-          body: [
-            'Lesson: a leaky baseline beat every honest model. Copying a teammate’s pace from the same race, under a random row split, scored 0.51%, better than any real forecaster and useless before a race. Walk-forward evaluation by race date, with future columns hidden in code, made leakage a test failure.',
-          ],
-          list: [
-            'Still in development: the public forecast record has 0 live weekends. Since October 2026 F1’s timing data needs a paid login, so no forecast could be frozen before a race.',
-            'It doesn’t win everywhere: the per-year model orders drivers slightly better after qualifying (median Spearman 0.843 against 0.821), and in the first five races of the 2026 rules simpler methods did as well or better.',
-            'The chances are a little too flat: favourites make the top 3 more often than the model says.',
-            'Public data only and simple models on purpose: no weather, upgrades or penalties as inputs; fuel effects are an assumed 0.06 s per lap.',
-          ],
-          figures: ['dpec-debrief'],
         },
       ],
     },
@@ -620,7 +789,7 @@ export const projects: Project[] = [
     kicker: 'Computer vision · OCR',
     year: '2026',
     status: 'Working',
-    statusNote: 'Prototype · tuned on one synthetic sample',
+    statusNote: 'Prototype · tested on one synthetic sample, not a general accuracy result',
     tier: 'secondary',
     tone: 'yale',
     problem:
@@ -638,7 +807,7 @@ export const projects: Project[] = [
     stack: ['Python', 'OpenCV', 'NumPy', 'Tesseract (kor/eng)', 'matplotlib'],
     links: [],
     repoPublic: false,
-    privateNote: 'Repository is private: code available on request.',
+    privateNote: 'Code available on request (private repository).',
     plate: 'scanner-match',
     caseStudy: {
       summary:
@@ -708,6 +877,14 @@ export const projects: Project[] = [
 export const primaryProjects = projects.filter((p) => p.tier === 'primary');
 export const secondaryProjects = projects.filter((p) => p.tier === 'secondary');
 
+/**
+ * The "More work" area under the featured projects. `moreWork.note` mentions the wider body of work
+ * without naming it; the items below are the smaller pieces that are public or described.
+ */
+export const moreWork = {
+  note: 'The projects on this page are a selection from 20+ delivered across analytics, statistical modelling and machine learning in academic, professional and independent work. Others are available to discuss on request.',
+};
+
 /** Smaller pieces of evidence: listed, not featured. */
 export const archive = [
   {
@@ -732,6 +909,14 @@ export const archive = [
     text: '887 multilingual Google Maps reviews analysed with KH Coder keyword frequency, a co-occurrence network and descriptive statistics by experience dimension. Pricing & discounts scored lowest (mean 1.80 / 5).',
     image: null,
     href: `${GH}/lotte-world-busan-santiment-analyses` as string | null,
+    privateNote: null,
+  },
+  {
+    title: 'Statistical modelling notebooks',
+    meta: 'statsmodels · Seaborn · SciPy · 2026',
+    text: 'Three notebooks in statsmodels: OLS for student GPA and used-car prices, and a logistic-regression classifier for bank marketing, with coefficient tests and diagnostics. Used-car price model: test R² 0.773, 5-fold cross-validation mean 0.749.',
+    image: null,
+    href: `${GH}/data-science-portfolio` as string | null,
     privateNote: null,
   },
 ];
@@ -796,36 +981,18 @@ export const notes = [
 /* Toolkit                                                            */
 /* ------------------------------------------------------------------ */
 
+/** Learning and studied tools (the demonstrated ones come from `skillGroups` above). */
 export interface Tool {
   name: string;
   why: string;
   href: string;
-  evidence: string[]; // project slugs (case studies)
-  repo?: { label: string; href: string };
 }
 
-export const toolkit: { demonstrated: Tool[]; learning: Omit<Tool, 'evidence'>[]; studied: Omit<Tool, 'evidence'>[] } = {
-  demonstrated: [
-    { name: 'Python · pandas · NumPy', why: 'The working language of every project here.', href: 'https://pandas.pydata.org/docs/', evidence: ['f1-pace-intelligence', 'telco-churn', 'olist-delivery', 'retail-intelligence', 'document-scanner'] },
-    { name: 'SQL: DuckDB & SQLite', why: 'A 15-table warehouse from plain SQL, a star schema with stated grain, cohort and window queries.', href: 'https://duckdb.org/docs/', evidence: ['f1-pace-intelligence', 'retail-intelligence', 'olist-delivery'] },
-    { name: 'scikit-learn', why: 'Pipelines that bundle preprocessing with the model; stratified CV.', href: 'https://scikit-learn.org/stable/', evidence: ['telco-churn'] },
-    { name: 'statsmodels', why: 'Weighted least squares for the race-pace forecaster; OLS and logit with diagnostics.', href: 'https://www.statsmodels.org/stable/', evidence: ['f1-pace-intelligence'], repo: { label: 'Modelling notebooks', href: `${GH}/data-science-portfolio` } },
-    { name: 'FastAPI · Pydantic', why: 'Typed, validated model and data APIs: 18 read-only endpoints in DPEC, a /predict service for churn.', href: 'https://fastapi.tiangolo.com/', evidence: ['f1-pace-intelligence', 'telco-churn'], repo: { label: 'MNIST explorer', href: `${GH}/mnist-classifier-fullstack` } },
-    { name: 'pytest · Ruff · GitHub Actions', why: '129 tests in DPEC and 33 test functions in the churn project, run on every push.', href: 'https://docs.pytest.org/', evidence: ['f1-pace-intelligence', 'telco-churn'] },
-    { name: 'Docker', why: 'A release image with the data snapshot inside, checked before it is pushed.', href: 'https://docs.docker.com/', evidence: ['f1-pace-intelligence'] },
-    { name: 'LLM tool use (Claude API, Ollama)', why: 'A grounded agent with read-only tools, graded by an automatic exam.', href: 'https://docs.anthropic.com/', evidence: ['f1-pace-intelligence'] },
-    { name: 'OpenCV · Tesseract', why: 'Contours, homographies, feature matching with RANSAC, per-field Korean OCR.', href: 'https://docs.opencv.org/', evidence: ['document-scanner'] },
-    { name: 'Parquet / PyArrow', why: 'Columnar raw storage, saved once with checksums and re-read fast.', href: 'https://arrow.apache.org/docs/python/', evidence: ['f1-pace-intelligence', 'retail-intelligence'] },
-    { name: 'd3.js', why: 'A filterable dashboard with a clickable map and shareable views.', href: 'https://d3js.org/', evidence: ['olist-delivery'] },
-    { name: 'Streamlit', why: 'The quickest honest way to put a model in someone’s hands.', href: 'https://docs.streamlit.io/', evidence: ['telco-churn'] },
-    { name: 'PyTorch', why: 'A small network trained on MNIST and served through FastAPI.', href: 'https://pytorch.org/docs/stable/', evidence: [], repo: { label: 'MNIST explorer', href: `${GH}/mnist-classifier-fullstack` } },
-    { name: 'FastF1', why: 'Python access to F1 timing, telemetry and session data.', href: 'https://docs.fastf1.dev/', evidence: ['f1-pace-intelligence'] },
-  ],
+export const toolkit: { learning: Tool[]; studied: Tool[] } = {
   learning: [
     { name: 'Convolutional networks from scratch', why: 'The next stage of the computer-vision plan: a small CNN compared with Tesseract on numeric fields.', href: 'https://pytorch.org/tutorials/' },
     { name: 'Probability calibration', why: 'The churn model ranks well but its scores run high; calibrating them is the next step.', href: 'https://scikit-learn.org/stable/modules/calibration.html' },
     { name: 'Tableau', why: 'The retail dashboard has a written build spec; publishing it is next.', href: 'https://help.tableau.com/' },
-    { name: 'R', why: 'From university statistics coursework.', href: 'https://www.r-project.org/' },
   ],
   studied: [
     { name: 'f1-race-replay by Tom Shaw', why: 'Forked to study how a Python app replays FastF1 telemetry. The project is his; my own F1 work is DPEC.', href: 'https://github.com/IAmTomShaw/f1-race-replay' },
@@ -836,8 +1003,8 @@ export const toolkit: { demonstrated: Tool[]; learning: Omit<Tool, 'evidence'>[]
 };
 
 export const meta = {
-  title: 'Shavkatjon Yuldashev · Data Scientist | Machine Learning & Applied AI',
+  title: 'Shavkatjon Yuldashev · Data Scientist | Machine Learning, Statistical Modelling & Applied AI',
   description:
-    'Shavkatjon Yuldashev, data scientist in Busan, South Korea, building production-grade ML systems: forecasting with calibrated uncertainty, tested pipelines and honest evaluation. Case studies, code and CV.',
-  updated: '2026-11-12',
+    'Shavkatjon Yuldashev, Data Scientist building end-to-end data products: reproducible pipelines, statistical modelling, machine learning and applied AI, evaluated against baselines and delivered through applications people can use. Case studies, code and CV.',
+  updated: '2026-11-14',
 };

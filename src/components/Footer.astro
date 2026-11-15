@@ -1,6 +1,6 @@
 ---
 import ExtLink from './ExtLink.astro';
-import { identity, social, resume, meta } from '../content/site';
+import { identity, social, resume, meta, personalSite } from '../content/site';
 import { url } from '../lib/url';
 const year = meta.updated.slice(0, 4);
 ---
@@ -20,6 +20,8 @@ const year = meta.updated.slice(0, 4);
           <li><ExtLink href={social.email.href} class="footer__email">{social.email.handle}</ExtLink></li>
           <li><ExtLink href={social.github.href}>GitHub · {social.github.handle}</ExtLink></li>
           <li><ExtLink href={social.linkedin.href}>LinkedIn</ExtLink></li>
+          <li><ExtLink href={social.telegram.href}>Telegram</ExtLink></li>
+          {personalSite.href && <li><ExtLink href={personalSite.href}>{personalSite.label}</ExtLink></li>}
         </ul>
       </nav>
       <nav class="footer__col" aria-label="Site">

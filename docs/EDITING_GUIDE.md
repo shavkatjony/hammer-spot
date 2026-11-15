@@ -111,6 +111,11 @@ Useful fields: `title`, `status` (`'Complete' | 'Working' | 'In development' | '
 
 `export const social` and `export const email`. Components never hard-code links, so this is the only place.
 
+- **Telegram:** `social.telegram` (shown as a "Telegram" button in Contact and in the footer; the handle is not printed).
+- **Personal website:** `export const personalSite`. While `href` is empty, Contact shows "Personal website · coming soon".
+  Put the full address in `href` (for example `'https://yourname.com'`) and it becomes a live button, also listed in the
+  footer.
+
 ---
 
 ## 7. Add your photo

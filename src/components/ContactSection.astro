@@ -2,7 +2,7 @@
 import SectionHead from './SectionHead.astro';
 import ExtLink from './ExtLink.astro';
 import Icon from './Icon.astro';
-import { social, email, resume, identity } from '../content/site';
+import { social, email, resume, identity, personalSite } from '../content/site';
 import { url } from '../lib/url';
 ---
 <section class="section contact band-yale" id="contact" aria-labelledby="contact-title">
@@ -15,8 +15,8 @@ import { url } from '../lib/url';
           Hiring for data science or machine learning? Email is the quickest way to reach me.
         </p>
         <p class="contact__note">
-          {identity.location.city}, {identity.location.country} (KST, UTC+9). Open to roles in Korea and with international
-          English-speaking teams. There is no contact form, so nothing you send is stored by this site.
+          {identity.location.city}, {identity.location.country} (KST, UTC+9). Open to {identity.availability.scope}. There is
+          no contact form, so nothing you send is stored by this site.
         </p>
       </div>
       <div class="contact__actions">
@@ -25,6 +25,16 @@ import { url } from '../lib/url';
           <ExtLink href={social.email.href} class="btn btn--primary"><Icon name="mail" /> Email me</ExtLink>
           {resume.pdf && (
             <a class="btn btn--ghost" href={url(resume.pdf)} download><Icon name="download" /> Download CV (PDF)</a>
+          )}
+        </div>
+        <div class="contact__buttons">
+          <ExtLink href={social.telegram.href} class="btn btn--ghost">
+            <Icon name="telegram" /> Telegram
+          </ExtLink>
+          {personalSite.href ? (
+            <ExtLink href={personalSite.href} class="btn btn--ghost"><Icon name="globe" /> {personalSite.label}</ExtLink>
+          ) : (
+            <span class="btn btn--ghost contact__soon"><Icon name="globe" /> {personalSite.label} · coming soon</span>
           )}
         </div>
         <ul role="list" class="contact__list">
@@ -40,6 +50,13 @@ import { url } from '../lib/url';
 <style>
   .contact {
     overflow: hidden;
+  }
+  .contact__soon {
+    border-style: dashed;
+    cursor: default;
+  }
+  .contact__soon:hover {
+    transform: none;
   }
   .contact__topo {
     position: absolute;

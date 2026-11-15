@@ -67,7 +67,15 @@ export const social = {
     confirm: true,
   },
   email: { label: 'Email', handle: email, href: `mailto:${email}`, confirm: false },
+  // Shown as a "Telegram" button in Contact and the footer; the handle itself is not printed.
+  telegram: { label: 'Telegram', handle: 'Prometheus0411', href: 'https://t.me/Prometheus0411', confirm: false },
 } as const;
+
+/**
+ * Personal website. Leave `href` empty and Contact shows a "coming soon" placeholder;
+ * put the full address here (e.g. 'https://example.com') and it becomes a live button.
+ */
+export const personalSite = { label: 'Personal website', href: '' as string };
 
 export const resume = {
   page: 'resume/', // print-ready page generated from this file (no phone number by design)

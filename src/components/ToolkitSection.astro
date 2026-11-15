@@ -2,7 +2,7 @@
 /**
  * Toolkit: the same six skill groups as the hero, with evidence.
  * A skill appears under "Demonstrated" when a featured project (`evidence`) or other public work (`extra`)
- * shows it; the rest of the group is listed as "also used". Learning and studied tools stay separate.
+ * shows it; the rest of the group is listed as "also used". Open source studied is listed separately.
  * Everything here is edited in src/content/site.ts (skillGroups, toolkit).
  */
 import SectionHead from './SectionHead.astro';
@@ -11,14 +11,14 @@ import { skillGroups, toolkit, projects, type SkillGroup } from '../content/site
 import { url } from '../lib/url';
 
 const bySlug = Object.fromEntries(projects.map((p) => [p.slug, p]));
-const shown = (g: SkillGroup) => g.skills.filter((sk) => !sk.learning && ((sk.evidence?.length ?? 0) > 0 || sk.extra));
-const also = (g: SkillGroup) => g.skills.filter((sk) => !sk.learning && !(sk.evidence?.length ?? 0) && !sk.extra);
+const shown = (g: SkillGroup) => g.skills.filter((sk) => ((sk.evidence?.length ?? 0) > 0 || sk.extra));
+const also = (g: SkillGroup) => g.skills.filter((sk) => !(sk.evidence?.length ?? 0) && !sk.extra);
 ---
 <section class="section toolkit tone-willow" id="toolkit" aria-labelledby="toolkit-title">
   <div class="wrap wrap--wide">
     <SectionHead no="03" title="Toolkit" id="toolkit-title">
-      The six skill groups from the top of the page, each linked to the projects that show it. Tools I am still learning,
-      and open source I studied, are labelled separately.
+      The six skill groups from the top of the page, each linked to the projects that show it, followed by open-source
+      projects I studied.
     </SectionHead>
 
     <div class="tk__a">
@@ -70,18 +70,7 @@ const also = (g: SkillGroup) => g.skills.filter((sk) => !sk.learning && !(sk.evi
 
     <div class="tk__side">
       <div class="tk__col">
-        <h3 class="tk__head"><span class="tk__no mono">B</span> Learning now</h3>
-        <ul role="list" class="tk__list">
-          {toolkit.learning.map((t) => (
-            <li class="tk__item" data-reveal="fade">
-              <ExtLink href={t.href} class="tk__name">{t.name}</ExtLink>
-              <p class="tk__why">{t.why}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div class="tk__col">
-        <h3 class="tk__head"><span class="tk__no mono">C</span> Open source studied</h3>
+        <h3 class="tk__head"><span class="tk__no mono">B</span> Open source studied</h3>
         <ul role="list" class="tk__list">
           {toolkit.studied.map((t) => (
             <li class="tk__item" data-reveal="fade">
@@ -227,12 +216,22 @@ const also = (g: SkillGroup) => g.skills.filter((sk) => !sk.learning && !(sk.evi
     color: var(--ink-3);
   }
 
-  /* learning and studied */
+  /* open source studied */
   .tk__side {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-7) var(--space-6);
     margin-top: var(--space-8);
+  }
+  .tk__side .tk__list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 var(--space-6);
+  }
+  @media (max-width: 52rem) {
+    .tk__side .tk__list {
+      grid-template-columns: 1fr;
+    }
   }
   .tk__item {
     padding: var(--space-4) 0;

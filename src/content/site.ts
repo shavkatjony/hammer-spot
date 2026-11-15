@@ -161,7 +161,6 @@ const MNIST = { label: 'MNIST explorer', href: `${GH}/mnist-classifier-fullstack
  *       'f1-pace-intelligence'  'telco-churn'  'retail-intelligence'  'olist-delivery'  'document-scanner'
  *   - `extra: NOTEBOOKS` or `extra: MNIST` points to other public work.
  *   - `hero: false`  keeps a skill out of the hero boxes and the CV (Toolkit evidence only).
- *   - `learning: true` shows it as "(learning)".
  * Ready-made examples are commented out (lines starting with //): delete the // to switch one on.
  */
 export interface Skill {
@@ -174,8 +173,6 @@ export interface Skill {
   note?: string;
   /** false = Toolkit evidence only, not in the hero boxes or the CV. */
   hero?: boolean;
-  /** true = still learning. */
-  learning?: boolean;
 }
 export interface SkillGroup {
   id: string;
@@ -289,7 +286,7 @@ export const skillGroups: SkillGroup[] = [
 
 /** Skills shown in the hero boxes and the CV: everything except `hero: false`. */
 export const heroSkills = (g: SkillGroup) => g.skills.filter((sk) => sk.hero !== false);
-export const skillLabel = (sk: Skill) => (sk.learning ? `${sk.name} (learning)` : sk.name);
+export const skillLabel = (sk: Skill) => sk.name;
 
 /* ------------------------------------------------------------------ */
 /* Projects                                                            */
@@ -985,18 +982,14 @@ export const notes = [
 /* Toolkit                                                            */
 /* ------------------------------------------------------------------ */
 
-/** Learning and studied tools (the demonstrated ones come from `skillGroups` above). */
+/** Open-source projects studied (the demonstrated tools come from `skillGroups` above). */
 export interface Tool {
   name: string;
   why: string;
   href: string;
 }
 
-export const toolkit: { learning: Tool[]; studied: Tool[] } = {
-  learning: [
-    { name: 'Convolutional networks from scratch', why: 'The next stage of the computer-vision plan: a small CNN compared with Tesseract on numeric fields.', href: 'https://pytorch.org/tutorials/' },
-    { name: 'Probability calibration', why: 'The churn model ranks well but its scores run high; calibrating them is the next step.', href: 'https://scikit-learn.org/stable/modules/calibration.html' },
-  ],
+export const toolkit: { studied: Tool[] } = {
   studied: [
     { name: 'f1-race-replay by Tom Shaw', why: 'Forked to study how a Python app replays FastF1 telemetry. The project is his; my own F1 work is DPEC.', href: 'https://github.com/IAmTomShaw/f1-race-replay' },
     { name: 'FastF1', why: 'Follow its maintainer notes; the loss of public ERS and active-aero data shaped DPEC’s rules.', href: 'https://github.com/theOehrly/Fast-F1' },

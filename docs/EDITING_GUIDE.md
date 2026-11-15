@@ -55,7 +55,6 @@ one on:
 | `evidence: ['telco-churn']` | Shows project-number links next to the skill in the Toolkit. Use only for projects that really use it. |
 | `extra: NOTEBOOKS` | Links the skill to your statistical modelling notebooks (or `MNIST` for the MNIST explorer). |
 | `note: 'short text'` | A small line of detail under the skill in the Toolkit. |
-| `learning: true` | Shows the skill as "(learning)". |
 | `hero: false` | Keeps the skill out of the hero boxes; it appears only in the Toolkit. |
 
 Project ids for `evidence`: `'f1-pace-intelligence'`, `'telco-churn'`, `'retail-intelligence'`,

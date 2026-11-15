@@ -34,10 +34,9 @@ const year = meta.updated.slice(0, 4);
         </ul>
       </nav>
       <div class="footer__col">
-        <h2 class="mono muted">Colophon</h2>
+        <h2 class="mono muted">Licence</h2>
         <p>
-          Built with Astro and three.js. Set in Newsreader, IBM Plex Sans and IBM Plex Mono, all self-hosted. No
-          trackers, no cookies, no third-party scripts.
+          {'Site code is released under the '}<ExtLink href="https://opensource.org/license/mit" class="footer__inline">MIT License</ExtLink>{'. Text, case studies, images and the CV are © '}{year} {identity.name}{', all rights reserved.'}
         </p>
       </div>
     </div>
@@ -93,6 +92,10 @@ const year = meta.updated.slice(0, 4);
   }
   .footer__col ul li + li {
     margin-top: var(--space-2);
+  }
+  .footer__col p :global(.footer__inline) {
+    display: inline;
+    padding: 0;
   }
   .footer__col a {
     display: inline-block;

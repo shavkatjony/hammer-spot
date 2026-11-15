@@ -2,6 +2,7 @@
   "name": "shavkatjon-site",
   "type": "module",
   "version": "1.0.0",
+  "license": "MIT",
   "private": true,
   "description": "SHAVKATJON: personal portfolio of Shavkatjon Yuldashev (data science, ML, applied AI).",
   "engines": {

@@ -89,7 +89,7 @@ console.log(`static: ${pages.length} pages checked, ${external.size} unique exte
 
 /* ---------------- browser checks ---------------- */
 const axeSource = readFileSync('node_modules/axe-core/axe.min.js', 'utf8');
-const routes = ['', 'work/telco-churn/', 'work/olist-delivery/', 'work/retail-intelligence/', 'work/f1-pace-intelligence/', 'work/document-scanner/', 'resume/', 'does-not-exist/'];
+const routes = ['', 'work/telco-churn/', 'work/olist-delivery/', 'work/retail-intelligence/', 'work/f1-pace-intelligence/', 'work/document-scanner/', 'does-not-exist/'];
 const browser = await chromium.launch({ executablePath: process.env.PW_CHROMIUM || undefined });
 
 async function axe(page, label) {
@@ -147,7 +147,7 @@ for (const theme of ['light', 'dark']) {
   await page.goto(BASE + '?static');
   await page.click('[data-theme-toggle]');
   const pressed = await page.getAttribute('[data-theme-toggle]', 'aria-pressed');
-  await page.goto(BASE + 'resume/');
+  await page.goto(BASE + 'work/telco-churn/');
   const theme = await page.getAttribute('html', 'data-theme');
   if (pressed !== 'true' || theme !== 'dark') fail(`theme toggle: aria-pressed=${pressed}, after navigation theme=${theme}`);
   await ctx.close();

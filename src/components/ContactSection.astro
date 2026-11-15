@@ -23,9 +23,7 @@ import { url } from '../lib/url';
         <ExtLink href={social.email.href} class="contact__email">{email}</ExtLink>
         <div class="contact__buttons">
           <ExtLink href={social.email.href} class="btn btn--primary"><Icon name="mail" /> Email me</ExtLink>
-          {resume.pdf && (
-            <a class="btn btn--ghost" href={url(resume.pdf)} download><Icon name="download" /> Download CV (PDF)</a>
-          )}
+          <a class="btn btn--ghost" href={url(resume.pdf)} download><Icon name="download" /> Download CV (PDF)</a>
         </div>
         <div class="contact__buttons">
           <ExtLink href={social.telegram.href} class="btn btn--ghost">
@@ -40,7 +38,6 @@ import { url } from '../lib/url';
         <ul role="list" class="contact__list">
           <li><ExtLink href={social.linkedin.href} class="link-arrow"><Icon name="linkedin" /> LinkedIn</ExtLink></li>
           <li><ExtLink href={social.github.href} class="link-arrow"><Icon name="github" /> GitHub · {social.github.handle}</ExtLink></li>
-          <li><a class="link-arrow" href={url(resume.page)}><Icon name="doc" /> CV as a web page</a></li>
         </ul>
       </div>
     </div>

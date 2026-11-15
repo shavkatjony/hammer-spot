@@ -68,7 +68,7 @@ const [years] = identity.credentials;
           {targetRoles.map((r) => <li>{r}</li>)}
         </ul>
         <p class="fact__note">Open to {identity.availability.scope}.</p>
-        <a class="link-arrow" href={resume.pdf ? url(resume.pdf) : url(resume.page)}>Download the CV (PDF) →</a>
+        <a class="link-arrow" href={url(resume.pdf)} download>Download the CV (PDF) →</a>
       </section>
       <section class="fact" aria-labelledby="f-int">
         <h3 id="f-int" class="about__h mono caps">Professional interests</h3>

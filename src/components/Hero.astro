@@ -15,7 +15,7 @@ import { url } from '../lib/url';
 // Drop a photo at src/assets/portrait.(jpg|jpeg|png|webp|avif) and it is used automatically.
 const found = import.meta.glob<{ default: ImageMetadata }>('../assets/portrait.{jpg,jpeg,png,webp,avif}', { eager: true });
 const portrait = Object.values(found)[0]?.default ?? null;
-const cvHref = resume.pdf ? url(resume.pdf) : url(resume.page);
+const cvHref = url(resume.pdf);
 // The headline's emphasised words are set in the accent colour.
 const [headBefore, headAfter = ''] = identity.headline.split(identity.headlineEmphasis);
 const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.availability.scope.slice(1);
@@ -54,7 +54,7 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
       )}
       <div class="hero__actions" data-horizon-anchor>
         <a class="btn btn--primary" href="#work">View selected work <Icon name="arrow-down" /></a>
-        <a class="btn btn--ghost hero__cv" href={cvHref} download={resume.pdf ? '' : undefined}>
+        <a class="btn btn--ghost hero__cv" href={cvHref} download>
           <Icon name="download" /> Download CV <span class="hero__cv-fmt mono">PDF</span>
         </a>
         <ul class="hero__social" role="list" aria-label="Profiles">

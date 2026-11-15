@@ -77,9 +77,13 @@ export const social = {
  */
 export const personalSite = { label: 'Personal website', href: '' as string };
 
+/**
+ * The CV is download-only: there is no CV web page. The file is the owner's final Word CV, saved as a
+ * PDF with the phone number removed (nothing else changed). To update it, replace
+ * public/Shavkatjon-Yuldashev-CV.pdf with a new PDF of the same name and rebuild.
+ */
 export const resume = {
-  page: 'resume/', // print-ready page generated from this file (no phone number by design)
-  pdf: 'Shavkatjon-Yuldashev-CV.pdf' as string | null,
+  pdf: 'Shavkatjon-Yuldashev-CV.pdf',
 };
 
 export const education = [

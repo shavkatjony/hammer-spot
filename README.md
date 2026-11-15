@@ -34,14 +34,14 @@ These run against the preview server (`npm run preview`, which runs in the backg
 npm run verify         # static checks + axe WCAG 2.2 AA + console + theme/menu/reduced-motion/no-JS/keyboard
 npm run screenshots -- ./shots   # hero at desktop/mobile, 3D and static
 node scripts/fullpage.mjs ./shots "" dark   # full-page captures (path, theme)
-npm run assets         # regenerate public/Shavkatjon-Yuldashev-CV.pdf and public/og.jpg from the built pages
+npm run assets         # regenerate public/og.jpg (the share image) from the built hero
 ```
 
-Run `npm run assets` and rebuild after changing content, so the PDF résumé and share image stay in sync.
+The CV is download-only: `public/Shavkatjon-Yuldashev-CV.pdf` is the owner's own final CV (phone removed) and is never generated or overwritten by the build. Replace that file to update it.
 
 ## Editing content
 
-**Step-by-step guide: [docs/EDITING_GUIDE.md](docs/EDITING_GUIDE.md)** (skills, headline, projects, links, photo, CV PDF).
+**Step-by-step guide: [docs/EDITING_GUIDE.md](docs/EDITING_GUIDE.md)** (skills, headline, projects, links, photo, CV file).
 
 Everything personal lives in `src/content/site.ts`:
 
@@ -68,7 +68,7 @@ src/
   layouts/Base.astro     <head>, theme bootstrap, JSON-LD, nav, footer
   components/            Hero, DuneFallback (static SVG scene), ProjectFeature, sections, Nav, Footer…
   components/figures/    charts and diagrams drawn from verified project data
-  pages/                 index, work/[slug] (case studies), resume, 404, sitemap.xml, robots.txt
+  pages/                 index, work/[slug] (case studies), 404, sitemap.xml, robots.txt
   scripts/site.ts        theme toggle, nav, reveals, sun rail, guarded lazy-load of the 3D scene
   scripts/hero-scene.ts  the three.js desert diorama
   styles/                design tokens + global styles and the motion system
@@ -98,6 +98,6 @@ The workflow [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) type
 
 Then, in the repo, go to **Settings → Pages → Build and deployment → Source: GitHub Actions** and push to `main`. HTTPS is automatic for `*.github.io` (tick **Enforce HTTPS** if it's shown).
 
-If the final URL isn't `https://shavkatjony.github.io/`, rebuild the résumé PDF with the right URL: `SITE_URL=https://… SITE_BASE=/… npm run build && npm run preview` (with the same env vars), then `npm run assets`, rebuild and commit.
+If the final URL isn't `https://shavkatjony.github.io/`, build with the right URL: `SITE_URL=https://… SITE_BASE=/… npm run build`.
 
 **Other hosts:** `dist/` is plain static files. On Cloudflare Pages or Netlify, copy `deploy/_headers` into `public/` to add real HTTP security headers that GitHub Pages can't set (see [docs/SECURITY.md](docs/SECURITY.md)).

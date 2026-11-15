@@ -1,7 +1,7 @@
 # Editing guide
 
 Almost everything on the site comes from **one file: `src/content/site.ts`**. Change it, save, and the
-home page, the case studies, the CV page and the CV PDF all follow. You never need to touch the design files
+home page and the case studies follow. (The CV is your own file: see section 8.) You never need to touch the design files
 to change words, skills, projects or links.
 
 ---
@@ -45,7 +45,7 @@ one on:
   `Clustering (k-means)`
 - APIs & Deployment: `MLflow`, `AWS`
 - Visualization & Applied AI: `Power BI`, `Computer vision: image classification (CNN)`, `Object detection (YOLO)`
-- OpenCV and Tesseract are already in the list but only in the Toolkit. To show them in the hero boxes and the CV
+- OpenCV and Tesseract are already in the list but only in the Toolkit. To show them in the hero boxes too
   as well, delete `hero: false` on their lines.
 
 **Optional settings on a skill:**
@@ -56,7 +56,7 @@ one on:
 | `extra: NOTEBOOKS` | Links the skill to your statistical modelling notebooks (or `MNIST` for the MNIST explorer). |
 | `note: 'short text'` | A small line of detail under the skill in the Toolkit. |
 | `learning: true` | Shows the skill as "(learning)". |
-| `hero: false` | Keeps the skill out of the hero boxes and the CV; it appears only in the Toolkit. |
+| `hero: false` | Keeps the skill out of the hero boxes; it appears only in the Toolkit. |
 
 Project ids for `evidence`: `'f1-pace-intelligence'`, `'telco-churn'`, `'retail-intelligence'`,
 `'olist-delivery'`, `'document-scanner'`.
@@ -73,12 +73,12 @@ All in `export const identity`:
 
 | Field | Where it shows |
 |---|---|
-| `positioning` | Above your name in the hero; the CV profile; search and share text |
+| `positioning` | Above your name in the hero; search and share text |
 | `headline` and `headlineEmphasis` | The large line in the hero; the emphasis part is set in blue |
 | `statement` | The introduction paragraph in the hero |
 | `support` | The smaller sentence under it |
-| `roles` | The CV's title line and the page title |
-| `credentials` | "3+ years’ experience" in the hero, About and CV (add another `{ value, label, long }` line to show a second figure) |
+| `roles` | The page title |
+| `credentials` | "3+ years’ experience" in the hero and About (add another `{ value, label, long }` line to show a second figure) |
 | `availability.open` | `true` shows "Open to work"; `false` hides it |
 | `availability.scope` | "full-time, part-time, project-based and remote roles" |
 
@@ -95,7 +95,7 @@ All in `export const identity`:
 ## 5. Projects
 
 Projects live in `export const projects`. **Their order in the file is their order everywhere** (cards, case-study
-switcher, CV). Keep `index` (`'01'`, `'02'`, …) in the same order.
+switcher). Keep `index` (`'01'`, `'02'`, …) in the same order.
 
 Useful fields: `title`, `status` (`'Complete' | 'Working' | 'In development' | 'Archived'`), `statusNote`,
 `problem`, `contribution` (my part), `result`, `metrics` (three numbers on the card), `methods` (tags on the card),
@@ -125,19 +125,24 @@ the "SY" tile automatically.
 
 ---
 
-## 8. After editing: refresh the CV PDF and the share image
+## 8. Your CV (download only)
 
-The PDF and the share image are made from the built site, so regenerate them after content changes:
+The site has no CV web page. Every "CV" button downloads **`public/Shavkatjon-Yuldashev-CV.pdf`**, which is your own
+final CV (from your Word file, with only the phone number removed). The site never generates or edits it.
+
+**To update your CV:** in Word, open your CV, remove the phone number if you don't want it public, then
+File → Save As → PDF. Name it `Shavkatjon-Yuldashev-CV.pdf`, replace the file in `public/`, and rebuild.
+Skills and text on the website are separate: edit them in `src/content/site.ts`.
+
+**Share image** (the preview shown when the link is posted): regenerate it after changing the hero or adding your photo.
 
 ```bash
 npm run build
 npm run preview          # runs in the background
-npm run assets           # writes public/Shavkatjon-Yuldashev-CV.pdf and public/og.jpg
-npm run build            # so the new files ship
+npm run assets           # writes public/og.jpg only
+npm run build            # so the new image ships
 npx astro preview stop
 ```
-
-Check that the PDF is still one page (open it, or run `pdfinfo public/Shavkatjon-Yuldashev-CV.pdf`).
 
 ---
 

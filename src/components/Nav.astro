@@ -33,12 +33,12 @@ const links = [
         {links.map((l) => (
           <li><a href={l.href}>{l.label}</a></li>
         ))}
-        <li class="primary__resume-m"><a href={resume.pdf ? url(resume.pdf) : url(resume.page)}>CV (PDF)</a></li>
+        <li class="primary__resume-m"><a href={url(resume.pdf)} download>CV (PDF)</a></li>
       </ul>
     </nav>
 
     <div class="tools">
-      <a class="tools__resume" href={resume.pdf ? url(resume.pdf) : url(resume.page)} download={resume.pdf ? '' : undefined}>CV <span class="mono">PDF</span></a>
+      <a class="tools__resume" href={url(resume.pdf)} download>CV <span class="mono">PDF</span></a>
       <button class="icon-btn" type="button" data-theme-toggle aria-pressed="false">
         <span class="visually-hidden">Dark theme</span>
         <Icon name="moon" class="icon-btn__moon" />

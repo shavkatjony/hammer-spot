@@ -5,7 +5,7 @@ import { defineConfig } from 'astro/config';
 //   - a user site  (repo "shavkatjony.github.io")   -> SITE_BASE=/
 //   - a project site (repo "personalweb")           -> SITE_BASE=/personalweb/
 // The GitHub Pages workflow sets both from actions/configure-pages.
-const site = process.env.SITE_URL || 'https://shavkatjony.github.io';
+const site = process.env.SITE_URL || 'https://portfolio.yuldashevv.workers.dev';
 const base = process.env.SITE_BASE || '/';
 
 export default defineConfig({

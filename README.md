@@ -100,4 +100,4 @@ Then, in the repo, go to **Settings → Pages → Build and deployment → Sourc
 
 If the final URL isn't `https://shavkatjony.github.io/`, build with the right URL: `SITE_URL=https://… SITE_BASE=/… npm run build`.
 
-**Other hosts:** `dist/` is plain static files. On Cloudflare Pages or Netlify, copy `deploy/_headers` into `public/` to add real HTTP security headers that GitHub Pages can't set (see [docs/SECURITY.md](docs/SECURITY.md)).
+**Live site:** https://portfolio.yuldashevv.workers.dev/ (Cloudflare, direct upload of `dist/`). The default `SITE_URL` in `astro.config.mjs` is this address. `public/_headers` adds real HTTP security headers on Cloudflare (see [docs/SECURITY.md](docs/SECURITY.md)).

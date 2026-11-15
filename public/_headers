@@ -1,0 +1,13 @@
+# Optional: real HTTP security headers for hosts that support a _headers file
+# (Cloudflare Pages, Netlify). GitHub Pages ignores this file and cannot set headers.
+# To use: copy this file into public/ before building, then deploy to that host.
+# The CSP itself stays in each page's <meta> (Astro generates per-page hashes);
+# these headers add the protections a <meta> CSP cannot provide.
+/*
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+  Cross-Origin-Opener-Policy: same-origin
+  Strict-Transport-Security: max-age=31536000; includeSubDomains

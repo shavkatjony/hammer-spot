@@ -52,7 +52,7 @@ jobs:
         env:
           # user site (repo shavkatjony.github.io): origin=https://shavkatjony.github.io, base_path=""
           # project site (repo personalweb):        base_path="/personalweb"
-          SITE_URL: ${{ steps.pages.outputs.origin || 'https://shavkatjony.github.io' }}
+          SITE_URL: ${{ steps.pages.outputs.origin || 'https://portfolio.yuldashevv.workers.dev' }}
           SITE_BASE: ${{ steps.pages.outputs.base_path }}/
 
       - name: Upload artifact

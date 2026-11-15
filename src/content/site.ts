@@ -47,8 +47,8 @@ export const identity = {
   availability: {
     open: true, // CONFIRM before each deploy
     short: 'Open to work',
-    /** Read as "Open to remote, full-time and project-based roles." */
-    scope: 'remote, full-time and project-based roles',
+    /** Read as "Open to full-time, part-time, project-based and remote roles." */
+    scope: 'full-time, part-time, project-based and remote roles',
   },
 } as const;
 

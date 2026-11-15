@@ -80,7 +80,7 @@ All in `export const identity`:
 | `roles` | The CV's title line and the page title |
 | `credentials` | "3+ years’ experience" in the hero, About and CV (add another `{ value, label, long }` line to show a second figure) |
 | `availability.open` | `true` shows "Open to work"; `false` hides it |
-| `availability.scope` | "remote, full-time and project-based roles" |
+| `availability.scope` | "full-time, part-time, project-based and remote roles" |
 
 ---
 

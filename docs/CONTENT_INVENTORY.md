@@ -1,6 +1,17 @@
 # Content inventory
 
-Audit of 2026-10-12, updated 2026-11-12 for the redesign (section 0) and 2026-11-14 (section 0a). Where the sections disagree, the newest one (0a, then 0) is current.
+Audit of 2026-10-12, updated 2026-11-12 for the redesign (section 0) and 2026-11-14 (section 0a). Where the sections disagree, the newest one (0b, then 0a, then 0) is current.
+
+## 0b. Update of 2026-11-15 (review fixes)
+
+| Item | Now | Status |
+|---|---|---|
+| KVENTS period | **Jan 2023 – Mar 2026** (owner's correction), which gives the "3+ years" credential | SELF-REPORTED |
+| "20+ projects delivered" | Removed from the hero, About, CV and More work | Owner's decision |
+| Skills | Basic and overlapping items removed (JSON, CSV, Correlation analysis, separate "APIs", separate Git/GitHub, "Descriptive & inferential statistics" → "Statistical inference"). Regression listed once, under Statistics & Modelling, as OLS and weighted least squares. Added the evidenced Monte Carlo simulation and conformal prediction intervals. "LLM tool use" replaced by the actual capabilities: LLM agents & tool calling (Claude API, Ollama), grounded answers with SQL guardrails, LLM evaluation | VERIFIED against DPEC README for the AI items |
+| Olist wording | Findings stated as correlations ("association, not causation"), not as causes | VERIFIED |
+| Retail | Synthetic, M5-shaped data stated up front; the 59.1M-row stress test ran on a generated dataset at full M5 size (`docs/architecture.md`) | VERIFIED |
+| DPEC AI evaluation | Called an internal 50-question evaluation, not an independent benchmark | VERIFIED |
 
 ## 0a. Update of 2026-11-14 (positioning, order, skills)
 

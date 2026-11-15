@@ -78,7 +78,7 @@ All in `export const identity`:
 | `statement` | The introduction paragraph in the hero |
 | `support` | The smaller sentence under it |
 | `roles` | The CV's title line and the page title |
-| `credentials` | "3+ years’ experience · 20+ projects delivered" in the hero, About and CV |
+| `credentials` | "3+ years’ experience" in the hero, About and CV (add another `{ value, label, long }` line to show a second figure) |
 | `availability.open` | `true` shows "Open to work"; `false` hides it |
 | `availability.scope` | "remote, full-time and project-based roles" |
 
@@ -103,7 +103,7 @@ Useful fields: `title`, `status` (`'Complete' | 'Working' | 'In development' | '
 
 - `flagship: true` gives a project the largest card and the "Flagship project" badge (DPEC today).
 - A private repository: `repoPublic: false` and `privateNote: 'Code available on request (private repository).'`
-- Smaller work is in `archive`; the "20+ projects" sentence is `moreWork.note`.
+- Smaller work is in `archive`; the sentence above it is `moreWork.note`.
 
 ---
 

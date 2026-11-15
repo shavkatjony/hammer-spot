@@ -9,7 +9,7 @@ const strip = (t: string) => t.replaceAll('`', '');
 const repoOf = (p: (typeof projects)[number]) => p.links.find((l) => l.kind === 'repo');
 // Skills come from the same six groups as the hero boxes (src/content/site.ts → skillGroups).
 const skills = skillGroups.map((g) => ({ k: g.title, v: heroSkills(g).map(skillLabel).join(', ') }));
-const [years, delivered] = identity.credentials;
+const [years] = identity.credentials;
 ---
 <Base title="CV · Shavkatjon Yuldashev · Data Scientist" description="One-page CV of Shavkatjon Yuldashev, Data Scientist building end-to-end data products: machine learning, statistical modelling and applied AI.">
   <div class="cv-tools wrap no-print">
@@ -44,7 +44,7 @@ const [years, delivered] = identity.credentials;
           identity.positioning,
           identity.statement,
           identity.support,
-          `${years.value} ${years.long}; ${delivered.value} ${delivered.long}.`,
+          `${years.value} ${years.long}.`,
           `Open to ${identity.availability.scope}.`,
         ].join(' ')}
       </p>

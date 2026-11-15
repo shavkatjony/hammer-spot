@@ -4,7 +4,7 @@ import { identity, education, experience, languages, targetRoles, interests, pro
 import { url } from '../lib/url';
 const edu = education[0];
 const job = experience[0];
-const [years, delivered] = identity.credentials;
+const [years] = identity.credentials;
 ---
 <section class="section about" id="about" aria-labelledby="about-title">
   <div class="wrap wrap--wide">
@@ -17,8 +17,7 @@ const [years, delivered] = identity.credentials;
           toward data.
         </p>
         <p>
-          I have {years.value} {years.long} and {delivered.value} {delivered.long}, including my work as a data and business
-          analyst at {job.org}. I take a problem from data preparation and analysis through modelling, evaluation and
+          I have {years.value} {years.long}, including my work as a data and business analyst at {job.org}. I take a problem from data preparation and analysis through modelling, evaluation and
           delivery: reproducible pipelines, data-quality checks, models chosen against baselines, and evaluation on data
           the model never saw. My flagship project, DPEC, forecasts Formula 1 race pace from public timing data; its README
           traces every number to its source.

@@ -38,7 +38,6 @@ export const identity = {
   /** Credentials shown in the hero, About and CV. Self-reported: see docs/CONTENT_INVENTORY.md. */
   credentials: [
     { value: '3+', label: 'years’ experience', long: 'years of experience in data analysis and modelling' },
-    { value: '20+', label: 'projects delivered', long: 'projects delivered across analytics, statistical modelling and machine learning' },
   ],
   location: {
     city: 'Busan',
@@ -90,7 +89,7 @@ export const experience = [
     org: 'CHUST KVENTS',
     place: 'Chust, Namangan, Uzbekistan · remote',
     role: 'Data & Business Analyst',
-    period: 'Nov 2023 – Mar 2026', // CONFIRM: owner gave "November 2023 january – 2026 march"
+    period: 'Jan 2023 – Mar 2026',
     points: [
       'Developed Python and SQL workflows to analyze sales, inventory, product, and customer data across the head office and three retail locations.',
       'Applied statistical analysis and machine learning for product demand forecasting, customer segmentation, and purchasing behavior analysis.',
@@ -180,12 +179,10 @@ export const skillGroups: SkillGroup[] = [
     title: 'Programming & Data',
     skills: [
       { name: 'Python', evidence: ['f1-pace-intelligence', 'telco-churn', 'retail-intelligence', 'olist-delivery', 'document-scanner'] },
-      { name: 'SQL (MySQL, PostgreSQL)', note: 'DuckDB and SQLite in the projects', evidence: ['f1-pace-intelligence', 'retail-intelligence', 'olist-delivery'] },
+      { name: 'SQL (PostgreSQL, MySQL, DuckDB)', note: 'DuckDB and SQLite in the projects', evidence: ['f1-pace-intelligence', 'retail-intelligence', 'olist-delivery'] },
       { name: 'R' },
       { name: 'pandas', evidence: ['f1-pace-intelligence', 'telco-churn', 'retail-intelligence', 'olist-delivery'] },
       { name: 'NumPy', evidence: ['f1-pace-intelligence', 'retail-intelligence', 'document-scanner'] },
-      { name: 'JSON', evidence: ['f1-pace-intelligence', 'retail-intelligence'] },
-      { name: 'CSV', evidence: ['telco-churn', 'retail-intelligence', 'olist-delivery'] },
       { name: 'Parquet', evidence: ['f1-pace-intelligence', 'retail-intelligence'] },
       // { name: 'Polars' },
       // { name: 'Excel / Google Sheets' },
@@ -195,18 +192,15 @@ export const skillGroups: SkillGroup[] = [
     id: 'statistics',
     title: 'Statistics & Modelling',
     skills: [
-      { name: 'Probability', evidence: ['f1-pace-intelligence'], note: 'race chances scored with the Brier score' },
-      { name: 'Descriptive & inferential statistics', evidence: ['olist-delivery', 'f1-pace-intelligence'] },
-      { name: 'EDA', evidence: ['telco-churn', 'olist-delivery'] },
+      { name: 'Statistical inference', evidence: ['f1-pace-intelligence'], extra: NOTEBOOKS },
       { name: 'Hypothesis testing', extra: NOTEBOOKS },
-      { name: 'Weighted least squares', evidence: ['f1-pace-intelligence'] },
-      { name: 'OLS', extra: NOTEBOOKS },
-      { name: 'Regression', evidence: ['f1-pace-intelligence'], extra: NOTEBOOKS },
-      { name: 'Correlation analysis', evidence: ['olist-delivery', 'f1-pace-intelligence'] },
-      { name: 'Bootstrap intervals', evidence: ['f1-pace-intelligence'] },
-      { name: 'SciPy', extra: NOTEBOOKS },
+      { name: 'Regression (OLS, weighted least squares)', evidence: ['f1-pace-intelligence'], extra: NOTEBOOKS, note: 'WLS race-pace forecaster; OLS in the notebooks' },
+      { name: 'Bootstrap confidence intervals', evidence: ['f1-pace-intelligence'] },
+      { name: 'Monte Carlo simulation', evidence: ['f1-pace-intelligence'], note: 'pit-stop strategy over 4,000 draws' },
+      { name: 'Probability', evidence: ['f1-pace-intelligence'], note: 'race chances scored with the Brier score' },
+      { name: 'EDA', evidence: ['telco-churn', 'olist-delivery'] },
       { name: 'statsmodels', evidence: ['f1-pace-intelligence'], extra: NOTEBOOKS },
-      { name: 'Monte Carlo simulation', evidence: ['f1-pace-intelligence'], hero: false },
+      { name: 'SciPy', extra: NOTEBOOKS },
       // { name: 'Time-series analysis' },
       // { name: 'A/B testing' },
     ],
@@ -217,7 +211,6 @@ export const skillGroups: SkillGroup[] = [
     skills: [
       { name: 'scikit-learn', evidence: ['telco-churn'] },
       { name: 'Supervised & unsupervised learning', evidence: ['telco-churn'], note: 'unsupervised: customer segmentation at work' },
-      { name: 'Regression', evidence: ['f1-pace-intelligence'] },
       { name: 'Classification', evidence: ['telco-churn'] },
       { name: 'Decision trees', evidence: ['telco-churn'], note: 'tree ensembles in the churn comparison' },
       { name: 'Random forest', evidence: ['telco-churn'] },
@@ -236,28 +229,25 @@ export const skillGroups: SkillGroup[] = [
     title: 'Model Development & Validation',
     flow: true,
     skills: [
-      { name: 'Data cleaning', evidence: ['f1-pace-intelligence', 'telco-churn', 'retail-intelligence'] },
-      { name: 'Preprocessing', evidence: ['telco-churn'] },
+      { name: 'Data cleaning & preprocessing', evidence: ['f1-pace-intelligence', 'telco-churn', 'retail-intelligence'] },
       { name: 'Feature engineering', evidence: ['telco-churn'] },
       { name: 'Stratified cross-validation', evidence: ['telco-churn'] },
       { name: 'Baseline comparison', evidence: ['f1-pace-intelligence', 'telco-churn'] },
       { name: 'Model evaluation', evidence: ['telco-churn', 'f1-pace-intelligence'] },
       { name: 'Walk-forward backtesting', evidence: ['f1-pace-intelligence'] },
-      { name: 'Split-conformal uncertainty ranges', evidence: ['f1-pace-intelligence'], hero: false },
+      { name: 'Conformal prediction intervals', evidence: ['f1-pace-intelligence'], note: 'split-conformal 80% ranges' },
     ],
   },
   {
     id: 'deployment',
     title: 'APIs & Deployment',
     skills: [
-      { name: 'APIs', evidence: ['f1-pace-intelligence'], note: 'FastF1 timing data and the Claude API' },
       { name: 'REST APIs', evidence: ['f1-pace-intelligence', 'telco-churn'] },
       { name: 'FastAPI', evidence: ['f1-pace-intelligence', 'telco-churn'], extra: MNIST },
       { name: 'Streamlit', evidence: ['telco-churn'] },
       { name: 'Docker', evidence: ['f1-pace-intelligence'], note: 'release image, hosted on Render' },
       { name: 'Postman' },
-      { name: 'Git', evidence: ['f1-pace-intelligence', 'telco-churn', 'retail-intelligence', 'olist-delivery'] },
-      { name: 'GitHub', evidence: ['f1-pace-intelligence', 'telco-churn', 'retail-intelligence', 'olist-delivery'] },
+      { name: 'Git & GitHub', evidence: ['f1-pace-intelligence', 'telco-churn', 'retail-intelligence', 'olist-delivery'] },
       { name: 'Testing & CI (pytest, Ruff, GitHub Actions)', evidence: ['f1-pace-intelligence', 'telco-churn'], hero: false },
       // { name: 'MLflow' },
       // { name: 'AWS' },
@@ -272,7 +262,9 @@ export const skillGroups: SkillGroup[] = [
       { name: 'Plotly' },
       { name: 'D3.js', evidence: ['olist-delivery'] },
       { name: 'Tableau' },
-      { name: 'LLM tool use (AI APIs and Ollama)', evidence: ['f1-pace-intelligence'] },
+      { name: 'LLM agents & tool calling (Claude API, Ollama)', evidence: ['f1-pace-intelligence'], note: '8 read-only tools' },
+      { name: 'Grounded answers with SQL guardrails', evidence: ['f1-pace-intelligence'], note: 'every number names its source tool' },
+      { name: 'LLM evaluation', evidence: ['f1-pace-intelligence'], note: 'internal 50-question test set' },
       // To show OpenCV / Tesseract in the hero boxes too, delete `hero: false` on their lines.
       { name: 'OpenCV', evidence: ['document-scanner'], hero: false },
       { name: 'Tesseract OCR', evidence: ['document-scanner'], hero: false },
@@ -376,7 +368,7 @@ export const projects: Project[] = [
     problem:
       'Before each race, how fast will each car really be over a race distance, how sure can we be, and how many pit stops make sense, using public data only?',
     contribution:
-      'Built it solo, end to end: a 545-session pipeline and 15-table DuckDB warehouse, research on what predicts race pace, one shared weighted regression tested walk-forward with split-conformal 80% ranges, a Monte Carlo strategy model, a read-only FastAPI service and web app on Render, and an AI race engineer graded by an automatic exam.',
+      'Built it solo, end to end: a 545-session pipeline and 15-table DuckDB warehouse, research on what predicts race pace, one shared weighted regression tested walk-forward with split-conformal 80% ranges, a Monte Carlo strategy model, a read-only FastAPI service and web app on Render, and an AI race engineer checked by an internal 50-question evaluation.',
     result:
       'On 37 race weekends held out from every modelling choice, race-pace error after qualifying was 0.548% of a lap (about 0.49 s), against 0.589% for the best of five baselines, and 79.9% of real results fell inside the 80% ranges.',
     metrics: [
@@ -453,7 +445,7 @@ export const projects: Project[] = [
             'Ranges that mean what they say: 78.5% (after practice) and 79.9% (after qualifying) of real results fell inside the 80% ranges. Top-3 chance Brier score 0.070 against 0.129 for no information.',
             'Strategy, replayed on 78 dry races with only earlier data: the stop count matched what most of the top 10 did in 58% of races, against 46% for “always one stop” (67% against 57% when the call was clear).',
             'The live code path, replayed on 16 races of 2026, gave exactly the backtest’s error (0.573%).',
-            'The AI assistant passed a 50-question exam, including 5 trap questions it had to turn down, graded against the warehouse on 8 November 2026.',
+            'The AI assistant passed all 50 questions of an internal evaluation I wrote, including 5 trap questions it had to turn down, graded against the warehouse on 8 November 2026. It is a project test set, not an independent benchmark.',
           ],
           figures: ['dpec-results'],
         },
@@ -597,9 +589,9 @@ export const projects: Project[] = [
     contribution:
       'Designed a star schema with an explicit grain, staged DuckDB SQL, a data-quality build gate, a metrics engine with a transparent priority score, and a self-contained three-page HTML dashboard.',
     result:
-      'At full M5 shape the build processed 59.1M rows end to end in 84 s, with peak memory cut from 8.8 GB to 2.6 GB. The business findings shown are illustrative: the repo runs on a synthetic, M5-shaped sample.',
+      'Built and tested on synthetic, M5-shaped data. On a generated dataset at full M5 size, the build processed 59.1M rows end to end in 84 s, with peak memory cut from 8.8 GB to 2.6 GB. The business findings shown are illustrative, not real retail results.',
     metrics: [
-      { value: '59.1M', label: 'Rows in the full-shape stress test' },
+      { value: '59.1M', label: 'Rows in the full-size stress test (generated data)' },
       { value: '2.6 GB', label: 'Peak memory at full shape, down from 8.8 GB' },
       { value: '8', label: 'Data-quality checks gating the build' },
     ],
@@ -656,7 +648,7 @@ export const projects: Project[] = [
           id: 'findings',
           title: 'Findings and verified results',
           body: [
-            'The pipeline was stress-tested at full M5 shape: 30,450 series × 1,941 days = 59.1M rows. The first version peaked at 8.8 GB. Four changes, each measured on its own, brought it to 2.6 GB: streaming the reshape store by store, categorical encoding for every text column, running ingestion in its own process, and capping DuckDB at 1.5 GB so it spills to disk.',
+            'The pipeline was stress-tested on a generated dataset at full M5 shape: 30,450 series × 1,941 days = 59.1M rows. The first version peaked at 8.8 GB. Four changes, each measured on its own, brought it to 2.6 GB: streaming the reshape store by store, categorical encoding for every text column, running ingestion in its own process, and capping DuckDB at 1.5 GB so it spills to disk.',
           ],
           figures: ['retail-scale', 'retail-tower'],
         },
@@ -757,8 +749,8 @@ export const projects: Project[] = [
           title: 'Findings and verified results',
           body: [
             'The marketplace is structurally one-time-purchase: 3.12% of customers ever order again, and 70.7% are already At Risk or Churned. Retention is flat at 3–5% in every acquisition cohort from early 2017.',
-            'Late delivery is the clearest driver of poor reviews: every band of lateness costs roughly a star.',
-            'Customers punish broken promises, not distance. The slowest states are in the north: Roraima 29.4 days, Amapá 27.2, Amazonas 26.4, against a 12.6-day average. But slow is not late. Amapá and Amazonas arrive on time about 96% of the time, because their delivery estimates are long, and both average above 4.1 stars (small samples: 68 and 147 orders).',
+            'Late delivery shows the strongest association with poor reviews: each band of lateness goes with roughly one star less.',
+            'Low reviews line up with broken promises more than with distance. The slowest states are in the north: Roraima 29.4 days, Amapá 27.2, Amazonas 26.4, against a 12.6-day average. But slow is not late. Amapá and Amazonas arrive on time about 96% of the time, because their delivery estimates are long, and both average above 4.1 stars (small samples: 68 and 147 orders).',
             'Across the 27 states, the average review tracks the on-time rate (r = 0.78) more closely than delivery days (r = −0.53). The broken promises sit where the volume is: Rio de Janeiro (12,698 orders, 86.5% on time, 3.90 stars) and the Northeast (Alagoas 76.1%, Maranhão 80.3% on time).',
             'Sellers: no one dominates (the largest makes 1.7% of item revenue, the top 15 make 17.6%), but 540 of 3,053 sellers (17.7%) make 80% of it, so seller support should start with that group.',
           ],
@@ -882,7 +874,7 @@ export const secondaryProjects = projects.filter((p) => p.tier === 'secondary');
  * without naming it; the items below are the smaller pieces that are public or described.
  */
 export const moreWork = {
-  note: 'The projects on this page are a selection from 20+ delivered across analytics, statistical modelling and machine learning in academic, professional and independent work. Others are available to discuss on request.',
+  note: 'The projects on this page are a selection from my academic, professional and independent work in analytics, statistical modelling and machine learning. Others are available to discuss on request.',
 };
 
 /** Smaller pieces of evidence: listed, not featured. */
@@ -944,7 +936,7 @@ export const notes = [
     id: 'slow-is-not-late',
     category: 'Statistics',
     title: 'Slow is not late',
-    text: 'Across 27 Brazilian states, the average review tracks the on-time rate (r = 0.78) more closely than delivery days (r = −0.53). The slowest northern states keep about 96% of their promises; the reviews suffer where promises break.',
+    text: 'Across 27 Brazilian states, the average review tracks the on-time rate (r = 0.78) more closely than delivery days (r = −0.53). The slowest northern states keep about 96% of their promises; low reviews cluster where promises break. These are correlations, not causal effects.',
     source: { label: 'olist · reports/findings.md', href: `${OLIST}/blob/main/reports/findings.md` },
   },
   {
@@ -972,7 +964,7 @@ export const notes = [
     id: 'grade-the-assistant',
     category: 'Applied AI',
     title: 'Grade the AI assistant like software',
-    text: 'DPEC’s race engineer must name the tool behind every number. Its 50-question exam recomputes each right answer from the warehouse on every run, including 5 trap questions about things that aren’t public, and it passed 50 of 50.',
+    text: 'DPEC’s race engineer must name the tool behind every number. Its internal 50-question evaluation recomputes each right answer from the warehouse on every run, including 5 trap questions about things that aren’t public, and it passed 50 of 50. It is a test set I wrote, not an independent benchmark.',
     source: { label: 'dpec · reports/ai', href: `${DPEC}/blob/main/reports/ai/README.md` },
   },
 ];

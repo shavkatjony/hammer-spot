@@ -25,20 +25,18 @@ export const identity = {
   lastName: 'Yuldashev',
   handle: 'SHAVKATJON',
   title: 'Data Scientist',
-  /** Shown above the name in the hero, and in the CV, footer, search and share text. */
+  /** Search and share description, and the structured data for search engines. */
   positioning: 'Data Scientist building end-to-end data products.',
-  /** Professional direction: Data Scientist focused on these three areas. */
+  /** The hero's top line reads "Data Scientist · Machine Learning · Statistical Modelling · Applied AI". */
   roles: ['Machine Learning', 'Statistical Modelling', 'Applied AI'],
-  /** The hero's large line. `emphasis` is the part set in the accent colour. */
-  headline: 'Building data products that turn complex data into useful decisions.',
-  headlineEmphasis: 'useful decisions',
+  /**
+   * The hero has two levels of text, on purpose: one headline, then one paragraph.
+   * `headlineEmphasis` is the part of the headline set in the accent colour.
+   */
+  headline: 'I build data products that turn complex data into better decisions.',
+  headlineEmphasis: 'better decisions',
   statement:
-    'I build reproducible pipelines, apply statistical modelling and machine learning, and deliver evaluated results through applications people can use.',
-  support: 'My work emphasises rigorous validation, reproducibility, and clear reporting of both results and limitations.',
-  /** Credentials shown in the hero, About and CV. Self-reported: see docs/CONTENT_INVENTORY.md. */
-  credentials: [
-    { value: '3+', label: 'years’ experience', long: 'years of experience in data analysis and modelling' },
-  ],
+    '3+ years in data science and analytics, after 2+ years as a backend developer. I take problems from raw data to deployed tools: reproducible pipelines, models tested against honest baselines, and APIs and apps that put the results to work.',
   location: {
     city: 'Busan',
     country: 'South Korea',
@@ -96,18 +94,60 @@ export const education = [
   },
 ];
 
-export const experience = [
+/**
+ * Work experience, strongest and most recent first. Shown in full in the Experience section.
+ * Self-reported (see docs/CONTENT_INVENTORY.md). `skills` are short tags drawn from the bullets.
+ */
+export const experience: {
+  org: string;
+  place: string;
+  role: string;
+  period: string;
+  summary: string;
+  points: string[];
+  skills: string[];
+}[] = [
   {
     org: 'CHUST KVENTS',
-    place: 'Chust, Namangan, Uzbekistan · remote',
+    place: 'Chust, Namangan, Uzbekistan · Remote',
     role: 'Data & Business Analyst',
     period: 'Jan 2023 – Mar 2026',
+    summary: 'Data analysis, forecasting and reporting automation for a business with a head office and three retail locations.',
     points: [
       'Developed Python and SQL workflows to analyze sales, inventory, product, and customer data across the head office and three retail locations.',
       'Applied statistical analysis and machine learning for product demand forecasting, customer segmentation, and purchasing behavior analysis.',
       'Analyzed product profitability, sales trends, and pricing performance to identify business improvement opportunities.',
       'Automated data processing, reporting, and predictive workflows to support data-driven business decisions.',
     ],
+    skills: ['Python', 'SQL', 'Demand forecasting', 'Customer segmentation', 'Reporting automation'],
+  },
+  {
+    org: 'CHUST TEXTILE',
+    place: 'Chust, Uzbekistan',
+    role: 'Junior Backend Developer',
+    period: 'May 2020 – Jun 2022',
+    summary: 'Contributed to internal backend development and operational data management, working alongside senior developers.',
+    points: [
+      'Developed and maintained Python scripts for internal data processing and operational workflows.',
+      'Supported database queries, record maintenance and data-quality checks.',
+      'Performed basic reporting and analytical tasks, including summaries, distributions and financial tracking support.',
+      'Assisted with backend maintenance and the organisation of company operational data.',
+    ],
+    skills: ['Python', 'SQL', 'Data quality', 'Reporting'],
+  },
+  {
+    org: 'CHUST ASL CHARM SHOES',
+    place: 'Chust, Uzbekistan',
+    role: 'Backend Developer Intern',
+    period: 'Oct 2019 – Jun 2020',
+    summary: 'Gained practical backend development experience through Python scripting, data processing and database support under senior developer supervision.',
+    points: [
+      'Developed Python scripts for routine backend tasks and workflow automation.',
+      'Created data-validation scripts to identify formatting issues and maintain consistent records.',
+      'Assisted with database queries, updates and routine record maintenance.',
+      'Tested assigned code changes and incorporated feedback from senior developers.',
+    ],
+    skills: ['Python', 'Data validation', 'SQL', 'Testing'],
   },
 ];
 

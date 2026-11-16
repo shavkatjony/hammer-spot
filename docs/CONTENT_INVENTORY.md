@@ -1,6 +1,16 @@
 # Content inventory
 
-Audit of 2026-10-12, updated 2026-11-12 for the redesign (section 0) and 2026-11-14 (section 0a). Where the sections disagree, the newest one (0b, then 0a, then 0) is current.
+Audit of 2026-10-12, updated 2026-11-12 for the redesign (section 0) and 2026-11-14 (section 0a). Where the sections disagree, the newest one (0c, then 0b, 0a, 0) is current.
+
+## 0c. Update of 2026-11-16 (experience history, hero copy)
+
+| Item | Now | Status |
+|---|---|---|
+| CHUST TEXTILE | Junior Backend Developer, Chust, Uzbekistan, May 2020 – Jun 2022; summary and four bullets as supplied | SELF-REPORTED (owner) |
+| CHUST ASL CHARM SHOES | Backend Developer Intern, Chust, Uzbekistan, Oct 2019 – Jun 2020; summary and four bullets as supplied | SELF-REPORTED (owner). Overlaps the TEXTILE role in May–Jun 2020 |
+| KVENTS summary line | "Data analysis, forecasting and reporting automation for a business with a head office and three retail locations", a summary of the owner's own four bullets | EDITORIAL |
+| Hero copy | Headline "I build data products that turn complex data into better decisions." and one paragraph: "3+ years in data science and analytics, after 2+ years as a backend developer…" (2+ years = Oct 2019 – Jun 2022) | EDITORIAL from the owner's roles |
+| Experience section | New section 01, straight after the hero; all three roles in full | Owner's decision |
 
 ## 0b. Update of 2026-11-15 (review fixes)
 

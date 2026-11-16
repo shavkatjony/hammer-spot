@@ -29,7 +29,7 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
 
   <div class="hero__inner wrap wrap--wide">
     <div class="hero__copy">
-      <p class="hero__eyebrow mono caps">{identity.positioning.replace(/\.$/, '')}</p>
+      <p class="hero__eyebrow mono caps">{[identity.title, ...identity.roles].join(' · ')}</p>
       <h1 id="hero-name" class="hero__name">
         <span class="hero__first">{identity.firstName}</span>{' '}
         <span class="hero__last">{identity.lastName}</span>
@@ -38,12 +38,6 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
         {headBefore}<em>{identity.headlineEmphasis}</em>{headAfter}
       </p>
       <p class="hero__statement">{identity.statement}</p>
-      <p class="hero__support">{identity.support}</p>
-      <ul class="hero__creds" role="list">
-        {identity.credentials.map((c) => (
-          <li><span class="hero__cred-v">{c.value}</span>{' '}<span class="hero__cred-l">{c.label}</span></li>
-        ))}
-      </ul>
       {identity.availability.open && (
         <p class="hero__open">
           <span class="chip-open">{identity.availability.short}</span>{' '}
@@ -220,40 +214,11 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
     color: var(--accent);
   }
   .hero__statement {
-    margin-top: var(--space-4);
+    margin-top: var(--space-5);
     font-size: var(--fs-lead);
-    line-height: 1.55;
+    line-height: 1.6;
     color: var(--ink-2);
-    max-width: 50ch;
-  }
-  .hero__support {
-    margin-top: var(--space-2);
-    font-size: 0.98rem;
-    line-height: 1.55;
-    color: var(--ink-2);
-    max-width: 56ch;
-  }
-  .hero__creds {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2) var(--space-6);
-    margin-top: var(--space-3);
-  }
-  .hero__creds li {
-    display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
-  }
-  .hero__cred-v {
-    font-family: var(--f-display);
-    font-size: clamp(1.5rem, 1.2rem + 0.8vw, 1.9rem);
-    font-weight: 500;
-    line-height: 1;
-    color: var(--willow-ink);
-  }
-  .hero__cred-l {
-    font-size: var(--fs-small);
-    color: var(--ink-2);
+    max-width: 54ch;
   }
   .hero__open {
     display: flex;
@@ -505,8 +470,6 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
     }
     .hero__position,
     .hero__statement,
-    .hero__support,
-    .hero__creds,
     .hero__open,
     .hero__actions {
       grid-column: 1 / -1;
@@ -560,8 +523,6 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
   :global(html.motion:not(.intro-seen)) .hero__plate { animation: plate-in 1100ms var(--ease-settle) 260ms backwards; }
   :global(html.motion:not(.intro-seen)) .hero__position { animation: fade-up 700ms var(--ease-out) 460ms backwards; }
   :global(html.motion:not(.intro-seen)) .hero__statement { animation: fade-up 700ms var(--ease-out) 560ms backwards; }
-  :global(html.motion:not(.intro-seen)) .hero__support { animation: fade-up 700ms var(--ease-out) 600ms backwards; }
-  :global(html.motion:not(.intro-seen)) .hero__creds { animation: fade-up 700ms var(--ease-out) 620ms backwards; }
   :global(html.motion:not(.intro-seen)) .hero__open { animation: fade-up 700ms var(--ease-out) 640ms backwards; }
   :global(html.motion:not(.intro-seen)) .hero__actions { animation: fade-up 700ms var(--ease-out) 720ms backwards; }
   :global(html.motion:not(.intro-seen)) .hero__stack { animation: fade-up 800ms var(--ease-out) 880ms backwards; }

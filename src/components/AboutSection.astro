@@ -4,11 +4,12 @@ import { identity, education, experience, languages, targetRoles, interests, pro
 import { url } from '../lib/url';
 const edu = education[0];
 const job = experience[0];
-const [years] = identity.credentials;
+const first = experience[experience.length - 1];
+const count = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'][experience.length] ?? String(experience.length);
 ---
 <section class="section about" id="about" aria-labelledby="about-title">
   <div class="wrap wrap--wide">
-    <SectionHead no="04" title="About" id="about-title" />
+    <SectionHead no="05" title="About" id="about-title" />
     <div class="about__grid">
       <div class="about__prose prose" data-reveal="fade">
         <p class="about__lead">
@@ -17,9 +18,10 @@ const [years] = identity.credentials;
           toward data.
         </p>
         <p>
-          I have {years.value} {years.long}, including my work as a data and business analyst at {job.org}. I take a problem from data preparation and analysis through modelling, evaluation and
-          delivery: reproducible pipelines, data-quality checks, models chosen against baselines, and evaluation on data
-          the model never saw. My flagship project, DPEC, forecasts Formula 1 race pace from public timing data; its README
+          I started as a backend developer, writing Python and database tooling for two companies in Chust, then spent
+          three years as a data and business analyst at {job.org}. I take a problem from data preparation and analysis
+          through modelling, evaluation and delivery: reproducible pipelines, data-quality checks, models chosen against
+          baselines, and evaluation on data the model never saw. My flagship project, DPEC, forecasts Formula 1 race pace from public timing data; its README
           traces every number to its source.
         </p>
         <p>
@@ -31,12 +33,13 @@ const [years] = identity.credentials;
         <h3 class="about__h mono caps">Record</h3>
         <ol class="record" role="list">
           <li class="record__item">
-            <p class="record__meta"><span class="record__type">Employment</span><span>{job.period}</span></p>
-            <p class="record__title">{job.role}, {job.org}</p>
-            <p class="record__sub">{job.place}</p>
-            <ul class="record__points">
-              {job.points.map((pt) => <li>{pt}</li>)}
-            </ul>
+            <p class="record__meta">
+              <span class="record__type">Experience</span><span>{first.period.split(' – ')[0]} – {job.period.split(' – ')[1]}</span>
+            </p>
+            <p class="record__title">{count} roles, from backend development to data science</p>
+            <p class="record__links">
+              {experience.map((x) => <a href={url('#experience')}>{x.role}</a>)}
+            </p>
           </li>
           <li class="record__item">
             <p class="record__meta"><span class="record__type">Education</span><span>{edu.year}</span></p>
@@ -151,18 +154,6 @@ const [years] = identity.credentials;
   .record__sub {
     font-size: var(--fs-small);
     color: var(--ink-2);
-  }
-  .record__points {
-    margin-top: var(--space-2);
-    padding-left: 1.1em;
-    font-size: var(--fs-small);
-    color: var(--ink-2);
-  }
-  .record__points li + li {
-    margin-top: var(--space-1);
-  }
-  .record__points li::marker {
-    color: var(--warm-ink);
   }
   .record__links {
     display: flex;

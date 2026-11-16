@@ -1,0 +1,114 @@
+---
+/**
+ * Work experience, straight after the hero: most recent and strongest role first.
+ * Everything comes from `experience` in src/content/site.ts.
+ */
+import SectionHead from './SectionHead.astro';
+import { experience } from '../content/site';
+const since = experience[experience.length - 1].period.split(' – ')[0].split(' ')[1];
+const words = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+const count = words[experience.length] ?? String(experience.length);
+---
+<section class="section xp" id="experience" aria-labelledby="xp-title">
+  <div class="wrap wrap--wide">
+    <SectionHead no="01" title="Experience" id="xp-title">
+      {count} roles since {since}: data science and analytics, built on a foundation in backend development.
+    </SectionHead>
+
+    <ol class="xp__list" role="list">
+      {experience.map((x, i) => (
+        <li class:list={['xp__item', { 'xp__item--lead': i === 0 }]} data-reveal="fade">
+          <div class="xp__when">
+            <p class="xp__period mono">{x.period}</p>
+            <p class="xp__place">{x.place}</p>
+          </div>
+          <div class="xp__body">
+            <h3 class="xp__role">{x.role}</h3>
+            <p class="xp__org mono caps">{x.org}</p>
+            <p class="xp__summary">{x.summary}</p>
+            <ul class="xp__points">
+              {x.points.map((pt) => <li>{pt}</li>)}
+            </ul>
+            <ul class="tags xp__tags" role="list" aria-label="Skills used">
+              {x.skills.map((t) => <li class="tag">{t}</li>)}
+            </ul>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .xp {
+    background: var(--surface);
+    border-top: 1px solid var(--rule);
+  }
+  .xp__list {
+    border-top: 1.5px solid var(--ink);
+  }
+  .xp__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    gap: var(--space-3) var(--space-6);
+    padding: var(--space-6) 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .xp__when {
+    display: grid;
+    gap: 0.3rem;
+    align-content: start;
+  }
+  .xp__period {
+    color: var(--warm-ink);
+    font-weight: 500;
+  }
+  .xp__place {
+    font-size: var(--fs-small);
+    color: var(--ink-3);
+  }
+  .xp__role {
+    font-size: var(--fs-h3);
+    line-height: 1.1;
+  }
+  .xp__item--lead .xp__role {
+    font-size: clamp(1.75rem, 1.3rem + 1.4vw, 2.5rem);
+  }
+  .xp__org {
+    margin-top: 0.4rem;
+    color: var(--willow-ink);
+    font-weight: 500;
+  }
+  .xp__summary {
+    margin-top: var(--space-3);
+    max-width: 62ch;
+    color: var(--ink);
+  }
+  .xp__points {
+    display: grid;
+    gap: var(--space-1);
+    margin-top: var(--space-3);
+    padding-left: 1.1em;
+    max-width: 72ch;
+    color: var(--ink-2);
+  }
+  .xp__points li::marker {
+    color: var(--warm-ink);
+  }
+  .xp__tags {
+    margin-top: var(--space-4);
+  }
+  @media (max-width: 52rem) {
+    .xp__item {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+    .xp__when {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.2rem var(--space-3);
+      align-items: baseline;
+    }
+  }
+</style>

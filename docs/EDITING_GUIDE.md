@@ -66,18 +66,17 @@ A skill with no `evidence` and no `extra` is listed in the Toolkit under "Also u
 
 ---
 
-## 3. Change your headline, introduction, availability, years and project count
+## 3. Change your headline, introduction and availability
 
-All in `export const identity`:
+All in `export const identity`. The hero has two levels of text on purpose, one headline and one paragraph, so
+keep each to one or two sentences.
 
 | Field | Where it shows |
 |---|---|
-| `positioning` | Above your name in the hero; search and share text |
-| `headline` and `headlineEmphasis` | The large line in the hero; the emphasis part is set in blue |
-| `statement` | The introduction paragraph in the hero |
-| `support` | The smaller sentence under it |
-| `roles` | The page title |
-| `credentials` | "3+ years’ experience" in the hero and About (add another `{ value, label, long }` line to show a second figure) |
+| `roles` | The line above your name: "Data Scientist · Machine Learning · Statistical Modelling · Applied AI" |
+| `headline` and `headlineEmphasis` | The large line under your name; the emphasis part is set in blue |
+| `statement` | The paragraph under the headline (it carries your years of experience) |
+| `positioning` | Search and share description only |
 | `availability.open` | `true` shows "Open to work"; `false` hides it |
 | `availability.scope` | "full-time, part-time, project-based and remote roles" |
 
@@ -85,7 +84,9 @@ All in `export const identity`:
 
 ## 4. Experience, education, languages, target roles
 
-- `experience`: company, role, place, period and bullet points (CHUST KVENTS today).
+- `experience`: one entry per job, most recent and strongest first. Each has `org`, `place`, `role`, `period`,
+  a one-line `summary`, `points` (bullets) and `skills` (small tags). They appear in full in the Experience section,
+  straight after the hero. To add a job, copy an entry and change it.
 - `education`: degree, school, year and focus.
 - `languages`, `targetRoles` ("Looking for" in About) and `interests`.
 

@@ -162,11 +162,12 @@ for (const theme of ['light', 'dark']) {
   const open = await page.getAttribute('[data-menu-toggle]', 'aria-expanded');
   const focused = await page.evaluate(() => document.activeElement?.textContent?.trim());
   const visible = await page.isVisible('[data-menu] a');
+  const firstLink = await page.evaluate(() => document.querySelector('[data-menu] a')?.textContent?.trim());
   await page.keyboard.press('Escape');
   const closed = await page.getAttribute('[data-menu-toggle]', 'aria-expanded');
   const back = await page.evaluate(() => document.activeElement?.hasAttribute('data-menu-toggle'));
-  if (open !== 'true' || !visible || focused !== 'Work' || closed !== 'false' || !back)
-    fail(`mobile menu: open=${open} visible=${visible} focus=${focused} closed=${closed} focusBack=${back}`);
+  if (open !== 'true' || !visible || !firstLink || focused !== firstLink || closed !== 'false' || !back)
+    fail(`mobile menu: open=${open} visible=${visible} focus=${focused} (first link ${firstLink}) closed=${closed} focusBack=${back}`);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   if (overflow > 0) fail(`mobile: horizontal overflow ${overflow}px`);
   await ctx.close();

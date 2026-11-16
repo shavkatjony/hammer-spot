@@ -109,9 +109,9 @@ export const experience: {
   {
     org: 'CHUST KVENTS',
     place: 'Chust, Namangan, Uzbekistan · Remote',
-    role: 'Data & Business Analyst',
+    role: 'Data Scientist & ML Engineer',
     period: 'Jan 2023 – Mar 2026',
-    summary: 'Data analysis, forecasting and reporting automation for a business with a head office and three retail locations.',
+    summary: 'Data science and machine learning for a business with a head office and three retail locations: forecasting, segmentation, analysis and automated workflows.',
     points: [
       'Developed Python and SQL workflows to analyze sales, inventory, product, and customer data across the head office and three retail locations.',
       'Applied statistical analysis and machine learning for product demand forecasting, customer segmentation, and purchasing behavior analysis.',

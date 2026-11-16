@@ -68,14 +68,14 @@ A skill with no `evidence` and no `extra` is listed in the Toolkit under "Also u
 
 ## 3. Change your headline, introduction and availability
 
-All in `export const identity`. The hero has two levels of text on purpose, one headline and one paragraph, so
-keep each to one or two sentences.
+All in `export const identity`. Under your name the hero shows three lines: your title, the headline, then one
+paragraph. Keep each short.
 
 | Field | Where it shows |
 |---|---|
-| `roles` | The line above your name: "Data Scientist · Machine Learning · Statistical Modelling · Applied AI" |
-| `headline` and `headlineEmphasis` | The large line under your name; the emphasis part is set in blue |
-| `statement` | The paragraph under the headline (it carries your years of experience) |
+| `title` | "Data Scientist & Applied ML Engineer": under your name, next to it in the nav, in the footer and in search results |
+| `headline` and `headlineEmphasis` | "From raw data to reliable decisions."; the emphasis part is set in blue |
+| `statement` | The paragraph under the headline |
 | `positioning` | Search and share description only |
 | `availability.open` | `true` shows "Open to work"; `false` hides it |
 | `availability.scope` | "full-time, part-time, project-based and remote roles" |

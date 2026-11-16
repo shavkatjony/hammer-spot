@@ -29,11 +29,11 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
 
   <div class="hero__inner wrap wrap--wide">
     <div class="hero__copy">
-      <p class="hero__eyebrow mono caps">{[identity.title, ...identity.roles].join(' · ')}</p>
       <h1 id="hero-name" class="hero__name">
         <span class="hero__first">{identity.firstName}</span>{' '}
         <span class="hero__last">{identity.lastName}</span>
       </h1>
+      <p class="hero__role">{identity.title}</p>
       <p class="hero__position">
         {headBefore}<em>{identity.headlineEmphasis}</em>{headAfter}
       </p>
@@ -185,12 +185,6 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
     padding-top: clamp(2rem, 7vh, 5rem);
     padding-bottom: var(--space-6);
   }
-  .hero__eyebrow {
-    color: var(--warm-ink);
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    margin-bottom: var(--space-4);
-  }
   .hero__name {
     font-size: var(--fs-name);
     font-weight: 500;
@@ -200,14 +194,22 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
   .hero__name span {
     display: inline-block;
   }
-  .hero__position {
+  .hero__role {
     margin-top: var(--space-4);
-    font-family: var(--f-display);
-    font-size: var(--fs-statement);
-    line-height: 1.18;
-    letter-spacing: -0.008em;
+    font-size: clamp(1.45rem, 1.1rem + 1vw, 2rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.012em;
     color: var(--ink);
-    max-width: 30ch;
+  }
+  .hero__position {
+    margin-top: var(--space-3);
+    font-family: var(--f-display);
+    font-size: clamp(1.3rem, 1.05rem + 0.7vw, 1.75rem);
+    line-height: 1.25;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+    max-width: 40ch;
   }
   .hero__position em {
     font-style: italic;
@@ -433,7 +435,7 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
     }
     .hero__inner {
       grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr);
-      grid-template-areas: 'plate eyebrow' 'plate name';
+      grid-template-areas: 'plate name' 'plate role';
       grid-template-rows: 1fr auto;
       gap: var(--space-4) var(--space-4);
       padding-top: var(--space-5);
@@ -454,11 +456,11 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
     .hero__plate-cap {
       display: none;
     }
-    .hero__eyebrow {
-      grid-area: eyebrow;
-      align-self: end;
-      margin: 0;
-      font-size: 0.68rem;
+    .hero__role {
+      grid-area: role;
+      align-self: start;
+      margin-top: 0;
+      font-size: 1.05rem;
     }
     .hero__name {
       grid-area: name;
@@ -517,7 +519,7 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
     to { opacity: 1; clip-path: inset(-20px -20px -20px -20px); }
   }
   :global(html.motion:not(.intro-seen)) .hero__fallback { animation: rise-mask 1200ms var(--ease-in-out) 60ms backwards; }
-  :global(html.motion:not(.intro-seen)) .hero__eyebrow { animation: fade-up 600ms var(--ease-out) 120ms backwards; }
+  :global(html.motion:not(.intro-seen)) .hero__role { animation: fade-up 600ms var(--ease-out) 380ms backwards; }
   :global(html.motion:not(.intro-seen)) .hero__first { animation: fade-up 800ms var(--ease-settle) 200ms backwards; }
   :global(html.motion:not(.intro-seen)) .hero__last { animation: fade-up 800ms var(--ease-settle) 300ms backwards; }
   :global(html.motion:not(.intro-seen)) .hero__plate { animation: plate-in 1100ms var(--ease-settle) 260ms backwards; }

@@ -6,10 +6,10 @@ Audit of 2026-10-12, updated 2026-11-12 for the redesign (section 0) and 2026-11
 
 | Item | Now | Status |
 |---|---|---|
-| CHUST TEXTILE | Junior Backend Developer, Chust, Uzbekistan, May 2020 – Jun 2022; summary and four bullets as supplied | SELF-REPORTED (owner) |
-| CHUST ASL CHARM SHOES | Backend Developer Intern, Chust, Uzbekistan, Oct 2019 – Jun 2020; summary and four bullets as supplied | SELF-REPORTED (owner). Overlaps the TEXTILE role in May–Jun 2020 |
+| CHUST TEXTILE | Junior Backend Developer, Chust, Uzbekistan, **May 2021 – Jul 2022** (owner's correction of 2026-11-16); summary and four bullets as supplied | SELF-REPORTED (owner) |
+| CHUST ASL CHARM SHOES | Backend Developer Intern, Chust, Uzbekistan, **Sep 2020 – Mar 2021** (6 months; owner's correction); summary and four bullets as supplied | SELF-REPORTED (owner) |
 | KVENTS summary line | "Data analysis, forecasting and reporting automation for a business with a head office and three retail locations", a summary of the owner's own four bullets | EDITORIAL |
-| Hero copy | Headline "I build data products that turn complex data into better decisions." and one paragraph: "3+ years in data science and analytics, after 2+ years as a backend developer…" (2+ years = Oct 2019 – Jun 2022) | EDITORIAL from the owner's roles |
+| Hero copy | Owner's own text: title "Data Scientist & Applied ML Engineer", headline "From raw data to reliable decisions.", paragraph "I build data products through statistical modelling, machine learning and data engineering — …". No years are claimed in the hero | Owner's copy |
 | Experience section | New section 01, straight after the hero; all three roles in full | Owner's decision |
 
 ## 0b. Update of 2026-11-15 (review fixes)

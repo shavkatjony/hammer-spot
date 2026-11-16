@@ -1,7 +1,7 @@
 ---
 import Icon from './Icon.astro';
 import { url } from '../lib/url';
-import { resume } from '../content/site';
+import { resume, identity } from '../content/site';
 
 interface Props {
   onDark?: boolean;
@@ -26,7 +26,7 @@ const links = [
         <path d="M5 20h14" />
       </svg>
       <span class="brand__word">Shavkatjon Yuldashev</span>{' '}
-      <span class="brand__role mono">Data Scientist</span>
+      <span class="brand__role mono">{identity.title}</span>
     </a>
 
     <nav class="primary" aria-label="Primary">
@@ -243,7 +243,8 @@ const links = [
     transform: translateY(-3px) rotate(-25deg);
   }
 
-  @media (max-width: 64rem) {
+  /* the full title needs room: shown from 82rem up, next to the name */
+  @media (max-width: 82rem) {
     .brand__role {
       display: none;
     }

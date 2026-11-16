@@ -45,7 +45,7 @@ The CV is download-only: `public/Shavkatjon-Yuldashev-CV.pdf` is the owner's own
 
 Everything personal lives in `src/content/site.ts`:
 
-- `identity`: name, roles, headline, the hero paragraph (`statement`, which carries the years of experience), location and availability (`availability.open`, `availability.scope`).
+- `identity`: name, professional `title`, headline, the hero paragraph (`statement`), location and availability (`availability.open`, `availability.scope`).
 - `skillGroups`: the six technical-skill groups (Programming & Data; Statistics & Modelling; Machine Learning; Model Development & Validation; APIs & Deployment; Visualization & Applied AI). One list feeds the hero's skill boxes, the Toolkit's evidence links and the CV.
 - `social`: the only place external profile URLs are defined.
 - `projects`: four primary projects in this order: DPEC Formula 1 (the flagship, marked Complete with its 0-live-weekend limitation), Telco churn, Retail commercial intelligence and Olist SQL, plus one secondary computer-vision project. Each case study has six sections (problem; objectives and questions; data and methodology; technical implementation; findings and verified results; limitations and lessons) plus the repository and demo links. Text can contain `` `code` `` in backticks; it's rendered as `<code>`, never as HTML.

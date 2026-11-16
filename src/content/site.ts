@@ -24,19 +24,18 @@ export const identity = {
   firstName: 'Shavkatjon',
   lastName: 'Yuldashev',
   handle: 'SHAVKATJON',
-  title: 'Data Scientist',
+  /** The professional title: under the name in the hero, next to it in the nav, in the footer and in search results. */
+  title: 'Data Scientist & Applied ML Engineer',
   /** Search and share description, and the structured data for search engines. */
-  positioning: 'Data Scientist building end-to-end data products.',
-  /** The hero's top line reads "Data Scientist · Machine Learning · Statistical Modelling · Applied AI". */
-  roles: ['Machine Learning', 'Statistical Modelling', 'Applied AI'],
+  positioning: 'Data Scientist & Applied ML Engineer: from raw data to reliable decisions.',
   /**
-   * The hero has two levels of text, on purpose: one headline, then one paragraph.
+   * The hero, under the name: the title, then `headline`, then `statement`.
    * `headlineEmphasis` is the part of the headline set in the accent colour.
    */
-  headline: 'I build data products that turn complex data into better decisions.',
-  headlineEmphasis: 'better decisions',
+  headline: 'From raw data to reliable decisions.',
+  headlineEmphasis: 'reliable decisions',
   statement:
-    '3+ years in data science and analytics, after 2+ years as a backend developer. I take problems from raw data to deployed tools: reproducible pipelines, models tested against honest baselines, and APIs and apps that put the results to work.',
+    'I build data products through statistical modelling, machine learning and data engineering — turning complex datasets into tested models, reproducible systems and practical applications.',
   location: {
     city: 'Busan',
     country: 'South Korea',
@@ -125,7 +124,7 @@ export const experience: {
     org: 'CHUST TEXTILE',
     place: 'Chust, Uzbekistan',
     role: 'Junior Backend Developer',
-    period: 'May 2020 – Jun 2022',
+    period: 'May 2021 – Jul 2022',
     summary: 'Contributed to internal backend development and operational data management, working alongside senior developers.',
     points: [
       'Developed and maintained Python scripts for internal data processing and operational workflows.',
@@ -139,7 +138,7 @@ export const experience: {
     org: 'CHUST ASL CHARM SHOES',
     place: 'Chust, Uzbekistan',
     role: 'Backend Developer Intern',
-    period: 'Oct 2019 – Jun 2020',
+    period: 'Sep 2020 – Mar 2021',
     summary: 'Gained practical backend development experience through Python scripting, data processing and database support under senior developer supervision.',
     points: [
       'Developed Python scripts for routine backend tasks and workflow automation.',
@@ -1039,8 +1038,8 @@ export const toolkit: { studied: Tool[] } = {
 };
 
 export const meta = {
-  title: 'Shavkatjon Yuldashev · Data Scientist | Machine Learning, Statistical Modelling & Applied AI',
+  title: 'Shavkatjon Yuldashev · Data Scientist & Applied ML Engineer',
   description:
-    'Shavkatjon Yuldashev, Data Scientist building end-to-end data products: reproducible pipelines, statistical modelling, machine learning and applied AI, evaluated against baselines and delivered through applications people can use. Case studies, code and CV.',
+    'Shavkatjon Yuldashev, Data Scientist & Applied ML Engineer in Busan: data products built through statistical modelling, machine learning and data engineering, from raw data to tested models, reproducible systems and practical applications. Case studies, code and CV.',
   updated: '2026-11-14',
 };

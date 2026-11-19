@@ -241,8 +241,6 @@ export const skillGroups: SkillGroup[] = [
       { name: 'R' },
       { name: 'pandas', evidence: ALL },
       { name: 'NumPy', evidence: ['f1-pace-intelligence', 'retail-intelligence', 'document-scanner'] },
-      { name: 'SciPy', extra: NOTEBOOKS },
-      { name: 'statsmodels', evidence: ['f1-pace-intelligence'], extra: NOTEBOOKS },
       { name: 'DuckDB', evidence: ['f1-pace-intelligence', 'retail-intelligence'] },
       { name: 'Parquet', evidence: ['f1-pace-intelligence', 'retail-intelligence'], hero: false },
       // { name: 'Polars' },
@@ -264,6 +262,8 @@ export const skillGroups: SkillGroup[] = [
       { name: 'Time Series Analysis', evidence: ['f1-pace-intelligence'], work: ['KVENTS'] },
       { name: 'Seasonal Forecasting', work: ['KVENTS'] },
       { name: 'Monte Carlo Simulation', evidence: ['f1-pace-intelligence'] },
+      { name: 'SciPy', extra: NOTEBOOKS },
+      { name: 'statsmodels', evidence: ['f1-pace-intelligence'], extra: NOTEBOOKS },
     ],
   },
   {

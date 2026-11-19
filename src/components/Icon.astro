@@ -1,7 +1,7 @@
 ---
 /** Small inline icon set. Decorative by default (aria-hidden); labels live on the link. */
 interface Props {
-  name: 'github' | 'linkedin' | 'mail' | 'arrow-ur' | 'arrow-down' | 'arrow-left' | 'doc' | 'play' | 'sun' | 'moon' | 'download' | 'data' | 'lock' | 'telegram' | 'globe';
+  name: 'github' | 'linkedin' | 'mail' | 'arrow-ur' | 'arrow-down' | 'arrow-left' | 'doc' | 'play' | 'sun' | 'moon' | 'download' | 'data' | 'lock' | 'telegram' | 'globe' | 'chevron';
   class?: string;
 }
 const { name, class: cls } = Astro.props;
@@ -38,6 +38,7 @@ const { name, class: cls } = Astro.props;
   {name === 'globe' && (
     <g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.6 3.8 5.6 3.8 9s-1.2 6.4-3.8 9c-2.6-2.6-3.8-5.6-3.8-9S9.4 5.6 12 3Z" /></g>
   )}
+  {name === 'chevron' && <path fill="none" stroke="currentColor" stroke-width="1.6" d="m6 9 6 6 6-6" />}
   {name === 'sun' && (
     <g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="4.2" /><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" /></g>
   )}

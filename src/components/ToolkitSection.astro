@@ -1,6 +1,6 @@
 ---
 /**
- * Toolkit: the same six skill groups as the hero, with evidence.
+ * Toolkit: the same seven skill groups as the hero, with evidence.
  * A skill appears under "Demonstrated" when a featured project (`evidence`) or other public work (`extra`)
  * shows it; the rest of the group is listed as "also used". Open source studied is listed separately.
  * Everything here is edited in src/content/site.ts (skillGroups, toolkit).
@@ -11,24 +11,27 @@ import { skillGroups, toolkit, projects, type SkillGroup } from '../content/site
 import { url } from '../lib/url';
 
 const bySlug = Object.fromEntries(projects.map((p) => [p.slug, p]));
-const shown = (g: SkillGroup) => g.skills.filter((sk) => ((sk.evidence?.length ?? 0) > 0 || sk.extra));
-const also = (g: SkillGroup) => g.skills.filter((sk) => !(sk.evidence?.length ?? 0) && !sk.extra);
+const has = (sk: SkillGroup['skills'][number]) => (sk.evidence?.length ?? 0) > 0 || (sk.work?.length ?? 0) > 0 || !!sk.extra;
+const shown = (g: SkillGroup) => g.skills.filter(has);
+const also = (g: SkillGroup) => g.skills.filter((sk) => !has(sk));
+const jobName = { KVENTS: 'KVENTS', TEXTILE: 'Textile', ASL: 'ASL' } as const;
 ---
 <section class="section toolkit tone-willow" id="toolkit" aria-labelledby="toolkit-title">
   <div class="wrap wrap--wide">
     <SectionHead no="04" title="Toolkit" id="toolkit-title">
-      The six skill groups from the top of the page, each linked to the projects that show it, followed by open-source
-      projects I studied.
+      The skill groups from the top of the page, each linked to the projects and jobs that show it, followed by
+      open-source projects I studied.
     </SectionHead>
 
     <div class="tk__a">
       <div class="tk__a-head">
-        <h3 class="tk__head"><span class="tk__no mono">A</span> Demonstrated in projects</h3>
+        <h3 class="tk__head"><span class="tk__no mono">A</span> Demonstrated in projects and work</h3>
         <p class="tk__key">
           <span class="mono">Project numbers:</span>
           {projects.map((p) => (
             <a href={url(`work/${p.slug}/`)} class="tk__key-item"><span class="mono">{p.index}</span> {p.short}</a>
           ))}
+          <a href={url('#experience')} class="tk__key-item"><span class="tk__work-dot" aria-hidden="true"></span> Job (see Experience)</a>
         </p>
       </div>
 
@@ -53,6 +56,9 @@ const also = (g: SkillGroup) => g.skills.filter((sk) => !(sk.evidence?.length ??
                         {bySlug[slug]?.index}
                       </a>
                     ))}
+                    {sk.work?.map((j) => (
+                      <a href={url('#experience')} class="tk__chip tk__chip--work" aria-label={`Used at ${jobName[j]}, see Experience`}>{jobName[j]}</a>
+                    ))}
                     {sk.extra && <ExtLink href={sk.extra.href} class="tk__chip tk__chip--repo">{sk.extra.label}</ExtLink>}
                   </span>
                 </li>
@@ -60,7 +66,7 @@ const also = (g: SkillGroup) => g.skills.filter((sk) => !(sk.evidence?.length ??
             </ul>
             {also(g).length > 0 && (
               <p class="tk__also">
-                <span class="mono">Also used at work or in coursework:</span> {also(g).map((sk) => sk.name).join(', ')}
+                <span class="mono">Also in my toolkit:</span> {also(g).map((sk) => sk.name).join(', ')}
               </p>
             )}
           </section>
@@ -130,7 +136,7 @@ const also = (g: SkillGroup) => g.skills.filter((sk) => !(sk.evidence?.length ??
     color: var(--warm-ink);
   }
 
-  /* six evidence cards, in the same order as the hero boxes */
+  /* seven evidence cards, in the same order as the hero boxes */
   .tk__groups {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -194,6 +200,17 @@ const also = (g: SkillGroup) => g.skills.filter((sk) => !(sk.evidence?.length ??
     text-decoration: none;
     transition: background-color var(--dur-1) ease, color var(--dur-1) ease, border-color var(--dur-1) ease;
   }
+  .tk__ev .tk__chip--work {
+    border-color: var(--willow-ink);
+    color: var(--willow-ink);
+    font-family: var(--f-body);
+  }
+  .tk__work-dot {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    border: 1.5px solid var(--willow-ink);
+  }
   .tk__ev :global(.tk__chip--repo) {
     border-style: dashed;
     font-family: var(--f-body);
@@ -245,6 +262,17 @@ const also = (g: SkillGroup) => g.skills.filter((sk) => !(sk.evidence?.length ??
     margin-top: var(--space-1);
     font-size: var(--fs-small);
     color: var(--ink-2);
+  }
+  /* a card left alone on the last row spans the width, its rows in three columns */
+  @media (min-width: 72.01rem) {
+    .tk__group:last-child:nth-child(3n + 1) {
+      grid-column: 1 / -1;
+    }
+    .tk__group:last-child:nth-child(3n + 1) .tk__rows {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0 var(--space-6);
+    }
   }
   @media (max-width: 72rem) {
     .tk__groups {

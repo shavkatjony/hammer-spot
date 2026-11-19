@@ -37,7 +37,7 @@ node scripts/fullpage.mjs ./shots "" dark   # full-page captures (path, theme)
 npm run assets         # regenerate public/og.jpg (the share image) from the built hero
 ```
 
-The CV is download-only: `public/Shavkatjon-Yuldashev-CV.pdf` is the owner's own final CV (phone removed) and is never generated or overwritten by the build. Replace that file to update it.
+The CV is download-only, in two languages: `public/Shavkatjon-Yuldashev-CV.pdf` (English) and `public/Shavkatjon-Yuldashev-CV-KR.pdf` (한국어). Both are the owner's own final CVs (no phone number) and are never generated or overwritten by the build. Every CV button opens a small menu to pick the language. Replace a file (same name) to update it.
 
 ## Editing content
 
@@ -46,7 +46,7 @@ The CV is download-only: `public/Shavkatjon-Yuldashev-CV.pdf` is the owner's own
 Everything personal lives in `src/content/site.ts`:
 
 - `identity`: name, professional `title`, headline, the hero paragraph (`statement`), location and availability (`availability.open`, `availability.scope`).
-- `skillGroups`: the six technical-skill groups (Programming & Data; Statistics & Modelling; Machine Learning; Model Development & Validation; APIs & Deployment; Visualization & Applied AI). One list feeds the hero's skill boxes, the Toolkit's evidence links and the CV.
+- `skillGroups`: the seven technical-skill groups, worded as in the owner's CV (Programming & Data; Statistics & Modelling; Machine Learning; ML Development & Validation; Applied AI & LLMs; APIs, Cloud & Deployment; Visualization & Apps). One list feeds the hero's skill boxes and the Toolkit, where each skill links to the projects (`evidence`) or jobs (`work`) that show it.
 - `social`: the only place external profile URLs are defined.
 - `projects`: four primary projects in this order: DPEC Formula 1 (the flagship, marked Complete with its 0-live-weekend limitation), Telco churn, Retail commercial intelligence and Olist SQL, plus one secondary computer-vision project. Each case study has six sections (problem; objectives and questions; data and methodology; technical implementation; findings and verified results; limitations and lessons) plus the repository and demo links. Text can contain `` `code` `` in backticks; it's rendered as `<code>`, never as HTML.
 - `archive` (smaller work, including Lotte World), `notes` (seven field notes), `toolkit` (open source studied; the demonstrated tools come from `skillGroups`, each linked to the projects that show it), `education`, `experience` (three roles, shown in the Experience section after the hero), `languages`, `targetRoles`, `interests`.
@@ -73,7 +73,7 @@ src/
   scripts/hero-scene.ts  the three.js desert diorama
   styles/                design tokens + global styles and the motion system
 src/assets/              portrait slot, contour and grain textures (fingerprinted by Vite, so any base path works)
-public/                  images (WebP), favicon, CV PDF, og.jpg
+public/                  images (WebP), favicon, CV PDFs (EN, KR), og.jpg
 scripts/                 verification, screenshots, asset generation, contour generator
 deploy/_headers          optional HTTP headers for Cloudflare Pages / Netlify
 ```

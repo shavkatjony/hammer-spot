@@ -1,6 +1,19 @@
 # Content inventory
 
-Audit of 2026-10-12, updated 2026-11-12 for the redesign (section 0) and 2026-11-14 (section 0a). Where the sections disagree, the newest one (0c, then 0b, 0a, 0) is current.
+Audit of 2026-10-12, updated 2026-11-12 for the redesign (section 0) and 2026-11-14 (section 0a). Where the sections disagree, the newest one (0d, then 0c, 0b, 0a, 0) is current.
+
+## 0d. Update of 2026-11-19 (owner's new English and Korean CVs)
+
+| Item | Now | Status |
+|---|---|---|
+| Source | Owner's English CV (`hammertime.docx.pdf`) and Korean CV (`shavkh-KR.pdf`), published unchanged as the two CV downloads (only the PDF title metadata was set) | Owner's documents |
+| KVENTS | Title "Data Scientist & Applied ML Engineer"; four new bullets copied word for word, including PostgreSQL warehouse ($7M inventory), SKU-level XGBoost/LightGBM forecasting (WAPE −20%, stockouts −15–25%), Text-to-SQL RAG assistant, RFM/K-Means and price elasticity (gross margin +4–8%, 15–20+ hours/week) | SELF-REPORTED (owner). No public evidence; be ready to explain each figure |
+| CHUST TEXTILE | Three new bullets word for word: Django/DRF APIs and PostgreSQL schemas (query speed +40–60%), atomic transactions and RBAC (mismatches −25%), automated aggregation (10–15+ hours/week), pytest | SELF-REPORTED (owner) |
+| CHUST ASL CHARM SHOES | One bullet word for word (sales/stock reconciliation) | SELF-REPORTED (owner) |
+| Skills | Seven groups word for word from the CV. Skills without a public project link to the job that used them (chips) or sit under "Also in my toolkit": R, A/B Testing, Hyperparameter Tuning, LLM Fine-Tuning, Autonomous Workflows, AWS, Plotly, Tableau | SELF-REPORTED where no project link |
+| Visa | D-10, shown in About and Contact as on the CV | Owner's CV |
+| Education | Graduation Aug 2026 | Owner's CV |
+| Korean | "Beginner, currently studying" | Owner's CV |
 
 ## 0c. Update of 2026-11-16 (experience history, hero copy)
 

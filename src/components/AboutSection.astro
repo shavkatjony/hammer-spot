@@ -18,8 +18,9 @@ const count = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'][experience.le
           toward data.
         </p>
         <p>
-          I started as a backend developer, writing Python and database tooling for two companies in Chust, then spent
-          three years as a data scientist and ML engineer at {job.org}. I take a problem from data preparation and analysis
+          I started in backend development, building Python tooling and then Django APIs and PostgreSQL schemas for two
+          companies in Chust. I then spent three years as a data scientist and applied ML engineer at {job.org}, where I built
+          a PostgreSQL warehouse, SKU-level demand forecasting and a Text-to-SQL assistant. I take a problem from data preparation and analysis
           through modelling, evaluation and delivery: reproducible pipelines, data-quality checks, models chosen against
           baselines, and evaluation on data the model never saw. My flagship project, DPEC, forecasts Formula 1 race pace from public timing data; its README
           traces every number to its source.
@@ -70,8 +71,11 @@ const count = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'][experience.le
         <ul class="fact__list">
           {targetRoles.map((r) => <li>{r}</li>)}
         </ul>
-        <p class="fact__note">Open to {identity.availability.scope}.</p>
-        <a class="link-arrow" href={url(resume.pdf)} download>Download the CV (PDF) →</a>
+        <p class="fact__note">Open to {identity.availability.scope}. Based in {identity.location.city}, visa {identity.visa}.</p>
+        <p class="fact__cv">
+          <a class="link-arrow" href={url(resume.en.file)} download hreflang="en">CV in English →</a>
+          <a class="link-arrow" href={url(resume.kr.file)} download hreflang="ko"><span lang="ko">한국어 이력서</span>{' →'}</a>
+        </p>
       </section>
       <section class="fact" aria-labelledby="f-int">
         <h3 id="f-int" class="about__h mono caps">Professional interests</h3>

@@ -1,0 +1,184 @@
+---
+/**
+ * "Download CV" button that opens a small menu: English or 한국어.
+ * Built on <details>/<summary>, so it works without JavaScript and keyboard users get it for free;
+ * the script only adds closing on an outside click or Escape.
+ */
+import Icon from './Icon.astro';
+import { resume } from '../content/site';
+import { url } from '../lib/url';
+
+interface Props {
+  /** 'button': a full button (hero). 'nav': the compact CV button in the top bar. */
+  variant?: 'button' | 'nav';
+  /** Which edge the menu lines up with. */
+  align?: 'start' | 'end';
+}
+const { variant = 'button', align = 'start' } = Astro.props;
+const options = [
+  { ...resume.en, lang: 'en', note: 'English' },
+  { ...resume.kr, lang: 'ko', note: 'Korean' },
+];
+---
+<details class:list={['cvd', `cvd--${variant}`, `cvd--${align}`]} data-cvd>
+  <summary class:list={['cvd__trigger', { 'btn btn--ghost': variant === 'button' }]}>
+    {variant === 'button' ? (
+      <>
+        <Icon name="download" /> Download CV <Icon name="chevron" class="cvd__chev" />
+      </>
+    ) : (
+      <>
+        CV <span class="mono">PDF</span> <Icon name="chevron" class="cvd__chev" />
+      </>
+    )}
+  </summary>
+  <div class="cvd__menu" role="group" aria-label="Choose the CV language">
+    <p class="cvd__head mono caps" aria-hidden="true">Choose language</p>
+    {options.map((o) => (
+      <a class="cvd__item" href={url(o.file)} download hreflang={o.lang} type="application/pdf">
+        <span class="cvd__lang" lang={o.lang}>{o.label}</span>
+        <span class="cvd__meta mono">PDF</span>
+        <Icon name="download" class="cvd__icon" />
+      </a>
+    ))}
+  </div>
+</details>
+
+<script>
+  // Close an open CV menu on an outside click, on Escape, or after a download starts.
+  const menus = () => Array.from(document.querySelectorAll<HTMLDetailsElement>('details[data-cvd]'));
+  document.addEventListener('click', (e) => {
+    for (const d of menus()) if (d.open && !d.contains(e.target as Node)) d.open = false;
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    for (const d of menus()) {
+      if (!d.open) continue;
+      d.open = false;
+      d.querySelector('summary')?.focus();
+    }
+  });
+  for (const d of menus()) {
+    d.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setTimeout(() => (d.open = false), 150)));
+  }
+</script>
+
+<style>
+  .cvd {
+    position: relative;
+    display: inline-block;
+  }
+  .cvd__trigger {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+  }
+  .cvd__trigger::-webkit-details-marker {
+    display: none;
+  }
+  .cvd__trigger :global(.cvd__chev) {
+    width: 0.9em;
+    height: 0.9em;
+    transition: transform var(--dur-1) var(--ease-out);
+  }
+  .cvd[open] .cvd__trigger :global(.cvd__chev) {
+    transform: rotate(180deg);
+  }
+  .cvd--button .cvd__trigger {
+    background: var(--hero-sky, var(--bg));
+  }
+  /* hover, keyboard focus and the open state all use the ghost button's inverted look */
+  .cvd--button .cvd__trigger:hover,
+  .cvd--button .cvd__trigger:focus-visible,
+  .cvd--button[open] .cvd__trigger {
+    background: var(--ink);
+    color: var(--bg);
+  }
+
+  /* compact trigger in the top bar, same look as the old CV button */
+  .cvd--nav .cvd__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 38px;
+    padding: 0.3rem 0.75rem 0.3rem 0.85rem;
+    border-radius: var(--radius);
+    background: var(--accent);
+    color: var(--on-accent);
+    font-size: var(--fs-small);
+    font-weight: 500;
+    transition: background-color var(--dur-1) ease;
+  }
+  .cvd--nav .cvd__trigger .mono {
+    font-size: 0.66rem;
+    opacity: 0.85;
+  }
+  .cvd--nav .cvd__trigger:hover {
+    background: color-mix(in oklab, var(--accent) 86%, var(--ink));
+  }
+
+  .cvd__menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    z-index: 30;
+    display: grid;
+    min-width: 15rem;
+    padding: 0.4rem;
+    background: var(--surface-solid, var(--bg));
+    color: var(--ink);
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-plate);
+  }
+  .cvd--start .cvd__menu {
+    left: 0;
+  }
+  .cvd--end .cvd__menu {
+    right: 0;
+  }
+  .cvd__head {
+    padding: 0.35rem 0.6rem 0.4rem;
+    font-size: var(--fs-micro);
+    color: var(--ink-3);
+  }
+  .cvd__item {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 44px;
+    padding: 0.4rem 0.6rem;
+    border-radius: calc(var(--radius) - 1px);
+    color: var(--ink);
+    text-decoration: none;
+    transition: background-color var(--dur-1) ease, color var(--dur-1) ease;
+  }
+  .cvd__lang {
+    font-weight: 600;
+  }
+  .cvd__meta {
+    font-size: var(--fs-micro);
+    color: var(--ink-3);
+  }
+  .cvd__item :global(.cvd__icon) {
+    width: 1rem;
+    height: 1rem;
+    color: var(--accent);
+  }
+  .cvd__item:hover,
+  .cvd__item:focus-visible {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+  .cvd__item:hover .cvd__meta,
+  .cvd__item:focus-visible .cvd__meta,
+  .cvd__item:hover :global(.cvd__icon),
+  .cvd__item:focus-visible :global(.cvd__icon) {
+    color: inherit;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cvd__trigger :global(.cvd__chev) {
+      transition: none;
+    }
+  }
+</style>

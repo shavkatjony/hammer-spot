@@ -41,6 +41,8 @@ export const identity = {
     country: 'South Korea',
     coords: '35.18° N · 129.08° E',
   },
+  /** Shown in About and Contact, as on the CV. */
+  visa: 'D-10',
   availability: {
     open: true, // CONFIRM before each deploy
     short: 'Open to work',
@@ -79,8 +81,13 @@ export const personalSite = { label: 'Personal website', href: '' as string };
  * PDF with the phone number removed (nothing else changed). To update it, replace
  * public/Shavkatjon-Yuldashev-CV.pdf with a new PDF of the same name and rebuild.
  */
+/**
+ * The CV is download-only, in two languages. Both files are the owner's own final CVs, published unchanged.
+ * To update one, replace the PDF in public/ with a new file of the same name and rebuild.
+ */
 export const resume = {
-  pdf: 'Shavkatjon-Yuldashev-CV.pdf',
+  en: { label: 'English', file: 'Shavkatjon-Yuldashev-CV.pdf' },
+  kr: { label: '한국어', file: 'Shavkatjon-Yuldashev-CV-KR.pdf' },
 };
 
 export const education = [
@@ -88,7 +95,7 @@ export const education = [
     school: 'Dong-A University',
     place: 'Busan, South Korea',
     degree: 'Bachelor of Integrated Business Management (IBM)',
-    year: '2026',
+    year: 'Aug 2026',
     focus: 'Statistics, econometrics, business statistics and strategy, marketing and marketing research',
   },
 ];
@@ -109,44 +116,40 @@ export const experience: {
   {
     org: 'CHUST KVENTS',
     place: 'Chust, Namangan, Uzbekistan · Remote',
-    role: 'Data Scientist & ML Engineer',
+    role: 'Data Scientist & Applied ML Engineer',
     period: 'Jan 2023 – Mar 2026',
-    summary: 'Data science and machine learning for a business with a head office and three retail locations: forecasting, segmentation, analysis and automated workflows.',
+    summary: 'Data warehouse, demand forecasting, segmentation and an AI database assistant for a retailer with three stores, online channels and a head office.',
     points: [
-      'Developed Python and SQL workflows to analyze sales, inventory, product, and customer data across the head office and three retail locations.',
-      'Applied statistical analysis and machine learning for product demand forecasting, customer segmentation, and purchasing behavior analysis.',
-      'Analyzed product profitability, sales trends, and pricing performance to identify business improvement opportunities.',
-      'Automated data processing, reporting, and predictive workflows to support data-driven business decisions.',
+      'Architected a centralized PostgreSQL warehouse and automated Python and SQL ingestion workflows, unifying sales, purchasing and stock logistics across three retail stores, online platforms and headquarters, spanning $7M in inventory.',
+      'Engineered SKU-level forecasting pipelines (XGBoost, LightGBM, scikit-learn) accounting for seasonal trends and vendor lead times, using expanding-window cross-validation to reduce volume-weighted error (WAPE) by 20% and stockouts by 15–25%.',
+      'Deployed a read-only AI database assistant using Python, LLM APIs and Text-to-SQL RAG, allowing business leadership to run real-time natural-language queries on inventory velocity, sales metrics and profit margins.',
+      'Constructed RFM and K-Means segmentation alongside price elasticity models for main inventory and replacement components, optimizing stock distribution to boost gross margin by 4–8% while saving 15–20+ weekly reporting hours.',
     ],
-    skills: ['Python', 'SQL', 'Demand forecasting', 'Customer segmentation', 'Reporting automation'],
+    skills: ['PostgreSQL', 'Python', 'XGBoost', 'LightGBM', 'Time-series forecasting', 'Text-to-SQL RAG', 'K-Means'],
   },
   {
     org: 'CHUST TEXTILE',
     place: 'Chust, Uzbekistan',
     role: 'Junior Backend Developer',
     period: 'May 2021 – Jul 2022',
-    summary: 'Contributed to internal backend development and operational data management, working alongside senior developers.',
+    summary: 'Backend APIs and production-data pipelines tracking textile production from yarn intake to export.',
     points: [
-      'Developed and maintained Python scripts for internal data processing and operational workflows.',
-      'Supported database queries, record maintenance and data-quality checks.',
-      'Performed basic reporting and analytical tasks, including summaries, distributions and financial tracking support.',
-      'Assisted with backend maintenance and the organisation of company operational data.',
+      'Built and owned Django / Django REST Framework APIs and normalized PostgreSQL schemas tracking textile production from yarn intake to export, improving reporting query speed by 40–60% via ORM optimization and indexing.',
+      'Implemented atomic database transactions, input validation schemas and role-based permissions for internal inventory endpoints, eliminating duplicate stock entries and reducing warehouse mismatches by 25%.',
+      'Automated daily production and defect-rate data aggregation with modular Python and SQL pipelines, saving 10–15+ hours/week of manual spreadsheet consolidation, with core endpoints covered by pytest tests.',
     ],
-    skills: ['Python', 'SQL', 'Data quality', 'Reporting'],
+    skills: ['Django', 'Django REST Framework', 'PostgreSQL', 'Python', 'pytest'],
   },
   {
     org: 'CHUST ASL CHARM SHOES',
     place: 'Chust, Uzbekistan',
     role: 'Backend Developer Intern',
     period: 'Sep 2020 – Mar 2021',
-    summary: 'Gained practical backend development experience through Python scripting, data processing and database support under senior developer supervision.',
+    summary: 'Sales and stock reconciliation across manufacturing, retail and wholesale.',
     points: [
-      'Developed Python scripts for routine backend tasks and workflow automation.',
-      'Created data-validation scripts to identify formatting issues and maintain consistent records.',
-      'Assisted with database queries, updates and routine record maintenance.',
-      'Tested assigned code changes and incorporated feedback from senior developers.',
+      'Engineered Python verification utilities and SQL queries reconciling daily sales with stock ledgers across manufacturing, three retail outlets and wholesale export.',
     ],
-    skills: ['Python', 'Data validation', 'SQL', 'Testing'],
+    skills: ['Python', 'SQL', 'Data validation'],
   },
 ];
 
@@ -154,7 +157,7 @@ export const languages = [
   { name: 'Uzbek', level: 'native' },
   { name: 'English', level: 'fluent' },
   { name: 'Turkish', level: 'fluent' },
-  { name: 'Korean', level: 'beginner' },
+  { name: 'Korean', level: 'beginner, currently studying' },
 ];
 
 export const targetRoles = [
@@ -190,27 +193,30 @@ const MNIST = { label: 'MNIST explorer', href: `${GH}/mnist-classifier-fullstack
 /* ------------------------------------------------------------------ */
 
 /**
- * The six skill groups. This one list feeds three places, so they always agree:
+ * The technical-skill groups, word for word as on the owner's CV. This one list feeds:
  *   1. the skill boxes at the foot of the hero (every skill, unless `hero: false`), in this order;
- *   2. the Toolkit section, where a skill with `evidence` or `extra` links to the work that shows it;
- *   3. the Skills section of the CV page and PDF.
+ *   2. the Toolkit section, which links each skill to the work that shows it.
  *
  * TO ADD A SKILL: copy one line, change the name, save. That's all.
- *   - Add `evidence` only when a featured project really uses it. Project ids:
+ *   - `evidence`: featured projects that use it. Project ids:
  *       'f1-pace-intelligence'  'telco-churn'  'retail-intelligence'  'olist-delivery'  'document-scanner'
+ *   - `work`: jobs where it was used ('KVENTS', 'TEXTILE', 'ASL'); shown as chips linking to Experience.
  *   - `extra: NOTEBOOKS` or `extra: MNIST` points to other public work.
- *   - `hero: false`  keeps a skill out of the hero boxes and the CV (Toolkit evidence only).
+ *   - `hero: false`  keeps a skill out of the hero boxes (Toolkit evidence only).
  * Ready-made examples are commented out (lines starting with //): delete the // to switch one on.
  */
+export type Job = 'KVENTS' | 'TEXTILE' | 'ASL';
 export interface Skill {
   name: string;
   /** Case studies that show this skill (project ids). */
   evidence?: string[];
+  /** Jobs where it was used. */
+  work?: Job[];
   /** Other public work that shows it. */
   extra?: { label: string; href: string };
   /** Short qualifier shown in the Toolkit. */
   note?: string;
-  /** false = Toolkit evidence only, not in the hero boxes or the CV. */
+  /** false = Toolkit evidence only, not in the hero boxes. */
   hero?: boolean;
 }
 export interface SkillGroup {
@@ -218,107 +224,117 @@ export interface SkillGroup {
   title: string;
   /** true = the skills are steps in order, shown with arrows. */
   flow?: boolean;
+  /** true = the group takes two columns in the hero boxes (for the longest list). */
+  wide?: boolean;
   skills: Skill[];
 }
+
+const ALL = ['f1-pace-intelligence', 'telco-churn', 'retail-intelligence', 'olist-delivery'];
 
 export const skillGroups: SkillGroup[] = [
   {
     id: 'programming',
     title: 'Programming & Data',
     skills: [
-      { name: 'Python', evidence: ['f1-pace-intelligence', 'telco-churn', 'retail-intelligence', 'olist-delivery', 'document-scanner'] },
-      { name: 'SQL (PostgreSQL, MySQL, DuckDB)', note: 'DuckDB and SQLite in the projects', evidence: ['f1-pace-intelligence', 'retail-intelligence', 'olist-delivery'] },
+      { name: 'Python', evidence: [...ALL, 'document-scanner'], work: ['KVENTS', 'TEXTILE', 'ASL'] },
+      { name: 'SQL (PostgreSQL, MySQL)', evidence: ['f1-pace-intelligence', 'retail-intelligence', 'olist-delivery'], work: ['KVENTS', 'TEXTILE', 'ASL'], note: 'PostgreSQL at work; DuckDB and SQLite in the projects' },
       { name: 'R' },
-      { name: 'pandas', evidence: ['f1-pace-intelligence', 'telco-churn', 'retail-intelligence', 'olist-delivery'] },
+      { name: 'pandas', evidence: ALL },
       { name: 'NumPy', evidence: ['f1-pace-intelligence', 'retail-intelligence', 'document-scanner'] },
-      { name: 'Parquet', evidence: ['f1-pace-intelligence', 'retail-intelligence'] },
+      { name: 'SciPy', extra: NOTEBOOKS },
+      { name: 'statsmodels', evidence: ['f1-pace-intelligence'], extra: NOTEBOOKS },
+      { name: 'DuckDB', evidence: ['f1-pace-intelligence', 'retail-intelligence'] },
+      { name: 'Parquet', evidence: ['f1-pace-intelligence', 'retail-intelligence'], hero: false },
       // { name: 'Polars' },
-      // { name: 'Excel / Google Sheets' },
     ],
   },
   {
     id: 'statistics',
     title: 'Statistics & Modelling',
+    wide: true,
     skills: [
-      { name: 'Statistical inference', evidence: ['f1-pace-intelligence'], extra: NOTEBOOKS },
-      { name: 'Hypothesis testing', extra: NOTEBOOKS },
-      { name: 'Regression (OLS, weighted least squares)', evidence: ['f1-pace-intelligence'], extra: NOTEBOOKS, note: 'WLS race-pace forecaster; OLS in the notebooks' },
-      { name: 'Bootstrap confidence intervals', evidence: ['f1-pace-intelligence'] },
-      { name: 'Monte Carlo simulation', evidence: ['f1-pace-intelligence'], note: 'pit-stop strategy over 4,000 draws' },
       { name: 'Probability', evidence: ['f1-pace-intelligence'], note: 'race chances scored with the Brier score' },
+      { name: 'Statistical Inference', evidence: ['f1-pace-intelligence'], extra: NOTEBOOKS },
       { name: 'EDA', evidence: ['telco-churn', 'olist-delivery'] },
-      { name: 'statsmodels', evidence: ['f1-pace-intelligence'], extra: NOTEBOOKS },
-      { name: 'SciPy', extra: NOTEBOOKS },
-      // { name: 'Time-series analysis' },
-      // { name: 'A/B testing' },
+      { name: 'Hypothesis Testing', extra: NOTEBOOKS },
+      { name: 'A/B Testing' },
+      { name: 'Bootstrap Resampling', evidence: ['f1-pace-intelligence'] },
+      { name: 'Correlation & Regression (OLS, WLS)', evidence: ['f1-pace-intelligence', 'olist-delivery'], extra: NOTEBOOKS },
+      { name: 'KPI Analysis', evidence: ['olist-delivery', 'retail-intelligence'], work: ['KVENTS'] },
+      { name: 'Time Series Analysis', evidence: ['f1-pace-intelligence'], work: ['KVENTS'] },
+      { name: 'Seasonal Forecasting', work: ['KVENTS'] },
+      { name: 'Monte Carlo Simulation', evidence: ['f1-pace-intelligence'] },
     ],
   },
   {
     id: 'ml',
     title: 'Machine Learning',
     skills: [
-      { name: 'scikit-learn', evidence: ['telco-churn'] },
-      { name: 'Supervised & unsupervised learning', evidence: ['telco-churn'], note: 'unsupervised: customer segmentation at work' },
-      { name: 'Classification', evidence: ['telco-churn'] },
-      { name: 'Decision trees', evidence: ['telco-churn'], note: 'tree ensembles in the churn comparison' },
-      { name: 'Random forest', evidence: ['telco-churn'] },
-      { name: 'Gradient boosting', evidence: ['telco-churn'], note: 'HistGradientBoostingClassifier' },
-      { name: 'Logistic regression', evidence: ['telco-churn'], hero: false, note: 'the selected churn model' },
-      { name: 'PyTorch', extra: MNIST, hero: false, note: 'secondary: a small network on MNIST' },
-      // { name: 'Hyperparameter tuning (GridSearchCV, Optuna)' },
-      // { name: 'XGBoost' },
-      // { name: 'LightGBM' },
+      { name: 'scikit-learn', evidence: ['telco-churn'], work: ['KVENTS'] },
+      { name: 'Gradient Boosting (XGBoost, LightGBM)', evidence: ['telco-churn'], work: ['KVENTS'], note: 'HistGradientBoosting in the churn project' },
+      { name: 'Supervised Learning (Classification & Regression)', evidence: ['telco-churn', 'f1-pace-intelligence'] },
+      { name: 'Decision Trees', evidence: ['telco-churn'] },
+      { name: 'Random Forest', evidence: ['telco-churn'] },
+      { name: 'K-Means Clustering', work: ['KVENTS'] },
+      { name: 'PyTorch', extra: MNIST, hero: false, note: 'a small network on MNIST' },
       // { name: 'TensorFlow / Keras' },
-      // { name: 'Clustering (k-means)' },
     ],
   },
   {
     id: 'validation',
-    title: 'Model Development & Validation',
+    title: 'ML Development & Validation',
     flow: true,
     skills: [
-      { name: 'Data cleaning & preprocessing', evidence: ['f1-pace-intelligence', 'telco-churn', 'retail-intelligence'] },
-      { name: 'Feature engineering', evidence: ['telco-churn'] },
-      { name: 'Stratified cross-validation', evidence: ['telco-churn'] },
-      { name: 'Baseline comparison', evidence: ['f1-pace-intelligence', 'telco-churn'] },
-      { name: 'Model evaluation', evidence: ['telco-churn', 'f1-pace-intelligence'] },
-      { name: 'Walk-forward backtesting', evidence: ['f1-pace-intelligence'] },
-      { name: 'Conformal prediction intervals', evidence: ['f1-pace-intelligence'], note: 'split-conformal 80% ranges' },
+      { name: 'Data Preprocessing', evidence: ['telco-churn', 'f1-pace-intelligence', 'retail-intelligence'] },
+      { name: 'Feature Engineering', evidence: ['telco-churn'] },
+      { name: 'ML Pipeline Design', evidence: ['telco-churn', 'f1-pace-intelligence'] },
+      { name: 'Hyperparameter Tuning' },
+      { name: 'Stratified & Time-Based Cross-Validation', evidence: ['telco-churn', 'f1-pace-intelligence'], work: ['KVENTS'] },
+      { name: 'Walk-Forward Backtesting', evidence: ['f1-pace-intelligence'] },
+      { name: 'Conformal Prediction', evidence: ['f1-pace-intelligence'] },
+      { name: 'Model Selection & Evaluation', evidence: ['telco-churn', 'f1-pace-intelligence'] },
+    ],
+  },
+  {
+    id: 'ai',
+    title: 'Applied AI & LLMs',
+    skills: [
+      { name: 'LLM Agents (Gemini, Claude, OpenAI, Ollama)', evidence: ['f1-pace-intelligence'], work: ['KVENTS'], note: 'Claude API and Ollama in DPEC' },
+      { name: 'RAG (Text-to-SQL)', evidence: ['f1-pace-intelligence'], work: ['KVENTS'], note: 'a guarded SQL tool in DPEC' },
+      { name: 'Prompt Engineering', evidence: ['f1-pace-intelligence'] },
+      { name: 'Tool Calling', evidence: ['f1-pace-intelligence'], note: '8 read-only tools' },
+      { name: 'LLM Fine-Tuning' },
+      { name: 'Autonomous Workflows' },
     ],
   },
   {
     id: 'deployment',
-    title: 'APIs & Deployment',
+    title: 'APIs, Cloud & Deployment',
     skills: [
-      { name: 'REST APIs', evidence: ['f1-pace-intelligence', 'telco-churn'] },
       { name: 'FastAPI', evidence: ['f1-pace-intelligence', 'telco-churn'], extra: MNIST },
-      { name: 'Streamlit', evidence: ['telco-churn'] },
+      { name: 'Django', work: ['TEXTILE'] },
+      { name: 'Django REST Framework', work: ['TEXTILE'] },
+      { name: 'REST APIs', evidence: ['f1-pace-intelligence', 'telco-churn'], work: ['TEXTILE'] },
       { name: 'Docker', evidence: ['f1-pace-intelligence'], note: 'release image, hosted on Render' },
-      { name: 'Postman' },
-      { name: 'Git & GitHub', evidence: ['f1-pace-intelligence', 'telco-churn', 'retail-intelligence', 'olist-delivery'] },
-      { name: 'Testing & CI (pytest, Ruff, GitHub Actions)', evidence: ['f1-pace-intelligence', 'telco-churn'], hero: false },
-      // { name: 'MLflow' },
-      // { name: 'AWS' },
+      { name: 'AWS' },
+      { name: 'GitHub Actions CI/CD', evidence: ['f1-pace-intelligence', 'telco-churn'] },
+      { name: 'pytest', evidence: ['f1-pace-intelligence', 'telco-churn'], work: ['TEXTILE'] },
+      { name: 'Git & GitHub', evidence: ALL, hero: false },
     ],
   },
   {
     id: 'visualization',
-    title: 'Visualization & Applied AI',
+    title: 'Visualization & Apps',
     skills: [
       { name: 'Matplotlib', evidence: ['olist-delivery', 'telco-churn', 'document-scanner'] },
       { name: 'Seaborn', extra: NOTEBOOKS },
       { name: 'Plotly' },
-      { name: 'D3.js', evidence: ['olist-delivery'] },
       { name: 'Tableau' },
-      { name: 'LLM agents & tool calling (Claude API, Ollama)', evidence: ['f1-pace-intelligence'], note: '8 read-only tools' },
-      { name: 'Grounded answers with SQL guardrails', evidence: ['f1-pace-intelligence'], note: 'every number names its source tool' },
-      { name: 'LLM evaluation', evidence: ['f1-pace-intelligence'], note: 'internal 50-question test set' },
-      // To show OpenCV / Tesseract in the hero boxes too, delete `hero: false` on their lines.
+      { name: 'Streamlit', evidence: ['telco-churn'] },
+      { name: 'D3.js', evidence: ['olist-delivery'], hero: false },
       { name: 'OpenCV', evidence: ['document-scanner'], hero: false },
       { name: 'Tesseract OCR', evidence: ['document-scanner'], hero: false },
       // { name: 'Power BI' },
-      // { name: 'Computer vision: image classification (CNN)' },
-      // { name: 'Object detection (YOLO)' },
     ],
   },
 ];

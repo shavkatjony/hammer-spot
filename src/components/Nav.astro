@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro';
+import CvDownload from './CvDownload.astro';
 import { url } from '../lib/url';
 import { resume, identity } from '../content/site';
 
@@ -34,12 +35,13 @@ const links = [
         {links.map((l) => (
           <li><a href={l.href}>{l.label}</a></li>
         ))}
-        <li class="primary__resume-m"><a href={url(resume.pdf)} download>CV (PDF)</a></li>
+        <li class="primary__resume-m"><a href={url(resume.en.file)} download hreflang="en">CV · English (PDF)</a></li>
+        <li class="primary__resume-m"><a href={url(resume.kr.file)} download hreflang="ko">{'CV · '}<span lang="ko">한국어</span>{' (PDF)'}</a></li>
       </ul>
     </nav>
 
     <div class="tools">
-      <a class="tools__resume" href={url(resume.pdf)} download>CV <span class="mono">PDF</span></a>
+      <div class="tools__resume"><CvDownload variant="nav" align="end" /></div>
       <button class="icon-btn" type="button" data-theme-toggle aria-pressed="false">
         <span class="visually-hidden">Dark theme</span>
         <Icon name="moon" class="icon-btn__moon" />
@@ -161,26 +163,6 @@ const links = [
   }
   .tools__resume {
     display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    min-height: 38px;
-    padding: 0.3rem 0.85rem;
-    border-radius: var(--radius);
-    background: var(--accent);
-    color: var(--on-accent);
-    font-size: var(--fs-small);
-    font-weight: 500;
-    text-decoration: none;
-    transition: background-color var(--dur-1) ease, color var(--dur-1) ease;
-  }
-  .tools__resume .mono {
-    font-size: 0.66rem;
-    opacity: 0.85;
-  }
-  .tools__resume:hover,
-  .tools__resume:focus-visible {
-    color: var(--on-accent);
-    background: color-mix(in oklab, var(--accent) 86%, var(--ink));
   }
   .icon-btn {
     display: inline-grid;

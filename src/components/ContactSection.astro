@@ -15,7 +15,7 @@ import { url } from '../lib/url';
           Hiring for data science or machine learning? Email is the quickest way to reach me.
         </p>
         <p class="contact__note">
-          {identity.location.city}, {identity.location.country} (KST, UTC+9). Open to {identity.availability.scope}. There is
+          {identity.location.city}, {identity.location.country} (KST, UTC+9) · Visa {identity.visa}. Open to {identity.availability.scope}. There is
           no contact form, so nothing you send is stored by this site.
         </p>
       </div>
@@ -23,7 +23,8 @@ import { url } from '../lib/url';
         <ExtLink href={social.email.href} class="contact__email">{email}</ExtLink>
         <div class="contact__buttons">
           <ExtLink href={social.email.href} class="btn btn--primary"><Icon name="mail" /> Email me</ExtLink>
-          <a class="btn btn--ghost" href={url(resume.pdf)} download><Icon name="download" /> Download CV (PDF)</a>
+          <a class="btn btn--ghost" href={url(resume.en.file)} download hreflang="en"><Icon name="download" /> CV · English</a>
+          <a class="btn btn--ghost" href={url(resume.kr.file)} download hreflang="ko"><Icon name="download" />{' CV · '}<span lang="ko">한국어</span></a>
         </div>
         <div class="contact__buttons">
           <ExtLink href={social.telegram.href} class="btn btn--ghost">

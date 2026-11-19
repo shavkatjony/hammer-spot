@@ -18,17 +18,18 @@ Open <http://localhost:4321>. The page updates every time you save.
 
 ## 2. Add, remove or move a skill
 
-In `src/content/site.ts`, find `export const skillGroups`. It has six groups, in the order they appear in the
-skill boxes at the bottom of the hero:
+In `src/content/site.ts`, find `export const skillGroups`. It has seven groups, worded as in your CV and in the order
+they appear in the skill boxes at the bottom of the hero:
 
 | Group | id |
 |---|---|
 | Programming & Data | `programming` |
-| Statistics & Modelling | `statistics` |
+| Statistics & Modelling | `statistics` (the widest box) |
 | Machine Learning | `ml` |
-| Model Development & Validation | `validation` (shown with → arrows, as steps) |
-| APIs & Deployment | `deployment` |
-| Visualization & Applied AI | `visualization` |
+| ML Development & Validation | `validation` (shown with → arrows, as steps) |
+| Applied AI & LLMs | `ai` |
+| APIs, Cloud & Deployment | `deployment` |
+| Visualization & Apps | `visualization` |
 
 **Add a skill:** copy any line inside a group and change the name.
 
@@ -36,17 +37,11 @@ skill boxes at the bottom of the hero:
 { name: 'Power BI' },
 ```
 
-**Ready-made examples** are already in the file as comments (lines starting with `//`). Delete the `//` to switch
-one on:
+**Ready-made examples** are in the file as comments (lines starting with `//`): `Polars`, `TensorFlow / Keras` and
+`Power BI`. Delete the `//` to switch one on.
 
-- Programming & Data: `Polars`, `Excel / Google Sheets`
-- Statistics & Modelling: `Time-series analysis`, `A/B testing`
-- Machine Learning: `Hyperparameter tuning (GridSearchCV, Optuna)`, `XGBoost`, `LightGBM`, `TensorFlow / Keras`,
-  `Clustering (k-means)`
-- APIs & Deployment: `MLflow`, `AWS`
-- Visualization & Applied AI: `Power BI`, `Computer vision: image classification (CNN)`, `Object detection (YOLO)`
-- OpenCV and Tesseract are already in the list but only in the Toolkit. To show them in the hero boxes too
-  as well, delete `hero: false` on their lines.
+Some skills are in the Toolkit but kept out of the hero boxes so they stay readable (`hero: false`): Parquet, PyTorch,
+Git & GitHub, D3.js, OpenCV and Tesseract. Delete `hero: false` on a line to show it in the boxes too.
 
 **Optional settings on a skill:**
 
@@ -54,13 +49,15 @@ one on:
 |---|---|
 | `evidence: ['telco-churn']` | Shows project-number links next to the skill in the Toolkit. Use only for projects that really use it. |
 | `extra: NOTEBOOKS` | Links the skill to your statistical modelling notebooks (or `MNIST` for the MNIST explorer). |
+| `work: ['KVENTS']` | Shows a job chip (`KVENTS`, `TEXTILE` or `ASL`) linking to the Experience section. |
+| `wide: true` (on a group) | The group takes two columns in the hero boxes; use it for the longest list. |
 | `note: 'short text'` | A small line of detail under the skill in the Toolkit. |
 | `hero: false` | Keeps the skill out of the hero boxes; it appears only in the Toolkit. |
 
 Project ids for `evidence`: `'f1-pace-intelligence'`, `'telco-churn'`, `'retail-intelligence'`,
 `'olist-delivery'`, `'document-scanner'`.
 
-A skill with no `evidence` and no `extra` is listed in the Toolkit under "Also used at work or in coursework".
+A skill with no `evidence`, `work` or `extra` is listed in the Toolkit under "Also in my toolkit".
 
 > Rule of thumb: add a skill only if you can talk through a real example of using it in an interview.
 
@@ -125,14 +122,19 @@ the "SY" tile automatically.
 
 ---
 
-## 8. Your CV (download only)
+## 8. Your CV (download only, English and Korean)
 
-The site has no CV web page. Every "CV" button downloads **`public/Shavkatjon-Yuldashev-CV.pdf`**, which is your own
-final CV (from your Word file, with only the phone number removed). The site never generates or edits it.
+There is no CV web page. Every "CV" button opens a small menu with **English** and **한국어**, and each option downloads a file
+from `public/`:
 
-**To update your CV:** in Word, open your CV, remove the phone number if you don't want it public, then
-File → Save As → PDF. Name it `Shavkatjon-Yuldashev-CV.pdf`, replace the file in `public/`, and rebuild.
-Skills and text on the website are separate: edit them in `src/content/site.ts`.
+| Language | File |
+|---|---|
+| English | `public/Shavkatjon-Yuldashev-CV.pdf` |
+| 한국어 | `public/Shavkatjon-Yuldashev-CV-KR.pdf` |
+
+Both are your own final CVs, published unchanged. **To update one:** export a new PDF from Word or Google Docs, give it
+the same file name, replace the file in `public/`, and rebuild. The file names and labels live in `resume` in
+`src/content/site.ts`.
 
 **Share image** (the preview shown when the link is posted): regenerate it after changing the hero or adding your photo.
 

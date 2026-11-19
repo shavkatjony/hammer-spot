@@ -9,13 +9,13 @@ import type { ImageMetadata } from 'astro';
 import DuneFallback from './DuneFallback.astro';
 import Icon from './Icon.astro';
 import ExtLink from './ExtLink.astro';
-import { identity, social, resume, skillGroups, heroSkills, skillLabel } from '../content/site';
+import CvDownload from './CvDownload.astro';
+import { identity, social, skillGroups, heroSkills, skillLabel } from '../content/site';
 import { url } from '../lib/url';
 
 // Drop a photo at src/assets/portrait.(jpg|jpeg|png|webp|avif) and it is used automatically.
 const found = import.meta.glob<{ default: ImageMetadata }>('../assets/portrait.{jpg,jpeg,png,webp,avif}', { eager: true });
 const portrait = Object.values(found)[0]?.default ?? null;
-const cvHref = url(resume.pdf);
 // The headline's emphasised words are set in the accent colour.
 const [headBefore, headAfter = ''] = identity.headline.split(identity.headlineEmphasis);
 const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.availability.scope.slice(1);
@@ -48,9 +48,7 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
       )}
       <div class="hero__actions" data-horizon-anchor>
         <a class="btn btn--primary" href="#work">View selected work <Icon name="arrow-down" /></a>
-        <a class="btn btn--ghost hero__cv" href={cvHref} download>
-          <Icon name="download" /> Download CV <span class="hero__cv-fmt mono">PDF</span>
-        </a>
+        <CvDownload />
         <ul class="hero__social" role="list" aria-label="Profiles">
           <li><ExtLink href={social.github.href} class="hero__icon" label="GitHub profile"><Icon name="github" /></ExtLink></li>
           <li><ExtLink href={social.linkedin.href} class="hero__icon" label="LinkedIn profile"><Icon name="linkedin" /></ExtLink></li>
@@ -96,7 +94,7 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
     <h2 id="stack-title" class="hero__stack-label mono caps">Technical skills</h2>
     <dl class="hero__stack-grid">
       {skillGroups.map((g) => (
-        <div class="hero__stack-group">
+        <div class:list={['hero__stack-group', { 'hero__stack-group--wide': g.wide }]}>
           <dt class="hero__stack-title mono caps">{g.title}</dt>
           <dd>
             {g.flow ? (
@@ -238,16 +236,6 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
     gap: var(--space-3);
     margin-top: var(--space-5);
   }
-  .hero__cv {
-    background: var(--hero-sky);
-  }
-  .hero__cv-fmt {
-    font-size: 0.68rem;
-    padding: 0.05rem 0.3rem;
-    border: 1px solid currentColor;
-    border-radius: 2px;
-    opacity: 0.8;
-  }
   .hero__social {
     display: flex;
     gap: var(--space-1);
@@ -382,7 +370,7 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
   /* 1 px gaps over a rule-coloured ground draw the dividers in every layout */
   .hero__stack-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 1px;
     margin: 0;
     background: var(--rule);
@@ -390,6 +378,9 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
     border-radius: var(--radius);
     box-shadow: var(--shadow-plate);
     overflow: hidden;
+  }
+  .hero__stack-group--wide {
+    grid-column: span 2;
   }
   .hero__stack-group {
     padding: 0.65rem var(--space-4) 0.75rem;
@@ -410,8 +401,9 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
     color: var(--ink);
   }
   .hero__stack-items li {
-    display: inline;
-    white-space: nowrap; /* lines break between items, never inside one */
+    /* lines break between items; a single item wraps inside only if it is wider than the box */
+    display: inline-block;
+    max-width: 100%;
   }
   .hero__stack-items li:not(:last-child)::after {
     content: '·' / '';
@@ -427,6 +419,10 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
   @media (max-width: 64rem) {
     .hero__stack-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .hero__stack-group--wide,
+    .hero__stack-group:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
     }
   }
   @media (max-width: 52rem) {

@@ -9,11 +9,15 @@ import '@fontsource/ibm-plex-sans/500.css';
 import '@fontsource/ibm-plex-sans/600.css';
 import '@fontsource/ibm-plex-mono/400.css';
 import '@fontsource/ibm-plex-mono/500.css';
+// Pretendard (OFL): Korean glyphs. Split by unicode range, so a browser only downloads the pieces a page uses.
+import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import SunRail from '../components/SunRail.astro';
-import { meta, identity, social, email } from '../content/site';
+import { getContent, social, email } from '../content';
+import { ui } from '../content/ui';
+import { getLang, altHref, htmlLang, ogLocale, LANGS } from '../lib/i18n';
 import { url } from '../lib/url';
 
 interface Props {
@@ -22,34 +26,48 @@ interface Props {
   ogType?: 'website' | 'article';
   rail?: boolean;
   navOnDark?: boolean; // the page opens on a dark header: invert the nav until it turns solid
+  alternates?: boolean; // false on the 404 page
 }
-const { title = meta.title, description = meta.description, ogType = 'website', rail = false, navOnDark = false } = Astro.props;
+const lang = getLang(Astro.url);
+const t = ui[lang];
+const { identity, meta, education } = getContent(lang);
+const {
+  title = meta.title,
+  description = meta.description,
+  ogType = 'website',
+  rail = false,
+  navOnDark = false,
+  alternates = true,
+} = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL(url('og.jpg'), Astro.site).href;
+const alt = LANGS.map((l) => ({ l, href: new URL(altHref(Astro.url, l), Astro.site).href }));
 
 const person = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: identity.name,
-  alternateName: identity.handle,
+  alternateName: identity.nameLocal ? [identity.handle, identity.nameLocal] : identity.handle,
   jobTitle: identity.title,
   address: { '@type': 'PostalAddress', addressLocality: identity.location.city, addressCountry: 'KR' },
-  alumniOf: { '@type': 'CollegeOrUniversity', name: 'Dong-A University' },
+  alumniOf: { '@type': 'CollegeOrUniversity', name: education[0].school },
   email: `mailto:${email}`,
   url: new URL(url(), Astro.site).href,
   sameAs: [social.github.href, social.linkedin.href],
   description: identity.positioning,
-  knowsAbout: ['Data science', 'Machine learning', 'Statistical modelling', 'Forecasting', 'Applied AI', 'SQL', 'Python'],
+  knowsAbout: t.knowsAbout,
 };
 ---
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang={htmlLang[lang]} data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {alternates && alt.map((a) => <link rel="alternate" hreflang={htmlLang[a.l]} href={a.href} />)}
+    {alternates && <link rel="alternate" hreflang="x-default" href={alt[0].href} />}
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#eee6d9" media="(prefers-color-scheme: light)" />
@@ -63,10 +81,12 @@ const person = {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={ogLocale[lang]} />
+    {LANGS.filter((l) => l !== lang).map((l) => <meta property="og:locale:alternate" content={ogLocale[l]} />)}
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={`${identity.name}, ${identity.title}: portfolio opening screen over a desert horizon.`} />
+    <meta property="og:image:alt" content={t.ogAlt(identity.name, identity.title)} />
     <meta name="twitter:card" content="summary_large_image" />
 
     <!-- Theme + motion bootstrap: runs before first paint to avoid a flash. -->
@@ -89,7 +109,7 @@ const person = {
     <slot name="head" />
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main">{t.skip}</a>
     <Nav onDark={navOnDark} />
     {rail && <SunRail />}
     <main id="main" tabindex="-1">

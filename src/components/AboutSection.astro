@@ -1,65 +1,64 @@
 ---
 import SectionHead from './SectionHead.astro';
-import { identity, education, experience, languages, targetRoles, interests, projects, resume } from '../content/site';
+import { getContent, resume } from '../content';
+import { ui } from '../content/ui';
+import { getLang, lurl } from '../lib/i18n';
 import { url } from '../lib/url';
+const lang = getLang(Astro.url);
+const t = ui[lang].about;
+const { identity, education, experience, languages, targetRoles, interests, projects } = getContent(lang);
 const edu = education[0];
 const job = experience[0];
 const first = experience[experience.length - 1];
-const count = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'][experience.length] ?? String(experience.length);
+const span = `${first.period.split(' – ')[0]} – ${job.period.split(' – ')[1]}`;
+const me = identity.nameLocal ? `${identity.nameLocal}(${identity.name})` : identity.name;
+// CV links: the page's own language first.
+const cvs = [
+  { href: url(resume.en.file), lang: 'en', label: t.cvEn },
+  { href: url(resume.kr.file), lang: 'ko', label: t.cvKo },
+];
+if (lang === 'ko') cvs.reverse();
 ---
 <section class="section about" id="about" aria-labelledby="about-title">
   <div class="wrap wrap--wide">
-    <SectionHead no="05" title="About" id="about-title" />
+    <SectionHead no="05" title={t.title} id="about-title" />
     <div class="about__grid">
       <div class="about__prose prose" data-reveal="fade">
-        <p class="about__lead">
-          I’m {identity.name}, a data scientist and applied ML engineer in Busan, working across statistical modelling,
-          machine learning and data engineering. I studied Integrated Business Management at Dong-A University, where statistics and econometrics pulled me
-          toward data.
-        </p>
-        <p>
-          I started in backend development, building Python tooling and then Django APIs and PostgreSQL schemas for two
-          companies in Chust. I then spent three years as a data scientist and applied ML engineer at {job.org}, where I built
-          a PostgreSQL warehouse, SKU-level demand forecasting and a Text-to-SQL assistant. I take a problem from data preparation and analysis
-          through modelling, evaluation and delivery: reproducible pipelines, data-quality checks, models chosen against
-          baselines, and evaluation on data the model never saw. My flagship project, DPEC, forecasts Formula 1 race pace from public timing data; its README
-          traces every number to its source.
-        </p>
-        <p>
-          I’d rather show than tell: the code, the tests, the write-ups and the limits of each project, stated plainly.
-        </p>
+        <p class="about__lead">{t.lead(me)}</p>
+        <p>{t.body(job.org)}</p>
+        <p>{t.close}</p>
       </div>
 
       <div class="about__record">
-        <h3 class="about__h mono caps">Record</h3>
+        <h3 class="about__h mono caps">{t.record}</h3>
         <ol class="record" role="list">
           <li class="record__item">
             <p class="record__meta">
-              <span class="record__type">Experience</span><span>{first.period.split(' – ')[0]} – {job.period.split(' – ')[1]}</span>
+              <span class="record__type">{t.experience}</span><span>{span}</span>
             </p>
-            <p class="record__title">{count} roles, from backend development to data science</p>
+            <p class="record__title">{t.roles(experience.length, identity.experienceTotal)}</p>
             <p class="record__links">
-              {experience.map((x) => <a href={url('#experience')}>{x.role}</a>)}
+              {experience.map((x) => <a href={lurl(lang, '#experience')}>{x.role}</a>)}
             </p>
           </li>
           <li class="record__item">
-            <p class="record__meta"><span class="record__type">Education</span><span>{edu.year}</span></p>
+            <p class="record__meta"><span class="record__type">{t.education}</span><span>{edu.period}</span></p>
             <p class="record__title">{edu.degree}</p>
             <p class="record__sub">{edu.school}, {edu.place} · {edu.focus}</p>
           </li>
           <li class="record__item">
-            <p class="record__meta"><span class="record__type">Independent projects</span><span>2026</span></p>
-            <p class="record__title">Five projects with case studies</p>
+            <p class="record__meta"><span class="record__type">{t.projects}</span><span>2026</span></p>
+            <p class="record__title">{t.projectsTitle}</p>
             <p class="record__links">
               {projects.map((p) => (
-                <a href={url(`work/${p.slug}/`)}><span class="mono">{p.index}</span> {p.short}</a>
+                <a href={lurl(lang, `work/${p.slug}/`)}><span class="mono">{p.index}</span> {p.short}</a>
               ))}
             </p>
           </li>
           <li class="record__item">
-            <p class="record__meta"><span class="record__type">Academic project</span><span>2023</span></p>
-            <p class="record__title">Lotte World Busan visitor review mining</p>
-            <p class="record__sub">Dong-A University team project · KH Coder, descriptive statistics</p>
+            <p class="record__meta"><span class="record__type">{t.academic}</span><span>2023</span></p>
+            <p class="record__title">{t.academicTitle}</p>
+            <p class="record__sub">{t.academicSub}</p>
           </li>
         </ol>
       </div>
@@ -67,24 +66,29 @@ const count = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'][experience.le
 
     <div class="about__facts">
       <section class="fact" aria-labelledby="f-roles">
-        <h3 id="f-roles" class="about__h mono caps">Looking for</h3>
+        <h3 id="f-roles" class="about__h mono caps">{t.lookingFor}</h3>
         <ul class="fact__list">
           {targetRoles.map((r) => <li>{r}</li>)}
         </ul>
-        <p class="fact__note">Open to {identity.availability.scope}. Based in {identity.location.city}, visa {identity.visa}.</p>
+        <p class="fact__note">{t.note(identity.availability.scope, identity.location.city, identity.visaDetail)}</p>
         <p class="fact__cv">
-          <a class="link-arrow" href={url(resume.en.file)} download hreflang="en">CV in English →</a>
-          <a class="link-arrow" href={url(resume.kr.file)} download hreflang="ko"><span lang="ko">한국어 이력서</span>{' →'}</a>
+          {cvs.map((c) =>
+            c.lang === 'ko' ? (
+              <a class="link-arrow" href={c.href} download hreflang="ko"><span><span lang="ko">{c.label}</span>{' →'}</span></a>
+            ) : (
+              <a class="link-arrow" href={c.href} download hreflang="en">{c.label}</a>
+            ),
+          )}
         </p>
       </section>
       <section class="fact" aria-labelledby="f-int">
-        <h3 id="f-int" class="about__h mono caps">Professional interests</h3>
+        <h3 id="f-int" class="about__h mono caps">{t.interests}</h3>
         <ul class="fact__list">
           {interests.map((r) => <li>{r}</li>)}
         </ul>
       </section>
       <section class="fact" aria-labelledby="f-lang">
-        <h3 id="f-lang" class="about__h mono caps">Languages</h3>
+        <h3 id="f-lang" class="about__h mono caps">{t.languages}</h3>
         <ul role="list" class="fact__langs">
           {languages.map((l) => (
             <li><span>{l.name}</span> <span class="muted">{l.level}</span></li>

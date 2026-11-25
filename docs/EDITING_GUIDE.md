@@ -1,7 +1,8 @@
 # Editing guide
 
 Almost everything on the site comes from **one file: `src/content/site.ts`**. Change it, save, and the
-home page and the case studies follow. (The CV is your own file: see section 8.) You never need to touch the design files
+home page and the case studies follow. The Korean pages (`/ko/`) take their words from `src/content/ko.ts`
+(section 11). (The CV is your own file: see section 8.) You never need to touch the design files
 to change words, skills, projects or links.
 
 ---
@@ -148,6 +149,13 @@ npx astro preview stop
 
 ---
 
+## 8b. Experience total and visa line
+
+`identity.experienceTotal` (`'4 years 6 months'`) and `identity.visaDetail` (the visa line from your CV) appear in
+Experience, About and Contact. Korean versions: `experienceTotal` and `visaDetail` in `identityKo` (`src/content/ko.ts`).
+
+---
+
 ## 9. Check before publishing
 
 ```bash
@@ -164,3 +172,29 @@ git add -A
 git commit -m "Update skills"
 git push
 ```
+
+---
+
+## 11. The Korean version (`/ko/`)
+
+The site has an English and a Korean version of every page. The **EN | 한국어** switch in the top bar opens the same
+page in the other language (on phones it shows only the other language).
+
+| What | File |
+|---|---|
+| English words, numbers, links, evidence | `src/content/site.ts` |
+| Korean words | `src/content/ko.ts` |
+| Buttons, headings and short sentences in both languages | `src/content/ui.ts` |
+| Figure captions and chart labels in both languages | `src/components/figures/` |
+
+**Changing a fact:** numbers, links and project evidence live only in `site.ts`, so both languages update together.
+Words are kept in two places: when you change an English sentence, change the Korean one in `ko.ts` too.
+
+**Adding something:** if you add a job bullet, a project metric, a link or a case-study paragraph in `site.ts`, add the
+Korean sentence at the same position in `ko.ts`. If you forget, `npm run build` stops with a message such as
+`ko.ts is out of sync with site.ts: CHUST KVENTS bullets (5 in English, 4 in Korean)`.
+
+**Adding a skill:** add it in `site.ts` as usual. If its Korean name differs, add a line to `skillNamesKo` in `ko.ts`
+(names not listed there, such as `PyTorch`, are shown as they are).
+
+The job bullets, skills, education and visa line in `ko.ts` are copied word for word from your Korean CV.

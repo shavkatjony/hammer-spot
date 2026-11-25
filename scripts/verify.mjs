@@ -45,7 +45,9 @@ for (const p of pages) {
     if (/unsafe-inline|unsafe-eval/.test(csp[1])) fail(`${rel}: CSP allows unsafe-inline/eval`);
     if (!/script-src 'self'/.test(csp[1])) fail(`${rel}: CSP script-src not restricted`);
   }
-  if (!/<html lang="en"/.test(html)) fail(`${rel}: missing lang`);
+  const wantLang = rel.startsWith('ko/') ? 'ko' : 'en';
+  if (!new RegExp(`<html lang="${wantLang}"`).test(html)) fail(`${rel}: expected <html lang="${wantLang}">`);
+  if (!rel.startsWith('404') && !/<link rel="alternate" hreflang="ko"/.test(html)) fail(`${rel}: missing hreflang alternates`);
   if (!/<title>[^<]{5,}<\/title>/.test(html)) fail(`${rel}: missing title`);
   if (!/<meta name="description" content="[^"]{20,}"/.test(html) && !rel.startsWith('404')) fail(`${rel}: missing description`);
   const h1 = (html.match(/<h1[\s>]/g) || []).length;
@@ -89,7 +91,8 @@ console.log(`static: ${pages.length} pages checked, ${external.size} unique exte
 
 /* ---------------- browser checks ---------------- */
 const axeSource = readFileSync('node_modules/axe-core/axe.min.js', 'utf8');
-const routes = ['', 'work/telco-churn/', 'work/olist-delivery/', 'work/retail-intelligence/', 'work/f1-pace-intelligence/', 'work/document-scanner/', 'does-not-exist/'];
+const caseRoutes = ['work/telco-churn/', 'work/olist-delivery/', 'work/retail-intelligence/', 'work/f1-pace-intelligence/', 'work/document-scanner/'];
+const routes = ['', ...caseRoutes, 'ko/', ...caseRoutes.map((r) => `ko/${r}`), 'does-not-exist/'];
 const browser = await chromium.launch({ executablePath: process.env.PW_CHROMIUM || undefined });
 
 async function axe(page, label) {
@@ -168,8 +171,34 @@ for (const theme of ['light', 'dark']) {
   const back = await page.evaluate(() => document.activeElement?.hasAttribute('data-menu-toggle'));
   if (open !== 'true' || !visible || !firstLink || focused !== firstLink || closed !== 'false' || !back)
     fail(`mobile menu: open=${open} visible=${visible} focus=${focused} (first link ${firstLink}) closed=${closed} focusBack=${back}`);
-  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-  if (overflow > 0) fail(`mobile: horizontal overflow ${overflow}px`);
+  // every page fits a 390 px phone (a page wider than the screen widens the mobile layout viewport)
+  for (const r of ['', ...caseRoutes, 'ko/', ...caseRoutes.map((x) => `ko/${x}`)]) {
+    await page.goto(BASE + r + '?static', { waitUntil: 'networkidle' });
+    const width = await page.evaluate(() => Math.max(document.documentElement.scrollWidth, window.innerWidth));
+    if (width > 390) fail(`mobile /${r}: page is ${width}px wide on a 390px screen`);
+  }
+  await ctx.close();
+}
+
+// Language switch: goes to the same page in the other language, and back
+{
+  const ctx = await browser.newContext();
+  const page = await ctx.newPage();
+  await page.goto(BASE + 'work/telco-churn/?static');
+  await page.click('.lang-switch a[hreflang="ko"]');
+  await page.waitForLoadState('domcontentloaded');
+  const koUrl = new URL(page.url()).pathname;
+  const koLang = await page.getAttribute('html', 'lang');
+  const koH1 = await page.textContent('h1');
+  await page.click('.lang-switch a[hreflang="en"]');
+  await page.waitForLoadState('domcontentloaded');
+  const enUrl = new URL(page.url()).pathname;
+  if (!koUrl.endsWith('/ko/work/telco-churn/') || koLang !== 'ko' || !/[가-힣]/.test(koH1 || '') || !enUrl.endsWith('/work/telco-churn/') || enUrl.includes('/ko/'))
+    fail(`language switch: ko=${koUrl} lang=${koLang} h1=${koH1} back=${enUrl}`);
+  // Korean page: the CV menu lists the Korean CV first
+  await page.goto(BASE + 'ko/?static');
+  const firstCv = await page.getAttribute('.hero details[data-cvd] .cvd__item', 'hreflang');
+  if (firstCv !== 'ko') fail(`ko CV menu: first option is ${firstCv}`);
   await ctx.close();
 }
 

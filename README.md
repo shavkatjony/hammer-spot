@@ -37,13 +37,15 @@ node scripts/fullpage.mjs ./shots "" dark   # full-page captures (path, theme)
 npm run assets         # regenerate public/og.jpg (the share image) from the built hero
 ```
 
-The CV is download-only, in two languages: `public/Shavkatjon-Yuldashev-CV.pdf` (English) and `public/Shavkatjon-Yuldashev-CV-KR.pdf` (한국어). Both are the owner's own final CVs (no phone number) and are never generated or overwritten by the build. Every CV button opens a small menu to pick the language. Replace a file (same name) to update it.
+The CV is download-only, in two languages: `public/Shavkatjon-Yuldashev-CV.pdf` (English) and `public/Shavkatjon-Yuldashev-CV-KR.pdf` (한국어). Both are the owner's own final CVs, published exactly as supplied (the owner chose to keep every detail in them, phone number included), and are never generated or overwritten by the build. Every CV button opens a small menu to pick the language. Replace a file (same name) to update it.
+
+The site is bilingual: English at `/`, Korean at `/ko/` (home and every case study). The EN | 한국어 switch in the top bar opens the same page in the other language. English words live in `src/content/site.ts`, Korean words in `src/content/ko.ts`, interface text for both in `src/content/ui.ts`; `src/content/index.ts` combines them and stops the build if the Korean lists fall out of step with the English ones. Korean text uses Pretendard (OFL, self-hosted, loaded only for the glyphs a page uses).
 
 ## Editing content
 
 **Step-by-step guide: [docs/EDITING_GUIDE.md](docs/EDITING_GUIDE.md)** (skills, headline, projects, links, photo, CV file).
 
-Everything personal lives in `src/content/site.ts`:
+Everything personal lives in `src/content/site.ts` (Korean words in `src/content/ko.ts`):
 
 - `identity`: name, professional `title`, headline, the hero paragraph (`statement`), location and availability (`availability.open`, `availability.scope`).
 - `skillGroups`: the seven technical-skill groups, worded as in the owner's CV (Programming & Data; Statistics & Modelling; Machine Learning; ML Development & Validation; Applied AI & LLMs; APIs, Cloud & Deployment; Visualization & Apps). One list feeds the hero's skill boxes and the Toolkit, where each skill links to the projects (`evidence`) or jobs (`work`) that show it.

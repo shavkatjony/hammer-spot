@@ -4,15 +4,46 @@
  * Source: brazilian-e-market/notebooks/analysis.ipynb (query sql/notebook/delivery_vs_review.sql).
  * Single series, so no legend: the caption names it. Values are direct-labelled at the bar tip.
  */
+import { getLang } from '../../lib/i18n';
 interface Props {
   compact?: boolean;
 }
 const { compact = false } = Astro.props;
+const ko = getLang(Astro.url) === 'ko';
+const W = ko
+  ? {
+      bands: ['정시 또는 조기 배송', '1–3일 지연', '4–7일 지연', '8일 이상 지연'],
+      title: '배송 정시성별 평균 리뷰 점수',
+      desc: '정시 또는 조기 배송: 별점 4.29. 1–3일 지연: 3.77. 4–7일 지연: 2.32. 8일 이상 지연: 1.73.',
+      row: (band: string, avg: string, orders: string) => `${band}: 배송 완료 주문 ${orders}건의 평균 별점 ${avg}`,
+      orders: (n: string) => `주문 ${n}건`,
+      stars: '별점',
+      view: '데이터 표 보기',
+      delivery: '배송',
+      ordersH: '주문 수',
+      avgH: '평균 리뷰',
+      fig: '그림',
+      cap: '배송 정시성별 평균 리뷰 점수(1–5), 배송 완료 주문만 포함. 출처: Olist 공개 데이터셋, 직접 작성한 SQL과 노트북.',
+    }
+  : {
+      bands: ['On time or early', '1–3 days late', '4–7 days late', '8+ days late'],
+      title: 'Average review score by delivery timeliness',
+      desc: 'On time or early: 4.29 stars. 1 to 3 days late: 3.77. 4 to 7 days late: 2.32. 8 or more days late: 1.73.',
+      row: (band: string, avg: string, orders: string) => `${band}: ${avg} average stars across ${orders} delivered orders`,
+      orders: (n: string) => `${n} orders`,
+      stars: 'stars',
+      view: 'View data table',
+      delivery: 'Delivery',
+      ordersH: 'Orders',
+      avgH: 'Avg. review',
+      fig: 'Fig.',
+      cap: 'Average review score (1–5) by delivery timeliness, delivered orders only. Source: Olist public dataset; my SQL and notebook.',
+    };
 const rows = [
-  { band: 'On time or early', orders: 88163, avg: 4.29 },
-  { band: '1–3 days late', orders: 2636, avg: 3.77 },
-  { band: '4–7 days late', orders: 1773, avg: 2.32 },
-  { band: '8+ days late', orders: 3252, avg: 1.73 },
+  { band: W.bands[0], orders: 88163, avg: 4.29 },
+  { band: W.bands[1], orders: 2636, avg: 3.77 },
+  { band: W.bands[2], orders: 1773, avg: 2.32 },
+  { band: W.bands[3], orders: 3252, avg: 1.73 },
 ];
 const L = 38; // label column, %
 const R = 90; // plot right edge, %
@@ -25,10 +56,8 @@ const nf = new Intl.NumberFormat('en-US');
 ---
 <figure class="chart" class:list={{ 'chart--compact': compact }}>
   <svg class="chart__svg" width="100%" height={h} role="img" aria-labelledby="olist-rv-title olist-rv-desc">
-    <title id="olist-rv-title">Average review score by delivery timeliness</title>
-    <desc id="olist-rv-desc">
-      On time or early: 4.29 stars. 1 to 3 days late: 3.77. 4 to 7 days late: 2.32. 8 or more days late: 1.73.
-    </desc>
+    <title id="olist-rv-title">{W.title}</title>
+    <desc id="olist-rv-desc">{W.desc}</desc>
     {[0, 1, 2, 3, 4, 5].map((t) => (
       <g>
         <line class="chart__grid" x1={pct(t)} x2={pct(t)} y1={top - 6} y2={top + rows.length * rowH} />
@@ -39,23 +68,23 @@ const nf = new Intl.NumberFormat('en-US');
       const y = top + i * rowH + (rowH - 22) / 2;
       return (
         <g class="chart__row">
-          <title>{`${r.band}: ${r.avg.toFixed(2)} average stars across ${nf.format(r.orders)} delivered orders`}</title>
+          <title>{W.row(r.band, r.avg.toFixed(2), nf.format(r.orders))}</title>
           <rect class="chart__hit" x="0" y={top + i * rowH} width="100%" height={rowH} />
           <text class="chart__label" x="0" y={y + 9}>{r.band}</text>
-          <text class="chart__sub" x="0" y={y + 25}>{nf.format(r.orders)} orders</text>
+          <text class="chart__sub" x="0" y={y + 25}>{W.orders(nf.format(r.orders))}</text>
           <rect class="chart__bar" x={pct(0)} y={y} width={`${((r.avg / 5) * span).toFixed(2)}%`} height="22" rx="4" />
           <rect class="chart__bar" x={pct(0)} y={y} width="5" height="22" />
           <text class="chart__value" x={pct(r.avg)} dx="8" y={y + 16}>{r.avg.toFixed(2)}</text>
         </g>
       );
     })}
-    <text class="chart__tick" x={`${R}%`} dx="6" y={h - 8}>stars</text>
+    <text class="chart__tick" x={`${R}%`} dx="6" y={h - 8}>{W.stars}</text>
   </svg>
   {!compact && (
     <details class="chart__table no-print">
-      <summary class="mono">View data table</summary>
+      <summary class="mono">{W.view}</summary>
       <table>
-        <thead><tr><th scope="col">Delivery</th><th scope="col">Orders</th><th scope="col">Avg. review</th></tr></thead>
+        <thead><tr><th scope="col">{W.delivery}</th><th scope="col">{W.ordersH}</th><th scope="col">{W.avgH}</th></tr></thead>
         <tbody>
           {rows.map((r) => (
             <tr><th scope="row">{r.band}</th><td>{nf.format(r.orders)}</td><td>{r.avg.toFixed(2)}</td></tr>
@@ -65,8 +94,7 @@ const nf = new Intl.NumberFormat('en-US');
     </details>
   )}
   <figcaption class="chart__cap">
-    <span class="mono">Fig.</span> Average review score (1–5) by delivery timeliness, delivered orders only. Source:
-    Olist public dataset; my SQL and notebook.
+    <span class="mono">{W.fig}</span> {W.cap}
   </figcaption>
 </figure>
 

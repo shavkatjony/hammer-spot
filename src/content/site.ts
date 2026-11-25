@@ -43,13 +43,17 @@ export const identity = {
   },
   /** Shown in About and Contact, as on the CV. */
   visa: 'D-10',
+  /** The visa line from the CV, shown in About and Contact. */
+  visaDetail: 'D-10 Job Seeker (valid until 2027.09.16) · E-7 sponsorship required upon hiring',
+  /** Professional experience as stated on the CV header (KVENTS + CHUST TEXTILE; the internship is listed separately). */
+  experienceTotal: '4 years 6 months',
   availability: {
     open: true, // CONFIRM before each deploy
     short: 'Open to work',
     /** Read as "Open to full-time, part-time, project-based and remote roles." */
     scope: 'full-time, part-time, project-based and remote roles',
   },
-} as const;
+};
 
 /* The portrait is picked up automatically from src/assets/portrait.{jpg,jpeg,png,webp,avif}. */
 
@@ -77,11 +81,6 @@ export const social = {
 export const personalSite = { label: 'Personal website', href: '' as string };
 
 /**
- * The CV is download-only: there is no CV web page. The file is the owner's final Word CV, saved as a
- * PDF with the phone number removed (nothing else changed). To update it, replace
- * public/Shavkatjon-Yuldashev-CV.pdf with a new PDF of the same name and rebuild.
- */
-/**
  * The CV is download-only, in two languages. Both files are the owner's own final CVs, published unchanged.
  * To update one, replace the PDF in public/ with a new file of the same name and rebuild.
  */
@@ -96,6 +95,7 @@ export const education = [
     place: 'Busan, South Korea',
     degree: 'Bachelor of Integrated Business Management (IBM)',
     year: 'Aug 2026',
+    period: 'Mar 2022 – Aug 2026',
     focus: 'Statistics, econometrics, business statistics and strategy, marketing and marketing research',
   },
 ];
@@ -120,23 +120,23 @@ export const experience: {
     period: 'Jan 2023 – Mar 2026',
     summary: 'Data warehouse, demand forecasting, segmentation and an AI database assistant for a retailer with three stores, online channels and a head office.',
     points: [
-      'Architected a centralized PostgreSQL warehouse and automated Python and SQL ingestion workflows, unifying sales, purchasing and stock logistics across three retail stores, online platforms and headquarters, spanning $7M in inventory.',
-      'Engineered SKU-level forecasting pipelines (XGBoost, LightGBM, scikit-learn) accounting for seasonal trends and vendor lead times, using expanding-window cross-validation to reduce volume-weighted error (WAPE) by 20% and stockouts by 15–25%.',
-      'Deployed a read-only AI database assistant using Python, LLM APIs and Text-to-SQL RAG, allowing business leadership to run real-time natural-language queries on inventory velocity, sales metrics and profit margins.',
-      'Constructed RFM and K-Means segmentation alongside price elasticity models for main inventory and replacement components, optimizing stock distribution to boost gross margin by 4–8% while saving 15–20+ weekly reporting hours.',
+      'Architected a central PostgreSQL warehouse with automated Python/SQL ingestion, unifying sales, purchasing and stock data across 3 stores, online platforms and HQ ($7M in combined assets).',
+      'Built SKU-level forecasting (XGBoost, LightGBM) with seasonality and vendor lead times; expanding-window CV cut WAPE from 31% to 25% vs. a seasonal-naive baseline; stockouts fell ~20%.',
+      'Deployed a read-only Text-to-SQL RAG assistant (Python, LLM APIs) for real-time natural-language queries on inventory, sales and margins.',
+      'Built RFM/K-Means segmentation and price elasticity models to optimize stock distribution: gross margin +4–8%, 15–20+ reporting hours saved weekly.',
     ],
     skills: ['PostgreSQL', 'Python', 'XGBoost', 'LightGBM', 'Time-series forecasting', 'Text-to-SQL RAG', 'K-Means'],
   },
   {
     org: 'CHUST TEXTILE',
     place: 'Chust, Uzbekistan',
-    role: 'Junior Backend Developer',
+    role: 'Backend Developer',
     period: 'May 2021 – Jul 2022',
     summary: 'Backend APIs and production-data pipelines tracking textile production from yarn intake to export.',
     points: [
-      'Built and owned Django / Django REST Framework APIs and normalized PostgreSQL schemas tracking textile production from yarn intake to export, improving reporting query speed by 40–60% via ORM optimization and indexing.',
-      'Implemented atomic database transactions, input validation schemas and role-based permissions for internal inventory endpoints, eliminating duplicate stock entries and reducing warehouse mismatches by 25%.',
-      'Automated daily production and defect-rate data aggregation with modular Python and SQL pipelines, saving 10–15+ hours/week of manual spreadsheet consolidation, with core endpoints covered by pytest tests.',
+      'Built Django/DRF APIs and normalized PostgreSQL schemas tracking production from yarn to export; ORM tuning and indexing sped up reporting queries 40–60%.',
+      'Added atomic transactions, input validation and role-based permissions to inventory endpoints, removing duplicate entries and cutting warehouse mismatches 25%.',
+      'Automated daily production and defect-rate aggregation with Python/SQL pipelines, saving 10–15+ hours/week; core endpoints tested with pytest.',
     ],
     skills: ['Django', 'Django REST Framework', 'PostgreSQL', 'Python', 'pytest'],
   },
@@ -157,7 +157,7 @@ export const languages = [
   { name: 'Uzbek', level: 'native' },
   { name: 'English', level: 'fluent' },
   { name: 'Turkish', level: 'fluent' },
-  { name: 'Korean', level: 'beginner, currently studying' },
+  { name: 'Korean', level: 'intermediate, currently studying' },
 ];
 
 export const targetRoles = [
@@ -242,6 +242,7 @@ export const skillGroups: SkillGroup[] = [
       { name: 'pandas', evidence: ALL },
       { name: 'NumPy', evidence: ['f1-pace-intelligence', 'retail-intelligence', 'document-scanner'] },
       { name: 'DuckDB', evidence: ['f1-pace-intelligence', 'retail-intelligence'] },
+      { name: 'Apache Spark' },
       { name: 'Parquet', evidence: ['f1-pace-intelligence', 'retail-intelligence'], hero: false },
       // { name: 'Polars' },
     ],
@@ -271,13 +272,13 @@ export const skillGroups: SkillGroup[] = [
     title: 'Machine Learning',
     skills: [
       { name: 'scikit-learn', evidence: ['telco-churn'], work: ['KVENTS'] },
+      { name: 'PyTorch', extra: MNIST, note: 'a small network on MNIST' },
+      { name: 'TensorFlow' },
       { name: 'Gradient Boosting (XGBoost, LightGBM)', evidence: ['telco-churn'], work: ['KVENTS'], note: 'HistGradientBoosting in the churn project' },
       { name: 'Supervised Learning (Classification & Regression)', evidence: ['telco-churn', 'f1-pace-intelligence'] },
       { name: 'Decision Trees', evidence: ['telco-churn'] },
       { name: 'Random Forest', evidence: ['telco-churn'] },
       { name: 'K-Means Clustering', work: ['KVENTS'] },
-      { name: 'PyTorch', extra: MNIST, hero: false, note: 'a small network on MNIST' },
-      // { name: 'TensorFlow / Keras' },
     ],
   },
   {
@@ -299,8 +300,11 @@ export const skillGroups: SkillGroup[] = [
     id: 'ai',
     title: 'Applied AI & LLMs',
     skills: [
+      { name: 'Generative AI (GenAI)', evidence: ['f1-pace-intelligence'], work: ['KVENTS'] },
       { name: 'LLM Agents (Gemini, Claude, OpenAI, Ollama)', evidence: ['f1-pace-intelligence'], work: ['KVENTS'], note: 'Claude API and Ollama in DPEC' },
-      { name: 'RAG (Text-to-SQL)', evidence: ['f1-pace-intelligence'], work: ['KVENTS'], note: 'a guarded SQL tool in DPEC' },
+      { name: 'LangChain' },
+      { name: 'Retrieval-Augmented Generation (RAG, incl. Text-to-SQL)', evidence: ['f1-pace-intelligence'], work: ['KVENTS'], note: 'a guarded SQL tool in DPEC' },
+      { name: 'Model Context Protocol (MCP)' },
       { name: 'Prompt Engineering', evidence: ['f1-pace-intelligence'] },
       { name: 'Tool Calling', evidence: ['f1-pace-intelligence'], note: '8 read-only tools' },
       { name: 'LLM Fine-Tuning' },
@@ -942,13 +946,21 @@ export const moreWork = {
 };
 
 /** Smaller pieces of evidence: listed, not featured. */
-export const archive = [
+export interface ArchiveItem {
+  title: string;
+  meta: string;
+  text: string;
+  image: { src: string; width: number; height: number; alt: string } | null;
+  href: string | null;
+  privateNote: string | null;
+}
+export const archive: ArchiveItem[] = [
   {
     title: 'Seam carving from scratch',
     meta: 'Computer vision · algorithms · 2026',
     text: 'Content-aware image resizing in about 170 lines of NumPy, no OpenCV: Sobel energy, a dynamic-programming seam checked against brute force on small inputs (8 tests in all), and masks to protect or remove objects. The write-up shows where it breaks, and the fix.',
     image: { src: 'seam-comparison', width: 1400, height: 306, alt: 'A rocket on a launch pad shown four ways: original, plain resize (rocket gets thin), centre crop (loses both towers), and seam carving (rocket keeps its shape).' },
-    href: null as string | null,
+    href: null,
     privateNote: 'Private repository',
   },
   {
@@ -956,7 +968,7 @@ export const archive = [
     meta: 'PyTorch · FastAPI · 2026',
     text: 'A small PyTorch network (784 → 256 → 128 → 64 → 10, with dropout) trained on MNIST and served by a FastAPI backend that streams training progress over WebSockets to a browser drawing pad.',
     image: null,
-    href: `${GH}/mnist-classifier-fullstack` as string | null,
+    href: `${GH}/mnist-classifier-fullstack`,
     privateNote: null,
   },
   {
@@ -964,7 +976,7 @@ export const archive = [
     meta: 'Dong-A University · team project · 2023',
     text: '887 multilingual Google Maps reviews analysed with KH Coder keyword frequency, a co-occurrence network and descriptive statistics by experience dimension. Pricing & discounts scored lowest (mean 1.80 / 5).',
     image: null,
-    href: `${GH}/lotte-world-busan-santiment-analyses` as string | null,
+    href: `${GH}/lotte-world-busan-santiment-analyses`,
     privateNote: null,
   },
   {
@@ -972,7 +984,7 @@ export const archive = [
     meta: 'statsmodels · Seaborn · SciPy · 2026',
     text: 'Three notebooks in statsmodels: OLS for student GPA and used-car prices, and a logistic-regression classifier for bank marketing, with coefficient tests and diagnostics. Used-car price model: test R² 0.773, 5-fold cross-validation mean 0.749.',
     image: null,
-    href: `${GH}/data-science-portfolio` as string | null,
+    href: `${GH}/data-science-portfolio`,
     privateNote: null,
   },
 ];
@@ -1057,5 +1069,5 @@ export const meta = {
   title: 'Shavkatjon Yuldashev · Data Scientist & Applied ML Engineer',
   description:
     'Shavkatjon Yuldashev, Data Scientist & Applied ML Engineer in Busan: data products built through statistical modelling, machine learning and data engineering, from raw data to tested models, reproducible systems and practical applications. Case studies, code and CV.',
-  updated: '2026-11-14',
+  updated: '2026-11-25',
 };

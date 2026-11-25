@@ -2,38 +2,49 @@
 import SectionHead from './SectionHead.astro';
 import ExtLink from './ExtLink.astro';
 import Icon from './Icon.astro';
-import { social, email, resume, identity, personalSite } from '../content/site';
+import { getContent, social, email, resume, personalSite } from '../content';
+import { ui } from '../content/ui';
+import { getLang } from '../lib/i18n';
 import { url } from '../lib/url';
+const lang = getLang(Astro.url);
+const t = ui[lang].contact;
+const { identity } = getContent(lang);
+// CV buttons: the page's own language first.
+const cvs = [
+  { href: url(resume.en.file), lang: 'en', parts: ['', t.cvEn] },
+  { href: url(resume.kr.file), lang: 'ko', parts: t.cvKo },
+];
+if (lang === 'ko') cvs.reverse();
 ---
 <section class="section contact band-yale" id="contact" aria-labelledby="contact-title">
   <div class="contact__topo" aria-hidden="true"></div>
   <div class="wrap wrap--wide contact__inner">
-    <SectionHead no="06" title="Contact" id="contact-title" />
+    <SectionHead no="06" title={t.title} id="contact-title" />
     <div class="contact__grid">
       <div class="contact__lead">
-        <p class="contact__line" data-reveal="mask">
-          Hiring for data science or machine learning? Email is the quickest way to reach me.
-        </p>
+        <p class="contact__line" data-reveal="mask">{t.line}</p>
         <p class="contact__note">
-          {identity.location.city}, {identity.location.country} (KST, UTC+9) · Visa {identity.visa}. Open to {identity.availability.scope}. There is
-          no contact form, so nothing you send is stored by this site.
+          {t.note(identity.location.city, identity.location.country, identity.visaDetail, identity.availability.scope)}
         </p>
       </div>
       <div class="contact__actions">
         <ExtLink href={social.email.href} class="contact__email">{email}</ExtLink>
         <div class="contact__buttons">
-          <ExtLink href={social.email.href} class="btn btn--primary"><Icon name="mail" /> Email me</ExtLink>
-          <a class="btn btn--ghost" href={url(resume.en.file)} download hreflang="en"><Icon name="download" /> CV · English</a>
-          <a class="btn btn--ghost" href={url(resume.kr.file)} download hreflang="ko"><Icon name="download" />{' CV · '}<span lang="ko">한국어</span></a>
+          <ExtLink href={social.email.href} class="btn btn--primary"><Icon name="mail" /> {t.emailMe}</ExtLink>
+          {cvs.map((c) => (
+            <a class="btn btn--ghost" href={c.href} download hreflang={c.lang}>
+              <Icon name="download" /> <span>{c.parts[0]}{c.lang === 'ko' ? <span lang="ko">{c.parts[1]}</span> : c.parts[1]}</span>
+            </a>
+          ))}
         </div>
         <div class="contact__buttons">
           <ExtLink href={social.telegram.href} class="btn btn--ghost">
             <Icon name="telegram" /> Telegram
           </ExtLink>
           {personalSite.href ? (
-            <ExtLink href={personalSite.href} class="btn btn--ghost"><Icon name="globe" /> {personalSite.label}</ExtLink>
+            <ExtLink href={personalSite.href} class="btn btn--ghost"><Icon name="globe" /> {t.personalSite}</ExtLink>
           ) : (
-            <span class="btn btn--ghost contact__soon"><Icon name="globe" /> {personalSite.label} · coming soon</span>
+            <span class="btn btn--ghost contact__soon"><Icon name="globe" /> {t.personalSite} · {t.soon}</span>
           )}
         </div>
         <ul role="list" class="contact__list">

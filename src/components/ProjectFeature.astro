@@ -1,17 +1,21 @@
 ---
-import type { Project } from '../content/site';
+import type { Project } from '../content';
 import Figure from './figures/Figure.astro';
 import Icon from './Icon.astro';
 import ExtLink from './ExtLink.astro';
 import Rich from './Rich.astro';
-import { url } from '../lib/url';
+import { ui } from '../content/ui';
+import { getLang, lurl } from '../lib/i18n';
 
 interface Props {
   project: Project;
   flip?: boolean;
 }
 const { project: p, flip = false } = Astro.props;
-const caseHref = url(`work/${p.slug}/`);
+const lang = getLang(Astro.url);
+const T = ui[lang];
+const t = T.pf;
+const caseHref = lurl(lang, `work/${p.slug}/`);
 const dark = p.tone === 'coffee' || p.tone === 'yale';
 const toneClass = p.tone === 'coffee' ? 'band-coffee' : p.tone === 'yale' ? 'band-yale' : `tone-${p.tone}`;
 const secondary = p.tier === 'secondary';
@@ -26,9 +30,9 @@ const icon = (k: string) => (k === 'demo' ? 'play' : k === 'repo' ? 'github' : k
   <div class="pf__inner wrap wrap--wide">
     <header class="pf__head" data-reveal="stagger">
       <span class="pf__index" aria-hidden="true">{p.index}</span>{' '}
-      {flagship && <><span class="pf__flag mono caps">Flagship project</span>{' '}</>}
+      {flagship && <><span class="pf__flag mono caps">{t.flagship}</span>{' '}</>}
       <span class="pf__kicker mono caps">{p.kicker}</span>{' '}
-      <span class="status" data-status={p.status}>{p.status}</span>{' '}
+      <span class="status" data-status={p.status}>{T.status[p.status]}</span>{' '}
       {p.statusNote && <span class="pf__note">{p.statusNote}</span>}
       <span class="pf__year mono">{p.year}</span>
     </header>
@@ -45,7 +49,7 @@ const icon = (k: string) => (k === 'demo' ? 'play' : k === 'repo' ? 'github' : k
         )}
         {flagship && p.demonstrates && (
           <div class="pf__demo" data-reveal="fade">
-            <p class="pf__demo-k mono caps">What it demonstrates</p>
+            <p class="pf__demo-k mono caps">{t.demonstrates}</p>
             <ol class="pf__demo-list" role="list">
               {p.demonstrates.map((d, i) => (
                 <li><span class="mono">{String(i + 1).padStart(2, '0')}</span> {d}</li>
@@ -61,8 +65,8 @@ const icon = (k: string) => (k === 'demo' ? 'play' : k === 'repo' ? 'github' : k
         </h3>
         <p class="pf__problem"><Rich text={p.problem} /></p>
         <dl class="pf__facts" data-reveal="fade">
-          <div><dt class="mono caps">My part</dt><dd><Rich text={p.contribution} /></dd></div>
-          <div><dt class="mono caps">Result</dt><dd><Rich text={p.result} /></dd></div>
+          <div><dt class="mono caps">{t.part}</dt><dd><Rich text={p.contribution} /></dd></div>
+          <div><dt class="mono caps">{t.result}</dt><dd><Rich text={p.result} /></dd></div>
         </dl>
         <ul class="pf__metrics" role="list" data-reveal="stagger">
           {p.metrics.map((m) => (
@@ -72,12 +76,12 @@ const icon = (k: string) => (k === 'demo' ? 'play' : k === 'repo' ? 'github' : k
             </li>
           ))}
         </ul>
-        <ul class="tags pf__tags" role="list" aria-label="Methods">
-          {p.methods.map((t) => <li class="tag">{t}</li>)}
+        <ul class="tags pf__tags" role="list" aria-label={t.methods}>
+          {p.methods.map((m) => <li class="tag">{m}</li>)}
         </ul>
-        <p class="pf__stack mono"><span class="pf__stack-k">Stack</span> {p.stack.join(' · ')}</p>
+        <p class="pf__stack mono"><span class="pf__stack-k">{t.stack}</span> {p.stack.join(' · ')}</p>
         <div class="pf__actions">
-          <a class="btn btn--primary" href={caseHref}>Read the case study <Icon name="arrow-ur" /></a>
+          <a class="btn btn--primary" href={caseHref}>{t.read} <Icon name="arrow-ur" /></a>
           {p.links
             .filter((l) => l.kind !== 'data')
             .map((l) => (

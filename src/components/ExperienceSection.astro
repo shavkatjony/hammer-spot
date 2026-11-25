@@ -1,18 +1,20 @@
 ---
 /**
  * Work experience, straight after the hero: most recent and strongest role first.
- * Everything comes from `experience` in src/content/site.ts.
+ * Everything comes from `experience` in src/content/site.ts (Korean: ko.ts).
  */
 import SectionHead from './SectionHead.astro';
-import { experience } from '../content/site';
-const since = experience[experience.length - 1].period.split(' – ')[0].split(' ')[1];
-const words = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
-const count = words[experience.length] ?? String(experience.length);
+import { getContent } from '../content';
+import { ui } from '../content/ui';
+import { getLang } from '../lib/i18n';
+const lang = getLang(Astro.url);
+const t = ui[lang].xp;
+const { experience, identity } = getContent(lang);
 ---
 <section class="section xp" id="experience" aria-labelledby="xp-title">
   <div class="wrap wrap--wide">
-    <SectionHead no="01" title="Experience" id="xp-title">
-      {count} roles since {since}: data science and machine learning, built on a foundation in backend development.
+    <SectionHead no="01" title={t.title} id="xp-title">
+      {t.dek(identity.experienceTotal)}
     </SectionHead>
 
     <ol class="xp__list" role="list">
@@ -29,8 +31,8 @@ const count = words[experience.length] ?? String(experience.length);
             <ul class="xp__points">
               {x.points.map((pt) => <li>{pt}</li>)}
             </ul>
-            <ul class="tags xp__tags" role="list" aria-label="Skills used">
-              {x.skills.map((t) => <li class="tag">{t}</li>)}
+            <ul class="tags xp__tags" role="list" aria-label={t.skillsUsed}>
+              {x.skills.map((s) => <li class="tag">{s}</li>)}
             </ul>
           </div>
         </li>

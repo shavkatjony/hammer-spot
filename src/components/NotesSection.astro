@@ -2,26 +2,30 @@
 import SectionHead from './SectionHead.astro';
 import ExtLink from './ExtLink.astro';
 import Rich from './Rich.astro';
-import { notes } from '../content/site';
+import { getContent } from '../content';
+import { ui } from '../content/ui';
+import { getLang } from '../lib/i18n';
+const lang = getLang(Astro.url);
+const t = ui[lang].notes;
+const { notes } = getContent(lang);
 ---
 <section class="section notes" id="notes" aria-labelledby="notes-title">
   <div class="notes__topo" aria-hidden="true"></div>
   <div class="wrap wrap--wide">
-    <SectionHead no="03" title="Field notes" id="notes-title">
-      Seven observations from the projects: what the data or the tests actually showed, each linked to the file it comes
-      from. Working notes, not published articles.
+    <SectionHead no="03" title={t.title} id="notes-title">
+      {t.dek}
     </SectionHead>
     <ol class="notes__list" role="list">
       {notes.map((n, i) => (
         <li class="note" data-reveal="fade">
           <p class="note__meta mono">
-            <span class="note__no">Obs. {String(i + 1).padStart(2, '0')}</span>{' '}
+            <span class="note__no">{t.obs} {String(i + 1).padStart(2, '0')}</span>{' '}
             <span class="note__cat">{n.category}</span>
           </p>
           <h3 class="note__title">{n.title}</h3>
           <p class="note__text"><Rich text={n.text} /></p>
           <p class="note__src">
-            <span class="visually-hidden">Source: </span>
+            <span class="visually-hidden">{t.source}</span>
             <ExtLink href={n.source.href} class="note__link mono">{n.source.label} ↗</ExtLink>
           </p>
         </li>

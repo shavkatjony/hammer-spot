@@ -9,6 +9,7 @@ import SurveyLog from './SurveyLog.astro';
 import RetailScale from './RetailScale.astro';
 import DpecResults from './DpecResults.astro';
 import ScannerResults from './ScannerResults.astro';
+import { getLang } from '../../lib/i18n';
 
 interface Props {
   id: FigureId;
@@ -16,26 +17,149 @@ interface Props {
   frame?: 'paper' | 'dark' | 'none';
 }
 const { id, compact = false, frame = 'paper' } = Astro.props;
+const lang = getLang(Astro.url);
 const cardSizes = '(max-width: 52rem) 100vw, (max-width: 80rem) 50vw, 44rem';
 
-const retailSteps = [
-  { title: 'Raw M5 CSVs', detail: 'Daily unit sales (wide), weekly prices, event/SNAP calendar.' },
-  { title: 'Python reshape', detail: 'Wide → long, streamed store by store; categoricals for every text column.' },
-  { title: 'Parquet staging', detail: 'Typed, validated, columnar.' },
-  { title: 'DuckDB SQL model', detail: 'Staging → dimensions → facts → marts, each with a stated grain.' },
-  { title: 'Data-quality gate', detail: '8 checks; hard failures stop the build.' },
-  { title: 'Metrics engine', detail: 'YoY, contribution, exception scoring, HHI concentration.' },
-  { title: 'Dashboards', detail: 'Self-contained HTML (live) and a Tableau build guide.' },
-];
-const dpecSteps = [
-  { title: 'Collect', detail: 'Each session downloaded once through FastF1 and stored untouched, with a SHA-256 per file: 545 sessions.' },
-  { title: 'Clean', detail: 'A 15-table DuckDB warehouse rebuilt from plain SQL; every lap gets one reason code.' },
-  { title: 'Check', detail: '21 data checks after every build, each returning the rows that break its rule.' },
-  { title: 'Forecast', detail: 'One shared regression refitted before each weekend on earlier races only; 80% ranges and chances.' },
-  { title: 'Decide', detail: '1-, 2- and 3-stop plans costed over 4,000 draws, or “no clear decision”.' },
-  { title: 'Serve', detail: 'Read-only FastAPI (18 endpoints), a 15-window web app and an AI race engineer.' },
-  { title: 'Record', detail: 'Forecasts frozen in git with a SHA-256 before the race and scored after it.', state: 'planned' as const, tag: '0 live weekends' },
-];
+type Step = { title: string; detail: string; state?: 'planned'; tag?: string };
+type Text = Record<string, { alt?: string; caption: string }>;
+
+/* ---------- words, in both languages ---------- */
+const EN: Text = {
+  'telco-app': {
+    alt: 'Screenshot of the Telco Customer Churn Predictor Streamlit app: a form of customer and billing fields, and a prediction result.',
+    caption: 'The Streamlit predictor scoring a high-risk profile (month-to-month, fibre optic, 3 months’ tenure): 87.7% churn probability, “High”.',
+  },
+  'olist-dashboard': {
+    alt: 'The live Olist dashboard: headline “what a late delivery costs”, on-time orders average 4.29 stars against 1.73 for 8+ days late, with filters for year, state and category and KPI tiles.',
+    caption: 'The live dashboard (plain HTML and d3 on GitHub Pages). Its numbers are rebuilt from the raw Kaggle files by `build_web_data.py`.',
+  },
+  'olist-states': {
+    alt: 'Bar chart of the 15 slowest Brazilian states by average delivery time; Roraima, Amapá and Amazonas take the longest.',
+    caption: 'Notebook figure: the 15 slowest states by average delivery days, against a 12.6-day national average. Slowest is not latest: Amapá and Amazonas still arrive on time about 96% of the time.',
+  },
+  'olist-cohorts': {
+    alt: 'Line chart of repeat-purchase rate by monthly acquisition cohort; flat between about 3 and 5 percent after early 2017.',
+    caption: 'Notebook figure: retention by acquisition cohort, flat at 3–5%. The early spike is a one-customer cohort and is disregarded.',
+  },
+  'retail-pipeline': { alt: 'Retail pipeline stages', caption: 'Raw data to ranked decision; every stage rebuilds with one `make all`.' },
+  'retail-tower': {
+    alt: 'Executive Control Tower reference render with KPI tiles, a contribution-by-category bar chart and ranked exception segments, labelled synthetic data.',
+    caption: 'Page 1, Executive Control Tower, rendered by the pipeline from the synthetic sample. Numbers are illustrative.',
+  },
+  'dpec-pitwall': {
+    alt: "The DPEC pit wall app on the 2025 Singapore Grand Prix: a race pace forecast for every car with its 80% range and the real result (19 of 20 inside), and each car's tyre strategy.",
+    caption: 'The public copy of the app on the 2025 Singapore GP: each car’s forecast after qualifying, its 80% range and what really happened (19 of 20 inside), with the tyres each car used.',
+  },
+  'dpec-pipeline': { alt: 'DPEC system stages', caption: 'What runs today, and the one part that is not live yet. Source: the project README and architecture notes.' },
+  'dpec-practice': {
+    alt: 'Box plot of the per-weekend Spearman correlation with race pace for qualifying, all practice long runs and FP2 long runs, 2022 to 2026; qualifying is clearly highest.',
+    caption: 'Which pre-race signal predicts race pace? Qualifying: median Spearman 0.80; practice long runs: 0.39 (86 dry weekends).',
+  },
+  'dpec-debrief': {
+    alt: 'The debrief window: a qualifying gap split by kind of track section, and a race gap split into pace, tyre age and traffic with ranges.',
+    caption: 'The debrief explains misses: here a qualifying gap split by kind of track section and a race gap split into pace, tyres and traffic.',
+  },
+  'scanner-scan': {
+    alt: 'Five panels: the invoice photo with detected corners, Canny edges, the perspective-warped page, the adaptive threshold, and the Hough-deskewed scan.',
+    caption: 'Stage 1 on the synthetic sample: photo and detected corners → edges → perspective warp → adaptive threshold → deskew (+2.94° of +3.00°).',
+  },
+  'scanner-match': {
+    alt: 'Stage 2 of the scanner: keypoint matches between the photo and the blank template, and the photo registered onto the template.',
+    caption: 'Stage 2: keypoint matching and RANSAC registration of the photo onto the blank template.',
+  },
+};
+
+const KO: Text = {
+  'telco-app': {
+    alt: '통신사 고객 이탈 예측 Streamlit 앱 화면: 고객·요금 정보 입력 양식과 예측 결과.',
+    caption: '고위험 프로필(월 단위 계약, 광섬유, 가입 3개월)을 평가한 Streamlit 예측기: 이탈 확률 87.7%, “High”.',
+  },
+  'olist-dashboard': {
+    alt: 'Olist 라이브 대시보드: “배송 지연의 비용” 헤드라인, 정시 주문 평균 별점 4.29 대 8일 이상 지연 1.73, 연도·주·카테고리 필터와 KPI 타일.',
+    caption: '라이브 대시보드(GitHub Pages의 순수 HTML과 d3). 모든 수치는 `build_web_data.py`가 원본 Kaggle 파일에서 다시 생성합니다.',
+  },
+  'olist-states': {
+    alt: '평균 배송 일수 기준 가장 느린 브라질 15개 주 막대 그래프. 호라이마, 아마파, 아마조나스가 가장 오래 걸립니다.',
+    caption: '노트북 그림: 평균 배송 일수 기준 가장 느린 15개 주와 전국 평균 12.6일. 가장 느린 곳이 가장 늦은 곳은 아닙니다. 아마파와 아마조나스는 약 96%가 정시에 도착합니다.',
+  },
+  'olist-cohorts': {
+    alt: '월별 유입 코호트의 재구매율 선 그래프. 2017년 초 이후 약 3–5%로 평탄합니다.',
+    caption: '노트북 그림: 유입 코호트별 리텐션은 3–5%로 평탄합니다. 초기의 급등은 고객 1명뿐인 코호트이므로 제외합니다.',
+  },
+  'retail-pipeline': { alt: '리테일 파이프라인 단계', caption: '원본 데이터에서 순위가 매겨진 의사결정까지. 모든 단계가 `make all` 한 번으로 다시 빌드됩니다.' },
+  'retail-tower': {
+    alt: 'KPI 타일, 카테고리별 기여도 막대 그래프, 순위가 매겨진 예외 세그먼트로 구성된 Executive Control Tower 화면. 합성 데이터로 표시되어 있습니다.',
+    caption: '1페이지 Executive Control Tower. 합성 샘플로 파이프라인이 생성한 화면이며, 수치는 예시입니다.',
+  },
+  'dpec-pitwall': {
+    alt: '2025 싱가포르 그랑프리의 DPEC 피트 월 앱: 모든 차량의 레이스 페이스 예측과 80% 구간, 실제 결과(20대 중 19대가 구간 안), 차량별 타이어 전략.',
+    caption: '2025 싱가포르 GP의 공개 앱 화면: 예선 후 각 차량의 예측, 80% 구간, 실제 결과(20대 중 19대가 구간 안), 각 차량이 사용한 타이어.',
+  },
+  'dpec-pipeline': { alt: 'DPEC 시스템 단계', caption: '현재 실행 중인 부분과, 아직 실시간으로 운영되지 않는 한 부분. 출처: 프로젝트 README와 아키텍처 문서.' },
+  'dpec-practice': {
+    alt: '2022–2026년 주말별 레이스 페이스와의 Spearman 상관을 예선, 전체 연습 주행 롱런, FP2 롱런으로 비교한 상자 그림. 예선이 뚜렷하게 가장 높습니다.',
+    caption: '어떤 레이스 전 신호가 레이스 페이스를 예측할까? 예선: Spearman 중앙값 0.80, 연습 주행 롱런: 0.39 (건조 노면 86개 주말).',
+  },
+  'dpec-debrief': {
+    alt: '디브리프 창: 트랙 구간 유형별로 나눈 예선 격차와, 페이스·타이어 사용 기간·트래픽으로 나눈 레이스 격차와 그 구간.',
+    caption: '디브리프는 예측이 빗나간 이유를 설명합니다. 예선 격차를 트랙 구간 유형별로, 레이스 격차를 페이스·타이어·트래픽으로 나누어 보여줍니다.',
+  },
+  'scanner-scan': {
+    alt: '다섯 패널: 모서리를 검출한 송장 사진, Canny 에지, 원근 보정한 페이지, 적응형 이진화, Hough 기울기 보정 스캔.',
+    caption: '합성 샘플에서의 1단계: 사진과 검출된 모서리 → 에지 → 원근 보정 → 적응형 이진화 → 기울기 보정(+3.00° 중 +2.94°).',
+  },
+  'scanner-match': {
+    alt: '스캐너 2단계: 사진과 빈 템플릿 사이의 특징점 매칭, 그리고 템플릿에 정합된 사진.',
+    caption: '2단계: 특징점 매칭과 RANSAC으로 사진을 빈 템플릿에 정합합니다.',
+  },
+};
+
+const STEPS: Record<'en' | 'ko', { retail: Step[]; dpec: Step[] }> = {
+  en: {
+    retail: [
+      { title: 'Raw M5 CSVs', detail: 'Daily unit sales (wide), weekly prices, event/SNAP calendar.' },
+      { title: 'Python reshape', detail: 'Wide → long, streamed store by store; categoricals for every text column.' },
+      { title: 'Parquet staging', detail: 'Typed, validated, columnar.' },
+      { title: 'DuckDB SQL model', detail: 'Staging → dimensions → facts → marts, each with a stated grain.' },
+      { title: 'Data-quality gate', detail: '8 checks; hard failures stop the build.' },
+      { title: 'Metrics engine', detail: 'YoY, contribution, exception scoring, HHI concentration.' },
+      { title: 'Dashboards', detail: 'Self-contained HTML (live) and a Tableau build guide.' },
+    ],
+    dpec: [
+      { title: 'Collect', detail: 'Each session downloaded once through FastF1 and stored untouched, with a SHA-256 per file: 545 sessions.' },
+      { title: 'Clean', detail: 'A 15-table DuckDB warehouse rebuilt from plain SQL; every lap gets one reason code.' },
+      { title: 'Check', detail: '21 data checks after every build, each returning the rows that break its rule.' },
+      { title: 'Forecast', detail: 'One shared regression refitted before each weekend on earlier races only; 80% ranges and chances.' },
+      { title: 'Decide', detail: '1-, 2- and 3-stop plans costed over 4,000 draws, or “no clear decision”.' },
+      { title: 'Serve', detail: 'Read-only FastAPI (18 endpoints), a 15-window web app and an AI race engineer.' },
+      { title: 'Record', detail: 'Forecasts frozen in git with a SHA-256 before the race and scored after it.', state: 'planned', tag: '0 live weekends' },
+    ],
+  },
+  ko: {
+    retail: [
+      { title: '원본 M5 CSV', detail: '일별 판매량(wide 형식), 주별 가격, 이벤트/SNAP 달력.' },
+      { title: 'Python 변환', detail: 'wide → long, 매장 단위 스트리밍. 모든 텍스트 열은 범주형.' },
+      { title: 'Parquet 스테이징', detail: '타입 지정, 검증, 컬럼 기반.' },
+      { title: 'DuckDB SQL 모델', detail: '스테이징 → 디멘션 → 팩트 → 마트, 각각 그레인을 명시.' },
+      { title: '데이터 품질 게이트', detail: '검사 8개. 치명적 실패는 빌드를 중단합니다.' },
+      { title: '지표 엔진', detail: '전년 대비, 기여도, 예외 점수화, HHI 집중도.' },
+      { title: '대시보드', detail: '독립 실행형 HTML(공개 중)과 Tableau 빌드 가이드.' },
+    ],
+    dpec: [
+      { title: '수집', detail: '각 세션을 FastF1로 한 번만 내려받아 파일별 SHA-256과 함께 원본 그대로 저장: 545개 세션.' },
+      { title: '정제', detail: '순수 SQL로 다시 빌드되는 15개 테이블 DuckDB 웨어하우스. 모든 랩에 사유 코드 하나.' },
+      { title: '검사', detail: '빌드마다 데이터 검사 21개. 각 검사는 규칙을 어긴 행을 반환합니다.' },
+      { title: '예측', detail: '매 주말 전 이전 레이스만으로 다시 학습하는 단일 공유 회귀. 80% 구간과 확률.' },
+      { title: '결정', detail: '1·2·3스톱 계획을 4,000회 추출로 비용 비교, 또는 “명확한 결정 없음”.' },
+      { title: '제공', detail: '읽기 전용 FastAPI(엔드포인트 18개), 창 15개 웹 앱, AI 레이스 엔지니어.' },
+      { title: '기록', detail: '레이스 전 SHA-256과 함께 git에 예측을 동결하고 레이스 후 채점.', state: 'planned', tag: '실시간 주말 0회' },
+    ],
+  },
+};
+
+const X = lang === 'ko' ? KO : EN;
+const S = STEPS[lang];
+const cap = (key: string) => (compact ? undefined : X[key].caption);
 ---
 {id === 'telco-app' && (
   <ImagePlate
@@ -43,8 +167,8 @@ const dpecSteps = [
     small={compact ? { name: 'telco-top-640', width: 640 } : { name: 'telco-app-640', width: 640 }}
     width={1100}
     height={compact ? 687 : 1603}
-    alt="Screenshot of the Telco Customer Churn Predictor Streamlit app: a form of customer and billing fields, and a prediction result."
-    caption={compact ? undefined : 'The Streamlit predictor scoring a high-risk profile (month-to-month, fibre optic, 3 months’ tenure): 87.7% churn probability, “High”.'}
+    alt={X['telco-app'].alt!}
+    caption={cap('telco-app')}
     plate={compact ? undefined : 'I'}
     frame={frame}
     sizes={compact ? cardSizes : undefined}
@@ -58,8 +182,8 @@ const dpecSteps = [
     small={{ name: 'olist-dashboard-700', width: 700 }}
     width={1400}
     height={735}
-    alt="The live Olist dashboard: headline “what a late delivery costs”, on-time orders average 4.29 stars against 1.73 for 8+ days late, with filters for year, state and category and KPI tiles."
-    caption={compact ? undefined : 'The live dashboard (plain HTML and d3 on GitHub Pages). Its numbers are rebuilt from the raw Kaggle files by `build_web_data.py`.'}
+    alt={X['olist-dashboard'].alt!}
+    caption={cap('olist-dashboard')}
     plate={compact ? undefined : 'II'}
     frame={frame}
     sizes={compact ? cardSizes : undefined}
@@ -67,27 +191,13 @@ const dpecSteps = [
 )}
 {id === 'olist-reviews' && <OlistReviews compact={compact} />}
 {id === 'olist-states' && (
-  <ImagePlate
-    src="olist-slowest-states"
-    width={1200}
-    height={715}
-    alt="Bar chart of the 15 slowest Brazilian states by average delivery time; Roraima, Amapá and Amazonas take the longest."
-    caption="Notebook figure: the 15 slowest states by average delivery days, against a 12.6-day national average. Slowest is not latest: Amapá and Amazonas still arrive on time about 96% of the time."
-    plate="III"
-  />
+  <ImagePlate src="olist-slowest-states" width={1200} height={715} alt={X['olist-states'].alt!} caption={X['olist-states'].caption} plate="III" />
 )}
 {id === 'olist-cohorts' && (
-  <ImagePlate
-    src="olist-cohort-retention"
-    width={1200}
-    height={715}
-    alt="Line chart of repeat-purchase rate by monthly acquisition cohort; flat between about 3 and 5 percent after early 2017."
-    caption="Notebook figure: retention by acquisition cohort, flat at 3–5%. The early spike is a one-customer cohort and is disregarded."
-    plate="IV"
-  />
+  <ImagePlate src="olist-cohort-retention" width={1200} height={715} alt={X['olist-cohorts'].alt!} caption={X['olist-cohorts'].caption} plate="IV" />
 )}
 {id === 'retail-pipeline' && (
-  <SurveyLog steps={retailSteps} label="Retail pipeline stages" caption="Raw data to ranked decision; every stage rebuilds with one `make all`." />
+  <SurveyLog steps={S.retail} label={X['retail-pipeline'].alt!} caption={X['retail-pipeline'].caption} />
 )}
 {id === 'retail-tower' && (
   <ImagePlate
@@ -95,8 +205,8 @@ const dpecSteps = [
     small={{ name: 'retail-control-tower-640', width: 640 }}
     width={1200}
     height={785}
-    alt="Executive Control Tower reference render with KPI tiles, a contribution-by-category bar chart and ranked exception segments, labelled synthetic data."
-    caption={compact ? undefined : 'Page 1, Executive Control Tower, rendered by the pipeline from the synthetic sample. Numbers are illustrative.'}
+    alt={X['retail-tower'].alt!}
+    caption={cap('retail-tower')}
     plate={compact ? undefined : 'V'}
     frame={frame}
     sizes={compact ? cardSizes : undefined}
@@ -109,15 +219,15 @@ const dpecSteps = [
     small={{ name: 'dpec-pitwall-700', width: 700 }}
     width={1400}
     height={646}
-    alt="The DPEC pit wall app on the 2025 Singapore Grand Prix: a race pace forecast for every car with its 80% range and the real result (19 of 20 inside), and each car's tyre strategy."
-    caption={compact ? undefined : 'The public copy of the app on the 2025 Singapore GP: each car’s forecast after qualifying, its 80% range and what really happened (19 of 20 inside), with the tyres each car used.'}
+    alt={X['dpec-pitwall'].alt!}
+    caption={cap('dpec-pitwall')}
     plate={compact ? undefined : 'VI'}
     frame={frame}
     sizes={compact ? cardSizes : undefined}
   />
 )}
 {id === 'dpec-pipeline' && (
-  <SurveyLog steps={dpecSteps} label="DPEC system stages" caption="What runs today, and the one part that is not live yet. Source: the project README and architecture notes." />
+  <SurveyLog steps={S.dpec} label={X['dpec-pipeline'].alt!} caption={X['dpec-pipeline'].caption} />
 )}
 {id === 'dpec-practice' && (
   <ImagePlate
@@ -125,8 +235,8 @@ const dpecSteps = [
     small={{ name: 'dpec-practice-640', width: 640 }}
     width={1117}
     height={588}
-    alt="Box plot of the per-weekend Spearman correlation with race pace for qualifying, all practice long runs and FP2 long runs, 2022 to 2026; qualifying is clearly highest."
-    caption="Which pre-race signal predicts race pace? Qualifying: median Spearman 0.80; practice long runs: 0.39 (86 dry weekends)."
+    alt={X['dpec-practice'].alt!}
+    caption={X['dpec-practice'].caption}
     plate="VII"
   />
 )}
@@ -137,8 +247,8 @@ const dpecSteps = [
     small={{ name: 'dpec-debrief-700', width: 700 }}
     width={1400}
     height={361}
-    alt="The debrief window: a qualifying gap split by kind of track section, and a race gap split into pace, tyre age and traffic with ranges."
-    caption="The debrief explains misses: here a qualifying gap split by kind of track section and a race gap split into pace, tyres and traffic."
+    alt={X['dpec-debrief'].alt!}
+    caption={X['dpec-debrief'].caption}
     plate="VIII"
   />
 )}
@@ -148,8 +258,8 @@ const dpecSteps = [
     small={{ name: 'scanner-scan-800', width: 800 }}
     width={1600}
     height={364}
-    alt="Five panels: the invoice photo with detected corners, Canny edges, the perspective-warped page, the adaptive threshold, and the Hough-deskewed scan."
-    caption={compact ? undefined : 'Stage 1 on the synthetic sample: photo and detected corners → edges → perspective warp → adaptive threshold → deskew (+2.94° of +3.00°).'}
+    alt={X['scanner-scan'].alt!}
+    caption={cap('scanner-scan')}
     plate={compact ? undefined : 'IX'}
     frame={frame}
     sizes={compact ? cardSizes : undefined}
@@ -161,8 +271,8 @@ const dpecSteps = [
     small={{ name: 'scanner-match-640', width: 640 }}
     width={1200}
     height={900}
-    alt="Stage 2 of the scanner: keypoint matches between the photo and the blank template, and the photo registered onto the template."
-    caption="Stage 2: keypoint matching and RANSAC registration of the photo onto the blank template."
+    alt={X['scanner-match'].alt!}
+    caption={X['scanner-match'].caption}
     plate="X"
   />
 )}

@@ -1,6 +1,8 @@
 ---
 /** External link: validated URL, new tab, and no opener/referrer leakage. */
 import { safeHref } from '../lib/url';
+import { getLang } from '../lib/i18n';
+import { ui } from '../content/ui';
 interface Props {
   href: string;
   class?: string;
@@ -11,6 +13,7 @@ interface Props {
 const { href, class: cls, label, newTab = true, ...rest } = Astro.props;
 const safe = safeHref(href);
 const isMail = safe.startsWith('mailto:');
+const note = ui[getLang(Astro.url)].newTab;
 ---
 <a
   href={safe}
@@ -19,4 +22,4 @@ const isMail = safe.startsWith('mailto:');
   target={newTab && !isMail ? '_blank' : undefined}
   rel={newTab && !isMail ? 'noopener noreferrer' : undefined}
   {...rest}
-><slot />{newTab && !isMail && <span class="visually-hidden"> (opens in a new tab)</span>}</a>
+><slot />{newTab && !isMail && <span class="visually-hidden">{note}</span>}</a>

@@ -1,11 +1,13 @@
 ---
 /**
- * "Download CV" button that opens a small menu: English or 한국어.
+ * "Download CV" button that opens a small menu: English or 한국어 (the page's own language first).
  * Built on <details>/<summary>, so it works without JavaScript and keyboard users get it for free;
  * the script only adds closing on an outside click or Escape.
  */
 import Icon from './Icon.astro';
-import { resume } from '../content/site';
+import { resume } from '../content';
+import { ui } from '../content/ui';
+import { getLang } from '../lib/i18n';
 import { url } from '../lib/url';
 
 interface Props {
@@ -15,29 +17,30 @@ interface Props {
   align?: 'start' | 'end';
 }
 const { variant = 'button', align = 'start' } = Astro.props;
-const options = [
-  { ...resume.en, lang: 'en', note: 'English' },
-  { ...resume.kr, lang: 'ko', note: 'Korean' },
-];
+const lang = getLang(Astro.url);
+const t = ui[lang].cv;
+const en = { ...resume.en, lang: 'en' };
+const ko = { ...resume.kr, lang: 'ko' };
+const options = lang === 'ko' ? [ko, en] : [en, ko];
 ---
 <details class:list={['cvd', `cvd--${variant}`, `cvd--${align}`]} data-cvd>
   <summary class:list={['cvd__trigger', { 'btn btn--ghost': variant === 'button' }]}>
     {variant === 'button' ? (
       <>
-        <Icon name="download" /> Download CV <Icon name="chevron" class="cvd__chev" />
+        <Icon name="download" /> {t.button} <Icon name="chevron" class="cvd__chev" />
       </>
     ) : (
       <>
-        CV <span class="mono">PDF</span> <Icon name="chevron" class="cvd__chev" />
+        {t.nav} <span class="mono">{t.pdf}</span> <Icon name="chevron" class="cvd__chev" />
       </>
     )}
   </summary>
-  <div class="cvd__menu" role="group" aria-label="Choose the CV language">
-    <p class="cvd__head mono caps" aria-hidden="true">Choose language</p>
+  <div class="cvd__menu" role="group" aria-label={t.menu}>
+    <p class="cvd__head mono caps" aria-hidden="true">{t.head}</p>
     {options.map((o) => (
       <a class="cvd__item" href={url(o.file)} download hreflang={o.lang} type="application/pdf">
         <span class="cvd__lang" lang={o.lang}>{o.label}</span>
-        <span class="cvd__meta mono">PDF</span>
+        <span class="cvd__meta mono">{t.pdf}</span>
         <Icon name="download" class="cvd__icon" />
       </a>
     ))}

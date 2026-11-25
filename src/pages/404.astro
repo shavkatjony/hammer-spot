@@ -1,15 +1,21 @@
 ---
+// Not-found page. It is served for any missing path in either language, so it speaks both.
 import Base from '../layouts/Base.astro';
 import { url } from '../lib/url';
+import { ui } from '../content/ui';
+const en = ui.en.nf;
+const ko = ui.ko.nf;
 ---
-<Base title="Not found · SHAVKATJON" description="This page could not be found.">
+<Base title={`${en.title} · ${ko.title} · SHAVKATJON`} description="This page could not be found. 페이지를 찾을 수 없습니다." alternates={false}>
   <section class="nf wrap">
-    <p class="mono muted">Error 404 · coordinates unknown</p>
-    <h1 class="nf__title">Nothing here but sand.</h1>
-    <p class="lead">The page you were looking for has drifted. Try the selected work, or start from the top.</p>
+    <p class="mono muted">{en.kicker}</p>
+    <h1 class="nf__title">{en.h1}</h1>
+    <p class="lead">{en.lead}</p>
+    <p class="lead" lang="ko">{ko.lead}</p>
     <p class="nf__links">
-      <a class="link-arrow" href={url('#work')}>Selected work →</a>
-      <a class="link-arrow" href={url()}>Home →</a>
+      <a class="link-arrow" href={url('#work')}>{en.work}</a>
+      <a class="link-arrow" href={url()}>{en.home}</a>
+      <a class="link-arrow" href={url('ko/')} hreflang="ko" lang="ko">{ko.home.replace('홈', '한국어 홈')}</a>
     </p>
   </section>
 </Base>
@@ -28,6 +34,7 @@ import { url } from '../lib/url';
   }
   .nf__links {
     display: flex;
-    gap: var(--space-5);
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-5);
   }
 </style>

@@ -75,9 +75,9 @@
   color-scheme: light;
 
   /* ---- type ---- */
-  --f-display: 'Newsreader Variable', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
-  --f-body: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
-  --f-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --f-display: 'Newsreader Variable', 'Pretendard Variable', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --f-body: 'IBM Plex Sans', 'Pretendard Variable', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Helvetica Neue', Arial, sans-serif;
+  --f-mono: 'IBM Plex Mono', 'Pretendard Variable', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
   --fs-micro: 0.75rem; /* 12px mono labels */
   --fs-small: 0.875rem; /* 14px */

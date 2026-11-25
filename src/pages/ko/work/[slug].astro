@@ -1,0 +1,18 @@
+---
+import CaseStudy from '../../../components/CaseStudy.astro';
+import { getContent } from '../../../content';
+
+export function getStaticPaths() {
+  const { projects } = getContent('ko');
+  return projects.map((p, i) => ({
+    params: { slug: p.slug },
+    props: {
+      project: p,
+      prev: projects[(i - 1 + projects.length) % projects.length],
+      next: projects[(i + 1) % projects.length],
+    },
+  }));
+}
+const { project, prev, next } = Astro.props;
+---
+<CaseStudy project={project} prev={prev} next={next} />

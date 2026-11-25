@@ -3,7 +3,9 @@
  * Decorative scroll indicator: a sun that sets along a thin vertical horizon as the
  * page is read. Desktop only, aria-hidden; the real navigation is the nav bar.
  */
-const ticks = ['Opening', 'Experience', 'Work', 'Notes', 'Toolkit', 'About', 'Contact'];
+import { ui } from '../content/ui';
+import { getLang } from '../lib/i18n';
+const ticks = ui[getLang(Astro.url)].rail;
 ---
 <div class="sun-rail" aria-hidden="true" data-sun-rail>
   <div class="sun-rail__track">

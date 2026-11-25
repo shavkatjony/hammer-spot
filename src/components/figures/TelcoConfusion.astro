@@ -5,39 +5,47 @@
  * precision 0.4983 -> 594 flagged -> FP 298; test n = 1,409 -> TN 737.
  * Check: (296 + 737) / 1409 = 0.73314 = reported accuracy.
  */
-const cells = [
-  { k: 'tp', label: 'Churners flagged', n: 296, note: 'caught in time' },
-  { k: 'fn', label: 'Churners missed', n: 78, note: 'lost revenue' },
-  { k: 'fp', label: 'Stayers flagged', n: 298, note: 'one unneeded call each' },
-  { k: 'tn', label: 'Stayers cleared', n: 737, note: 'correctly left alone' },
-];
+import { getLang } from '../../lib/i18n';
+const ko = getLang(Astro.url) === 'ko';
+const W = ko
+  ? {
+      cells: [['이탈 고객 탐지', '제때 발견'], ['이탈 고객 놓침', '매출 손실'], ['잔류 고객 오탐', '불필요한 전화 1통씩'], ['잔류 고객 정상 분류', '올바르게 제외']],
+      cap: '임계값 0.50에서 고객 1,409명의 테스트 결과', flagged: '이탈로 표시', notFlagged: '표시 안 함', churned: '실제 이탈 (374)', stayed: '실제 잔류 (1,035)',
+      fig: '그림', note: '임계값 0.50에서 홀드아웃 고객 1,409명의 결과(로지스틱 회귀, 클래스 가중치 적용).', src: '에서 도출했으며, 이 수치로 보고된 정확도 0.733이 정확히 재현됩니다.',
+    }
+  : {
+      cells: [['Churners flagged', 'caught in time'], ['Churners missed', 'lost revenue'], ['Stayers flagged', 'one unneeded call each'], ['Stayers cleared', 'correctly left alone']],
+      cap: 'Test-set outcomes at threshold 0.50 for 1,409 customers', flagged: 'Flagged as churn', notFlagged: 'Not flagged', churned: 'Actually churned (374)', stayed: 'Actually stayed (1,035)',
+      fig: 'Fig.', note: 'Outcomes for 1,409 held-out customers at threshold 0.50 (logistic regression, class-weighted). Derived from', src: '; the counts reproduce its accuracy of 0.733 exactly.',
+    };
+const n = [296, 78, 298, 737];
+const cells = W.cells.map(([label, note], i) => ({ n: n[i], label, note }));
 ---
 <figure class="cm">
   <table class="cm__grid">
-    <caption class="visually-hidden">Test-set outcomes at threshold 0.50 for 1,409 customers</caption>
+    <caption class="visually-hidden">{W.cap}</caption>
     <thead>
       <tr>
         <td></td>
-        <th scope="col" class="mono">Flagged as churn</th>
-        <th scope="col" class="mono">Not flagged</th>
+        <th scope="col" class="mono">{W.flagged}</th>
+        <th scope="col" class="mono">{W.notFlagged}</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <th scope="row" class="mono">Actually churned (374)</th>
+        <th scope="row" class="mono">{W.churned}</th>
         <td class="cm__cell cm__cell--good"><span class="cm__n">{cells[0].n}</span><span>{cells[0].label}</span><span class="cm__note">{cells[0].note}</span></td>
         <td class="cm__cell cm__cell--bad"><span class="cm__n">{cells[1].n}</span><span>{cells[1].label}</span><span class="cm__note">{cells[1].note}</span></td>
       </tr>
       <tr>
-        <th scope="row" class="mono">Actually stayed (1,035)</th>
+        <th scope="row" class="mono">{W.stayed}</th>
         <td class="cm__cell cm__cell--cost"><span class="cm__n">{cells[2].n}</span><span>{cells[2].label}</span><span class="cm__note">{cells[2].note}</span></td>
         <td class="cm__cell"><span class="cm__n">{cells[3].n}</span><span>{cells[3].label}</span><span class="cm__note">{cells[3].note}</span></td>
       </tr>
     </tbody>
   </table>
   <figcaption class="cm__cap">
-    <span class="mono">Fig.</span> Outcomes for 1,409 held-out customers at threshold 0.50 (logistic regression, class-weighted).
-    Derived from <code>reports/final_model_metrics.csv</code>; the counts reproduce its accuracy of 0.733 exactly.
+    <span class="mono">{W.fig}</span> {W.note} <code>reports/final_model_metrics.csv</code>{W.src}
   </figcaption>
 </figure>
 

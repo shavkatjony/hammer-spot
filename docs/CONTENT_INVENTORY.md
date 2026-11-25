@@ -2,6 +2,15 @@
 
 Audit of 2026-10-12, updated 2026-11-12 for the redesign (section 0) and 2026-11-14 (section 0a). Where the sections disagree, the newest one (0d, then 0c, 0b, 0a, 0) is current.
 
+## 0e. Update of 2026-11-25 (new CV design; Korean version of the site)
+
+- CVs: the owner's redesigned English and Korean CVs (`Shavkatjon_Yuldashev_Resume.pdf`, `샤브카트존 율다셰프 이력서`) are published byte for byte. At the owner's explicit request nothing is removed from the public copies: they include phone, date of birth, gender, nationality, military status and visa. The portrait on the site is unchanged.
+- Experience: KVENTS and CHUST TEXTILE bullets now follow the new CVs word for word (owner's wording, not edited). New KVENTS forecasting claim: WAPE 31% → 25% against a seasonal-naive baseline, stockouts ~20% lower; "$7M in combined assets". CHUST TEXTILE role is now "Backend Developer". The ASL internship stays on the site (it is no longer on the CVs). **Self-reported; no public evidence.**
+- "4 years 6 months of experience" (CV header) counts KVENTS and CHUST TEXTILE only; the site says so ("plus a backend internship").
+- Visa line: "D-10 Job Seeker (valid until 2027.09.16) · E-7 sponsorship required upon hiring". Korean: intermediate. Education: Mar 2022 – Aug 2026.
+- New skills from the CVs (no public project evidence, listed under "Also in my toolkit"): Apache Spark, TensorFlow, LangChain, Model Context Protocol (MCP). PyTorch now shows in the skill boxes (evidence: MNIST explorer). Generative AI and RAG link to DPEC and KVENTS.
+- Korean version of every page under `/ko/`; Korean job bullets, skills, education and visa copied from the Korean CV.
+
 ## 0d. Update of 2026-11-19 (owner's new English and Korean CVs)
 
 | Item | Now | Status |

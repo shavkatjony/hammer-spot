@@ -1,8 +1,25 @@
 ---
 /** Measured at full M5 shape. Source: retail-commercial-intelligence/docs/architecture.md */
+import { getLang } from '../../lib/i18n';
+const ko = getLang(Astro.url) === 'ko';
+const W = ko
+  ? {
+      first: '첫 버전: pandas melt 한 번에 처리, DuckDB 메모리 제한 없음',
+      final: '최종: 스트리밍 변환, 범주형, 수집 분리, DuckDB 메모리 제한',
+      peak: '최대',
+      fig: '그림',
+      cap: 'Intel i9 MacBook Pro에서 품목-매장-일 5,910만 행(시계열 30,450개 × 1,941일)을 처음부터 끝까지 빌드. 최대 메모리, 0–9 GB 척도. 출처:',
+    }
+  : {
+      first: 'First version: one-shot pandas melt, uncapped DuckDB',
+      final: 'Final: streamed reshape, categoricals, isolated ingest, capped DuckDB',
+      peak: 'peak',
+      fig: 'Fig.',
+      cap: 'End-to-end build of 59.1M item-store-days (30,450 series × 1,941 days) on an Intel i9 MacBook Pro. Peak memory, scale 0–9 GB. Source:',
+    };
 const rows = [
-  { v: 'First version: one-shot pandas melt, uncapped DuckDB', t: 105, m: 8.8, final: false },
-  { v: 'Final: streamed reshape, categoricals, isolated ingest, capped DuckDB', t: 84, m: 2.6, final: true },
+  { v: W.first, t: 105, m: 8.8, final: false },
+  { v: W.final, t: 84, m: 2.6, final: true },
 ];
 const max = 9;
 ---
@@ -16,13 +33,12 @@ const max = 9;
           <rect class="scale__fill" x="0" y="0" width={`${((r.m / max) * 100).toFixed(1)}%`} height="22" rx="4" />
           <rect class="scale__fill" x="0" y="0" width="5" height="22" />
         </svg>
-        <p class="scale__val mono"><span>{r.m.toFixed(1)} GB peak</span><span class="muted">{r.t} s</span></p>
+        <p class="scale__val mono"><span>{ko ? `${W.peak} ${r.m.toFixed(1)} GB` : `${r.m.toFixed(1)} GB ${W.peak}`}</span><span class="muted">{r.t} s</span></p>
       </div>
     ))}
   </div>
   <figcaption class="scale__cap">
-    <span class="mono">Fig.</span> End-to-end build of 59.1M item-store-days (30,450 series × 1,941 days) on an Intel i9 MacBook Pro.
-    Peak memory, scale 0–9 GB. Source: <code>docs/architecture.md</code>.
+    <span class="mono">{W.fig}</span> {W.cap} <code>docs/architecture.md</code>.
   </figcaption>
 </figure>
 

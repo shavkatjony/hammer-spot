@@ -3,27 +3,31 @@ import SectionHead from './SectionHead.astro';
 import ProjectFeature from './ProjectFeature.astro';
 import ExtLink from './ExtLink.astro';
 import Icon from './Icon.astro';
-import { primaryProjects, secondaryProjects, archive, moreWork } from '../content/site';
+import { getContent } from '../content';
+import { ui } from '../content/ui';
+import { getLang } from '../lib/i18n';
 import { url } from '../lib/url';
+const lang = getLang(Astro.url);
+const t = ui[lang].work;
+const { primaryProjects, secondaryProjects, archive, moreWork } = getContent(lang);
 ---
 <section class="work" id="work" aria-labelledby="work-title">
   <div class="wrap wrap--wide">
-    <SectionHead no="02" title="Selected work" id="work-title">
-      Four featured projects, led by my flagship, DPEC. Each has a full case study: the problem, the data, how it was
-      built, what the numbers say and where it falls short. Every number links back to the code or report it comes from.
+    <SectionHead no="02" title={t.title} id="work-title">
+      {t.dek}
     </SectionHead>
   </div>
 
   {primaryProjects.map((p, i) => <ProjectFeature project={p} flip={i % 2 === 1} />)}
 
   <div class="wrap wrap--wide work__also-head">
-    <h3 class="work__also-title">Also in computer vision</h3>
+    <h3 class="work__also-title">{t.alsoCv}</h3>
   </div>
   {secondaryProjects.map((p) => <ProjectFeature project={p} />)}
 
   <div class="wrap wrap--wide">
     <div class="archive">
-      <h3 class="archive__title mono caps">More work</h3>
+      <h3 class="archive__title mono caps">{t.more}</h3>
       <div class="archive__body">
       <p class="archive__note">{moreWork.note}</p>
       <ul class="archive__list" role="list">
@@ -47,7 +51,7 @@ import { url } from '../lib/url';
             <h4 class="archive__name">{a.title}</h4>
             <p class="archive__text">{a.text}</p>
             {a.href ? (
-              <ExtLink href={a.href} class="link-arrow"><Icon name="github" /> Repository</ExtLink>
+              <ExtLink href={a.href} class="link-arrow"><Icon name="github" /> {t.repo}</ExtLink>
             ) : (
               <p class="archive__private mono"><Icon name="lock" /> {a.privateNote}</p>
             )}

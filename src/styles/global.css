@@ -554,3 +554,13 @@ html.motion [data-reveal='stagger'] > :nth-child(n + 7) { transition-delay: calc
     text-decoration: underline;
   }
 }
+
+/* Korean pages: Latin keeps IBM Plex / Newsreader, Hangul falls back to Pretendard (see tokens.css).
+   Korean wraps between words, never inside one; uppercase-style tracking is relaxed for Hangul. */
+:lang(ko) {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+:lang(ko) .caps {
+  letter-spacing: 0.02em;
+}

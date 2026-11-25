@@ -10,15 +10,19 @@ import DuneFallback from './DuneFallback.astro';
 import Icon from './Icon.astro';
 import ExtLink from './ExtLink.astro';
 import CvDownload from './CvDownload.astro';
-import { identity, social, skillGroups, heroSkills, skillLabel } from '../content/site';
-import { url } from '../lib/url';
+import { getContent, social, heroSkills, skillLabel } from '../content';
+import { ui } from '../content/ui';
+import { getLang, lurl } from '../lib/i18n';
 
+const lang = getLang(Astro.url);
+const t = ui[lang].hero;
+const { identity, skillGroups } = getContent(lang);
 // Drop a photo at src/assets/portrait.(jpg|jpeg|png|webp|avif) and it is used automatically.
 const found = import.meta.glob<{ default: ImageMetadata }>('../assets/portrait.{jpg,jpeg,png,webp,avif}', { eager: true });
 const portrait = Object.values(found)[0]?.default ?? null;
 // The headline's emphasised words are set in the accent colour.
 const [headBefore, headAfter = ''] = identity.headline.split(identity.headlineEmphasis);
-const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.availability.scope.slice(1);
+const fullName = identity.nameLocal ? `${identity.nameLocal} (${identity.name})` : identity.name;
 ---
 <section class="hero" aria-labelledby="hero-name" data-hero>
   <div class="hero__scene hero-scene" data-hero-scene>
@@ -32,6 +36,7 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
       <h1 id="hero-name" class="hero__name">
         <span class="hero__first">{identity.firstName}</span>{' '}
         <span class="hero__last">{identity.lastName}</span>
+        {identity.nameLocal && <span class="visually-hidden"> ({identity.nameLocal})</span>}
       </h1>
       <p class="hero__role">{identity.title}</p>
       <p class="hero__position">
@@ -42,17 +47,17 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
         <p class="hero__open">
           <span class="chip-open">{identity.availability.short}</span>{' '}
           <span class="hero__open-text">
-            {scope} · Based in {identity.location.city}, {identity.location.country}
+            {t.open(identity.availability.scope, identity.location.city, identity.location.country)}
           </span>
         </p>
       )}
       <div class="hero__actions" data-horizon-anchor>
-        <a class="btn btn--primary" href="#work">View selected work <Icon name="arrow-down" /></a>
+        <a class="btn btn--primary" href={lurl(lang, '#work')}>{t.viewWork} <Icon name="arrow-down" /></a>
         <CvDownload />
-        <ul class="hero__social" role="list" aria-label="Profiles">
-          <li><ExtLink href={social.github.href} class="hero__icon" label="GitHub profile"><Icon name="github" /></ExtLink></li>
-          <li><ExtLink href={social.linkedin.href} class="hero__icon" label="LinkedIn profile"><Icon name="linkedin" /></ExtLink></li>
-          <li><ExtLink href={social.email.href} class="hero__icon" label={`Email ${social.email.handle}`}><Icon name="mail" /></ExtLink></li>
+        <ul class="hero__social" role="list" aria-label={t.profiles}>
+          <li><ExtLink href={social.github.href} class="hero__icon" label={t.github}><Icon name="github" /></ExtLink></li>
+          <li><ExtLink href={social.linkedin.href} class="hero__icon" label={t.linkedin}><Icon name="linkedin" /></ExtLink></li>
+          <li><ExtLink href={social.email.href} class="hero__icon" label={t.email(social.email.handle)}><Icon name="mail" /></ExtLink></li>
         </ul>
       </div>
     </div>
@@ -67,13 +72,13 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
             formats={['avif', 'webp']}
             widths={[320, 480, 640, 960]}
             sizes="(max-width: 52rem) 40vw, 26rem"
-            alt={`Portrait of ${identity.name}`}
+            alt={t.portrait(fullName)}
             class="hero__photo"
             loading="eager"
             fetchpriority="high"
           />
         ) : (
-          <div class="hero__monogram" role="img" aria-label={`${identity.name}, monogram`}>
+          <div class="hero__monogram" role="img" aria-label={t.monogram(identity.name)}>
             <svg viewBox="0 0 200 250" aria-hidden="true" focusable="false">
               <circle class="mono-sun" cx="128" cy="96" r="30" />
               <path class="mono-dune" d="M0 178 C46 158 74 160 104 172 C134 184 160 176 200 160 L200 250 L0 250 Z" />
@@ -83,7 +88,7 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
           </div>
         )}
         <figcaption class="hero__plate-cap mono">
-          <span>{identity.name}</span>{' '}
+          <span>{identity.nameLocal || identity.name}</span>{' '}
           <span>{identity.location.city} · {identity.location.coords}</span>
         </figcaption>
       </figure>
@@ -91,7 +96,7 @@ const scope = identity.availability.scope.charAt(0).toUpperCase() + identity.ava
   </div>
 
   <section class="hero__stack wrap wrap--wide" aria-labelledby="stack-title">
-    <h2 id="stack-title" class="hero__stack-label mono caps">Technical skills</h2>
+    <h2 id="stack-title" class="hero__stack-label mono caps">{t.skills}</h2>
     <dl class="hero__stack-grid">
       {skillGroups.map((g) => (
         <div class:list={['hero__stack-group', { 'hero__stack-group--wide': g.wide }]}>

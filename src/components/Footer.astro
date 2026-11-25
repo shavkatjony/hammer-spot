@@ -1,8 +1,21 @@
 ---
 import ExtLink from './ExtLink.astro';
-import { identity, social, resume, meta, personalSite } from '../content/site';
+import { getContent, social, resume, personalSite } from '../content';
+import { ui } from '../content/ui';
+import { getLang, lurl } from '../lib/i18n';
 import { url } from '../lib/url';
+const lang = getLang(Astro.url);
+const t = ui[lang].footer;
+const n = ui[lang].nav;
+const { identity, meta } = getContent(lang);
 const year = meta.updated.slice(0, 4);
+const [licA, licB] = t.licenceText(year, identity.name);
+// CV links: the page's own language first.
+const cvs = [
+  { href: url(resume.en.file), lang: 'en', parts: ['', n.cvEn, ''] },
+  { href: url(resume.kr.file), lang: 'ko', parts: n.cvKo },
+];
+if (lang === 'ko') cvs.reverse();
 ---
 <footer class="footer band-coffee">
   <div class="wrap wrap--wide">
@@ -14,38 +27,41 @@ const year = meta.updated.slice(0, 4);
         <p class="footer__mark">{identity.name}</p>
         <p class="mono muted">{identity.title} · {identity.location.city} · {identity.location.coords}</p>
       </div>
-      <nav class="footer__col" aria-label="Contact and profiles">
-        <h2 class="mono muted">Correspondence</h2>
+      <nav class="footer__col" aria-label={t.profiles}>
+        <h2 class="mono muted">{t.correspondence}</h2>
         <ul role="list">
           <li><ExtLink href={social.email.href} class="footer__email">{social.email.handle}</ExtLink></li>
           <li><ExtLink href={social.github.href}>GitHub · {social.github.handle}</ExtLink></li>
           <li><ExtLink href={social.linkedin.href}>LinkedIn</ExtLink></li>
           <li><ExtLink href={social.telegram.href}>Telegram</ExtLink></li>
-          {personalSite.href && <li><ExtLink href={personalSite.href}>{personalSite.label}</ExtLink></li>}
+          {personalSite.href && <li><ExtLink href={personalSite.href}>{ui[lang].contact.personalSite}</ExtLink></li>}
         </ul>
       </nav>
-      <nav class="footer__col" aria-label="Site">
-        <h2 class="mono muted">Index</h2>
+      <nav class="footer__col" aria-label={t.site}>
+        <h2 class="mono muted">{t.index}</h2>
         <ul role="list">
-          <li><a href={url('#experience')}>Experience</a></li>
-          <li><a href={url('#work')}>Selected work</a></li>
-          <li><a href={url('#notes')}>Field notes</a></li>
-          <li><a href={url('#toolkit')}>Toolkit</a></li>
-          <li><a href={url(resume.en.file)} download hreflang="en">CV · English (PDF)</a></li>
-          <li><a href={url(resume.kr.file)} download hreflang="ko">{'CV · '}<span lang="ko">한국어</span>{' (PDF)'}</a></li>
+          <li><a href={lurl(lang, '#experience')}>{t.links.experience}</a></li>
+          <li><a href={lurl(lang, '#work')}>{t.links.work}</a></li>
+          <li><a href={lurl(lang, '#notes')}>{t.links.notes}</a></li>
+          <li><a href={lurl(lang, '#toolkit')}>{t.links.toolkit}</a></li>
+          {cvs.map((c) => (
+            <li>
+              <a href={c.href} download hreflang={c.lang}><span>{c.parts[0]}{c.lang === 'ko' ? <span lang="ko">{c.parts[1]}</span> : c.parts[1]}{c.parts[2]}</span></a>
+            </li>
+          ))}
         </ul>
       </nav>
       <div class="footer__col">
-        <h2 class="mono muted">Licence</h2>
+        <h2 class="mono muted">{t.licence}</h2>
         <p>
-          {'Site code is released under the '}<ExtLink href="https://opensource.org/license/mit" class="footer__inline">MIT License</ExtLink>{'. Text, case studies, images and the CV are © '}{year} {identity.name}{', all rights reserved.'}
+          {licA}<ExtLink href="https://opensource.org/license/mit" class="footer__inline">MIT License</ExtLink>{licB}
         </p>
       </div>
     </div>
     <div class="footer__base mono muted">
       <span>© {year} {identity.name}</span>
-      <span>Last revised {meta.updated}</span>
-      <a href="#main" class="footer__top">Back to top ↑</a>
+      <span>{t.revised} {meta.updated}</span>
+      <a href="#main" class="footer__top">{t.top}</a>
     </div>
   </div>
 </footer>

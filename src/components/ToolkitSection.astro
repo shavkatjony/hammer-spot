@@ -1,15 +1,19 @@
 ---
 /**
- * Toolkit: the same seven skill groups as the hero, with evidence.
- * A skill appears under "Demonstrated" when a featured project (`evidence`) or other public work (`extra`)
- * shows it; the rest of the group is listed as "also used". Open source studied is listed separately.
- * Everything here is edited in src/content/site.ts (skillGroups, toolkit).
+ * Toolkit: the same skill groups as the hero, with evidence.
+ * A skill appears under "Demonstrated" when a featured project (`evidence`), a job (`work`) or other public
+ * work (`extra`) shows it; the rest of the group is listed as "also in my toolkit". Open source studied is listed separately.
+ * Everything here is edited in src/content/site.ts (skillGroups, toolkit); Korean words in ko.ts.
  */
 import SectionHead from './SectionHead.astro';
 import ExtLink from './ExtLink.astro';
-import { skillGroups, toolkit, projects, type SkillGroup } from '../content/site';
-import { url } from '../lib/url';
+import { getContent, type SkillGroup } from '../content';
+import { ui } from '../content/ui';
+import { getLang, lurl } from '../lib/i18n';
 
+const lang = getLang(Astro.url);
+const t = ui[lang].tk;
+const { skillGroups, toolkit, projects } = getContent(lang);
 const bySlug = Object.fromEntries(projects.map((p) => [p.slug, p]));
 const has = (sk: SkillGroup['skills'][number]) => (sk.evidence?.length ?? 0) > 0 || (sk.work?.length ?? 0) > 0 || !!sk.extra;
 const shown = (g: SkillGroup) => g.skills.filter(has);
@@ -18,20 +22,19 @@ const jobName = { KVENTS: 'KVENTS', TEXTILE: 'Textile', ASL: 'ASL' } as const;
 ---
 <section class="section toolkit tone-willow" id="toolkit" aria-labelledby="toolkit-title">
   <div class="wrap wrap--wide">
-    <SectionHead no="04" title="Toolkit" id="toolkit-title">
-      The skill groups from the top of the page, each linked to the projects and jobs that show it, followed by
-      open-source projects I studied.
+    <SectionHead no="04" title={t.title} id="toolkit-title">
+      {t.dek}
     </SectionHead>
 
     <div class="tk__a">
       <div class="tk__a-head">
-        <h3 class="tk__head"><span class="tk__no mono">A</span> Demonstrated in projects and work</h3>
+        <h3 class="tk__head"><span class="tk__no mono">A</span> {t.demonstrated}</h3>
         <p class="tk__key">
-          <span class="mono">Project numbers:</span>
+          <span class="mono">{t.numbers}</span>
           {projects.map((p) => (
-            <a href={url(`work/${p.slug}/`)} class="tk__key-item"><span class="mono">{p.index}</span> {p.short}</a>
+            <a href={lurl(lang, `work/${p.slug}/`)} class="tk__key-item"><span class="mono">{p.index}</span> {p.short}</a>
           ))}
-          <a href={url('#experience')} class="tk__key-item"><span class="tk__work-dot" aria-hidden="true"></span> Job (see Experience)</a>
+          <a href={lurl(lang, '#experience')} class="tk__key-item"><span class="tk__work-dot" aria-hidden="true"></span> {t.job}</a>
         </p>
       </div>
 
@@ -49,15 +52,15 @@ const jobName = { KVENTS: 'KVENTS', TEXTILE: 'Textile', ASL: 'ASL' } as const;
                   <span class="tk__ev">
                     {sk.evidence?.map((slug) => (
                       <a
-                        href={url(`work/${slug}/`)}
+                        href={lurl(lang, `work/${slug}/`)}
                         class="tk__chip"
-                        aria-label={`${bySlug[slug]?.index} ${bySlug[slug]?.title}, case study`}
+                        aria-label={t.chip(bySlug[slug]?.index, bySlug[slug]?.title)}
                       >
                         {bySlug[slug]?.index}
                       </a>
                     ))}
                     {sk.work?.map((j) => (
-                      <a href={url('#experience')} class="tk__chip tk__chip--work" aria-label={`Used at ${jobName[j]}, see Experience`}>{jobName[j]}</a>
+                      <a href={lurl(lang, '#experience')} class="tk__chip tk__chip--work" aria-label={t.usedAt(jobName[j])}>{jobName[j]}</a>
                     ))}
                     {sk.extra && <ExtLink href={sk.extra.href} class="tk__chip tk__chip--repo">{sk.extra.label}</ExtLink>}
                   </span>
@@ -66,7 +69,7 @@ const jobName = { KVENTS: 'KVENTS', TEXTILE: 'Textile', ASL: 'ASL' } as const;
             </ul>
             {also(g).length > 0 && (
               <p class="tk__also">
-                <span class="mono">Also in my toolkit:</span> {also(g).map((sk) => sk.name).join(', ')}
+                <span class="mono">{t.also}</span> {also(g).map((sk) => sk.name).join(', ')}
               </p>
             )}
           </section>
@@ -76,12 +79,12 @@ const jobName = { KVENTS: 'KVENTS', TEXTILE: 'Textile', ASL: 'ASL' } as const;
 
     <div class="tk__side">
       <div class="tk__col">
-        <h3 class="tk__head"><span class="tk__no mono">B</span> Open source studied</h3>
+        <h3 class="tk__head"><span class="tk__no mono">B</span> {t.studied}</h3>
         <ul role="list" class="tk__list">
-          {toolkit.studied.map((t) => (
+          {toolkit.studied.map((x) => (
             <li class="tk__item" data-reveal="fade">
-              <ExtLink href={t.href} class="tk__name">{t.name}</ExtLink>
-              <p class="tk__why">{t.why}</p>
+              <ExtLink href={x.href} class="tk__name">{x.name}</ExtLink>
+              <p class="tk__why">{x.why}</p>
             </li>
           ))}
         </ul>

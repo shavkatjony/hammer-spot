@@ -1,22 +1,41 @@
 ---
 /** Held-out results, 2025–26 (37 weekends, 726 driver-races per checkpoint).
  *  Source: F1-pace-intelligence README table, verified in reports/numbers-check.md (✓ all 12 values). */
+import { getLang } from '../../lib/i18n';
+const ko = getLang(Astro.url) === 'ko';
+const W = ko
+  ? {
+      m: ['공유 모델 (모든 서킷과 연도에 하나의 회귀)', '팀 폼 (팀의 최근 레이스)', '직전 레이스', '연도별 별도 모델', '신호 그대로 (롱런 / 예선 격차)', '신호 없음 (모든 차량 동일)'],
+      region: '홀드아웃 레이스에서의 예측 모델 비교',
+      cap: '레이스 페이스 평균 절대 오차, 랩타임의 %, 2025–26 홀드아웃 주말',
+      forecaster: '예측 모델', practice: '연습 주행 후', quali: '예선 후', table: '표',
+      note: '어떤 모델링 결정에도 쓰이지 않은 2025–26 시즌 37개 레이스 주말에서의 레이스 페이스 평균 절대 오차(랩타임의 %, 낮을수록 좋음). 열마다 최고 값은 굵게 표시. 출처: 프로젝트 README,',
+      verified: '에서 검증.',
+    }
+  : {
+      m: ['Shared model (one regression for every track and year)', 'Team form (the team’s recent races)', 'Last race', 'A separate model for each year', 'The signal as is (long runs / qualifying gap)', 'No signal (every car equal)'],
+      region: 'Forecaster comparison on held-out races',
+      cap: 'Mean absolute race-pace error, % of a lap time, 2025–26 held-out weekends',
+      forecaster: 'Forecaster', practice: 'After practice', quali: 'After qualifying', table: 'Table.',
+      note: 'Mean absolute error of race pace (% of a lap time; lower is better) on 37 race weekends of 2025–26 that played no part in any modelling choice. Best per column in bold. Source: the project README, verified in',
+      verified: '.',
+    };
 const rows = [
-  { m: 'Shared model (one regression for every track and year)', p: 0.648, q: 0.548, ours: true },
-  { m: 'Team form (the team’s recent races)', p: 0.674, q: 0.674 },
-  { m: 'Last race', p: 0.744, q: 0.744 },
-  { m: 'A separate model for each year', p: 0.883, q: 0.589 },
-  { m: 'The signal as is (long runs / qualifying gap)', p: 1.071, q: 0.594 },
-  { m: 'No signal (every car equal)', p: 1.047, q: 1.047 },
+  { m: W.m[0], p: 0.648, q: 0.548, ours: true },
+  { m: W.m[1], p: 0.674, q: 0.674 },
+  { m: W.m[2], p: 0.744, q: 0.744 },
+  { m: W.m[3], p: 0.883, q: 0.589 },
+  { m: W.m[4], p: 1.071, q: 0.594 },
+  { m: W.m[5], p: 1.047, q: 1.047 },
 ];
 const best = (k: 'p' | 'q') => Math.min(...rows.map((r) => r[k]));
 ---
 <figure class="dr">
-  <div class="dr__scroll" tabindex="0" role="region" aria-label="Forecaster comparison on held-out races">
+  <div class="dr__scroll" tabindex="0" role="region" aria-label={W.region}>
     <table class="dr__table">
-      <caption class="visually-hidden">Mean absolute race-pace error, % of a lap time, 2025–26 held-out weekends</caption>
+      <caption class="visually-hidden">{W.cap}</caption>
       <thead>
-        <tr><th scope="col">Forecaster</th><th scope="col">After practice</th><th scope="col">After qualifying</th></tr>
+        <tr><th scope="col">{W.forecaster}</th><th scope="col">{W.practice}</th><th scope="col">{W.quali}</th></tr>
       </thead>
       <tbody>
         {rows.map((r) => (
@@ -30,9 +49,7 @@ const best = (k: 'p' | 'q') => Math.min(...rows.map((r) => r[k]));
     </table>
   </div>
   <figcaption class="dr__cap">
-    <span class="mono">Table.</span> Mean absolute error of race pace (% of a lap time; lower is better) on 37 race weekends of
-    2025–26 that played no part in any modelling choice. Best per column in bold. Source: the project README, verified in
-    <code>reports/numbers-check.md</code>.
+    <span class="mono">{W.table}</span> {W.note} <code>reports/numbers-check.md</code>{W.verified}
   </figcaption>
 </figure>
 

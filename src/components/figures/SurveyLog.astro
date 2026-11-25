@@ -4,6 +4,8 @@
  * Built stages are solid; planned stages are hollow, dashed and labelled in text.
  */
 import Rich from '../Rich.astro';
+import { ui } from '../../content/ui';
+import { getLang } from '../../lib/i18n';
 interface Step {
   title: string;
   detail: string;
@@ -16,6 +18,7 @@ interface Props {
   label: string;
 }
 const { steps, caption, label } = Astro.props;
+const f = ui[getLang(Astro.url)].fig;
 ---
 <figure class="log">
   <ol class="log__list" role="list" aria-label={label} data-reveal="stagger">
@@ -27,11 +30,11 @@ const { steps, caption, label } = Astro.props;
           <span class="log__title"><Rich text={s.title} /></span>{' '}
           <span class="log__detail"><Rich text={s.detail} /></span>
         </span>
-        <span class="log__state mono">{s.tag ?? (s.state === 'planned' ? 'Planned' : 'Built')}</span>
+        <span class="log__state mono">{s.tag ?? (s.state === 'planned' ? f.planned : f.built)}</span>
       </li>
     ))}
   </ol>
-  <figcaption class="log__cap"><span class="mono">Fig.</span> <Rich text={caption} /></figcaption>
+  <figcaption class="log__cap"><span class="mono">{f.fig}</span> <Rich text={caption} /></figcaption>
 </figure>
 
 <style>

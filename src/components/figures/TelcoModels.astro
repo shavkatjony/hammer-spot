@@ -1,30 +1,35 @@
 ---
 /** 5-fold stratified CV results. Source: telco-c-classifier-alias/reports/model_comparison.csv */
+import { getLang } from '../../lib/i18n';
+const ko = getLang(Astro.url) === 'ko';
+const W = ko
+  ? { lr: '로지스틱 회귀', gb: '그래디언트 부스팅 (HistGB)', rf: '랜덤 포레스트', region: '모델 비교 표', cap: '교차검증 모델 비교, 5-fold', model: '모델', recall: '재현율', precision: '정밀도', accuracy: '정확도', selected: '선택', table: '표', note: '학습 데이터에서의 층화 5-fold 교차검증. 랜덤 포레스트는 정확도가 가장 높지만 재현율은 가장 낮습니다. 출처:' }
+  : { lr: 'Logistic regression', gb: 'Gradient boosting (HistGB)', rf: 'Random forest', region: 'Model comparison table', cap: 'Cross-validated model comparison, 5 folds', model: 'Model', recall: 'Recall', precision: 'Precision', accuracy: 'Accuracy', selected: 'Selected', table: 'Table.', note: '5-fold stratified cross-validation on the training split. The random forest has the best accuracy and the worst recall. Source:' };
 const rows = [
-  { m: 'Logistic regression', auc: 0.8463, sd: 0.0114, rec: 0.7973, pre: 0.5177, f1: 0.6276, acc: 0.749, chosen: true },
-  { m: 'Gradient boosting (HistGB)', auc: 0.8293, sd: 0.0085, rec: 0.7003, pre: 0.5536, f1: 0.6183, acc: 0.7707, chosen: false },
-  { m: 'Random forest', auc: 0.8239, sd: 0.0121, rec: 0.4649, pre: 0.6374, f1: 0.5374, acc: 0.7875, chosen: false },
+  { m: W.lr, auc: 0.8463, sd: 0.0114, rec: 0.7973, pre: 0.5177, f1: 0.6276, acc: 0.749, chosen: true },
+  { m: W.gb, auc: 0.8293, sd: 0.0085, rec: 0.7003, pre: 0.5536, f1: 0.6183, acc: 0.7707, chosen: false },
+  { m: W.rf, auc: 0.8239, sd: 0.0121, rec: 0.4649, pre: 0.6374, f1: 0.5374, acc: 0.7875, chosen: false },
 ];
 const f3 = (n: number) => n.toFixed(3);
 ---
 <figure class="mt">
-  <div class="mt__scroll" tabindex="0" role="region" aria-label="Model comparison table">
+  <div class="mt__scroll" tabindex="0" role="region" aria-label={W.region}>
     <table class="mt__table">
-      <caption class="visually-hidden">Cross-validated model comparison, 5 folds</caption>
+      <caption class="visually-hidden">{W.cap}</caption>
       <thead>
         <tr>
-          <th scope="col">Model</th>
+          <th scope="col">{W.model}</th>
           <th scope="col">ROC-AUC <span class="muted">± sd</span></th>
-          <th scope="col">Recall</th>
-          <th scope="col">Precision</th>
+          <th scope="col">{W.recall}</th>
+          <th scope="col">{W.precision}</th>
           <th scope="col">F1</th>
-          <th scope="col">Accuracy</th>
+          <th scope="col">{W.accuracy}</th>
         </tr>
       </thead>
       <tbody>
         {rows.map((r) => (
           <tr class:list={{ 'is-chosen': r.chosen }}>
-            <th scope="row">{r.m}{r.chosen && <span class="mt__tag mono">Selected</span>}</th>
+            <th scope="row">{r.m}{r.chosen && <span class="mt__tag mono">{W.selected}</span>}</th>
             <td>{f3(r.auc)} <span class="muted">± {f3(r.sd)}</span></td>
             <td>{f3(r.rec)}</td>
             <td>{f3(r.pre)}</td>
@@ -36,8 +41,7 @@ const f3 = (n: number) => n.toFixed(3);
     </table>
   </div>
   <figcaption class="mt__cap">
-    <span class="mono">Table.</span> 5-fold stratified cross-validation on the training split. The random forest has the best accuracy
-    and the worst recall. Source: <code>reports/model_comparison.csv</code>.
+    <span class="mono">{W.table}</span> {W.note} <code>reports/model_comparison.csv</code>.
   </figcaption>
 </figure>
 

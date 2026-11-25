@@ -1,18 +1,30 @@
 ---
 /** Stage 2 registration on the sample. Source: korean-document-scanner README (results on the sample). */
+import { getLang } from '../../lib/i18n';
+const ko = getLang(Astro.url) === 'ko';
+const W = ko
+  ? {
+      region: '특징점 매칭 결과', cap: 'RANSAC 적용 여부에 따른 템플릿 정합 오차',
+      h: ['특징점', '비율 테스트 매칭', 'RANSAC 인라이어', '모서리 오차, RANSAC', '최소제곱, 전체 매칭'],
+      table: '표', note: '오차 = 복원한 호모그래피가 템플릿의 네 모서리를 놓은 위치와 실제 위치 사이의 평균 거리(사진 픽셀). 출처: 프로젝트 README, 저장소는 비공개입니다.',
+    }
+  : {
+      region: 'Feature matching results', cap: 'Template registration error with and without RANSAC',
+      h: ['Keypoints', 'Ratio-test matches', 'RANSAC inliers', 'Corner error, RANSAC', 'Least squares, all matches'],
+      table: 'Table.', note: 'Error = mean distance, in photo pixels, between where the recovered homography puts the template’s four corners and where they truly are. Source: the project README; repository private.',
+    };
 const rows = [
   { m: 'ORB', ratio: 300, inliers: 145, ransac: '0.8 px', lsq: '~510 px' },
   { m: 'SIFT', ratio: 257, inliers: 131, ransac: '0.3 px', lsq: '~1,460 px' },
 ];
 ---
 <figure class="sr">
-  <div class="sr__scroll" tabindex="0" role="region" aria-label="Feature matching results">
+  <div class="sr__scroll" tabindex="0" role="region" aria-label={W.region}>
     <table class="sr__table">
-      <caption class="visually-hidden">Template registration error with and without RANSAC</caption>
+      <caption class="visually-hidden">{W.cap}</caption>
       <thead>
         <tr>
-          <th scope="col">Keypoints</th><th scope="col">Ratio-test matches</th><th scope="col">RANSAC inliers</th>
-          <th scope="col">Corner error, RANSAC</th><th scope="col">Least squares, all matches</th>
+          {W.h.map((x) => <th scope="col">{x}</th>)}
         </tr>
       </thead>
       <tbody>
@@ -25,8 +37,7 @@ const rows = [
     </table>
   </div>
   <figcaption class="sr__cap">
-    <span class="mono">Table.</span> Error = mean distance, in photo pixels, between where the recovered homography puts the
-    template’s four corners and where they truly are. Source: the project README; repository private.
+    <span class="mono">{W.table}</span> {W.note}
   </figcaption>
 </figure>
 
